@@ -7,7 +7,7 @@
                 <span class="complete" @click="complete" v-show="plete">выполнить</span>
             </div>
         </div>
-        <!--<div id="content">
+        <div id="content">
             <div id="hw">
                 <van-swipe-cell id="swipe">
                     <div id="goods">
@@ -122,15 +122,15 @@
                 </van-swipe-cell>
                 <label id="stepper"><van-stepper v-model="value" /></label>
             </div>
-        </div>-->
-        <div id="kong">
+        </div>
+        <!--<div id="kong">
             <div id="cartimg">
                 <img src="../assets/image/shop/gouwuchekong@2x.png">
             </div>
             <h2>Пустая корзина</h2>
             <p>Вы ничего не купили</p>
             <van-button id="minibnt" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
-        </div>
+        </div>-->
 
         <van-submit-bar v-show="sub" label="Всего：" currency='' :price="price" button-text="Подтвердить заказ" @submit="onSubmit">
             <van-checkbox v-model="checked">все</van-checkbox>
@@ -188,7 +188,7 @@
     #header {
         height: 100px;
         background-color: #ef423a;
-        padding: 0 20px 15px 40px;
+        padding: 0 20px;
     }
     #header #cart {
         float: left;
@@ -204,14 +204,17 @@
     #header #text {
         color: #fff;
         float: right;
+        height: 100%;
     }
     #header #text .admin_cart, #header #text .complete {
         color: #fff;
         display: inline-block;
         font-size: 26px;
+        height: 100%;
+        line-height: 100px;
     }
     .van-submit-bar {
-        bottom: 100px;
+        bottom: 90px;
     }
     .van-button--square {
         height: 100%;
@@ -237,6 +240,8 @@
     }
     #content {
         padding-bottom: 200px;
+        height: calc( 100vh - 100px);
+        overflow-y:auto;
     }
     #cartimg {
       width: 80%;

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Header :title="title"></Header>
-        <div class="Allorder">
+        <div class="Allorder" id="middle">
             <van-tabs :active="active">
               <van-search v-model="value" placeholder="введите ключевое слово для поиска" />
                 <van-tab title="Bce" name="a">
@@ -316,6 +316,10 @@
     .AllCode .codeOrder{
         display: inline-block;
 
+    }
+    #middle {
+      height: calc( 100vh - 100px);
+      overflow-y:auto;
     }
     .AllCode .paid {
         float: right;

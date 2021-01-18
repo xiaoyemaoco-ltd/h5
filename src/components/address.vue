@@ -85,6 +85,8 @@
     .box {
         font-family: Source Han Sans SC;
         font-weight: 400;
+        height: calc( 100vh - 100px);
+        overflow-y:auto;
     }
     .addBox {
         display: flex;
