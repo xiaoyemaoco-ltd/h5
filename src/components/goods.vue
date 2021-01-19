@@ -130,7 +130,6 @@
     #goods #attr {
         display: inline-block;
         width: 300px;
-        margin-left: 15px;
     }
     #goods .text {
         text-align: left;

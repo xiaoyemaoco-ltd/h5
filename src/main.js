@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Vant from 'vant'
+import Vant,{Lazyload} from 'vant'
 import 'vant/lib/index.css'
 import 'lib-flexible'
 import axios from 'axios'
@@ -17,7 +17,10 @@ axios.interceptors.request.use(function (config) {
 })
 
 Vue.prototype.$axios = axios
-
+Vue.use(Lazyload,{
+  lazyComponent: true,
+  loading: require('./assets/image/loading.gif')
+});
 Vue.use(Vant)
 
 Vue.config.productionTip = false

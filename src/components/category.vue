@@ -13,7 +13,10 @@
                 <van-list id="list" finished-text="Больше нет">
                     <h3>{{catename}}</h3>
                     <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsList(item.cat_id)">
-                        <van-image class="image" width="90px" height="80px" radius="5px" :src="item.cat_img" />
+                        <lazy-component>
+                            <!--<van-image class="image" :show-loading="false" width="90px" height="80px" radius="5px" v-lazy="item.cat_img" />-->
+                            <img id="images" v-lazy="item.cat_img" >
+                        </lazy-component>
                         <P class="text">{{item.cat_name}}</P>
                     </div>
                 </van-list>
@@ -158,6 +161,10 @@
     #right #goods {
         /*padding-left: 10px;*/
         width: 50%;
+    }
+    #goods #images {
+        width: 190px;
+        height: 180px;
     }
     #right .text {
         width: 90%;
