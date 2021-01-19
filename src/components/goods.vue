@@ -14,7 +14,7 @@
         <div id="content">
             <van-list id="list">
                 <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.goods_id)">
-                    <van-image class="image" width="120px" height="120px" radius="3px" :src="item.goods_thumb" />
+                    <img v-lazy="item.goods_thumb">
                     <p v-if="item.sales > 0" id="sales">Продажи：{{item.sales}}</p>
                     <p v-else id="sales"></p>
                     <P class="text">{{item.goods_name}}</P>
@@ -135,6 +135,10 @@
         text-align: left;
         margin-left: 20px;
         height: 70px;
+    }
+    #goods img {
+        width: 220px;
+        height: 250px;
     }
     #attr #price, #attr #dw {
         float: left;

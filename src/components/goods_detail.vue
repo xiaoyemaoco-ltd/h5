@@ -52,19 +52,14 @@
                     </div>
                     <div id="attrlist">
                         <label id="tz">регион доставки：</label>
-                        <p id="desc" class="area" v-if="cityname == ''" @click="selctarea">Выбрать</p>
-                        <p id="desc" class="area" v-else @click="selctarea">{{provice}} {{cityname}}</p>
+                        <p id="desc" v-if="cityname == ''" @click="selctarea">Выбрать</p>
+                        <p id="desc" v-else @click="selctarea">{{provice}} {{cityname}}</p>
                     </div>
 
                     <!--省市選取-->
                     <div>
                         <van-popup round  v-model="show2" closeable position="bottom">
                             <div id="coupon1">
-                                <!--<van-tabs v-model="active">
-                                    <van-tab title="Область">内容 1</van-tab>
-                                    <van-tab title="Город">内容 2</van-tab>
-                                </van-tabs>-->
-
                                 <van-tree-select height="55vw" :items="items" :active-id.sync="items.region_id"
                                                  :main-active-index.sync="activeIndex" @click-nav="getprovice">
                                     <template slot="content" >
@@ -88,41 +83,38 @@
                     </div>
                     <!-- 规格 -->
                     <div>
-                        <van-popup v-model="show" position="bottom" style="z-index: 2113;" >
-                            <div class="van-sku-header van-hairline--bottom">
-                                <div class="van-image van-sku-header__img-wrap"><img
-                                        src="https://b.yzcdn.cn/vant/sku/shoes-1.png" class="van-image__img"
-                                        style="object-fit: cover;"></div>
+                        <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
+                            <div class="van-sku-header van-hairline--bottom" style="text-align: left">
+                                <div class="van-image van-sku-header__img-wrap">
+                                    <img v-lazy="detail.goods_thumb" class="van-image__img" style="object-fit: cover;">
+                                </div>
                                 <div class="van-sku-header__goods-info">
-                                    <div class="van-sku__goods-price"><span class="van-sku__price-symbol">￥</span><span
-                                            class="van-sku__price-num">1.00</span></div>
-                                    <div class="van-sku-header-item"><span class="van-sku__stock">剩余 <span
-                                            class="van-sku__stock-num">227</span> 件</span>
+                                    <div class="van-sku__goods-price">
+                                        <span class="van-sku__price-num">{{detail.final_price}}тг.</span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">SKU:
+                                            <span class="van-sku__stock-num">{{detail.goods_sn}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">В наличии:
+                                            <span class="van-sku__stock-num">{{detail.goods_number}}</span> шт.</span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">Выбрано:
+                                            <span class="van-sku__stock-num">1</span> шт.</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="van-sku-body" style="max-height: 440px;">
-                                <div class="van-sku-group-container">
-                                    <div class="van-sku-row van-hairline--bottom">
-                                        <div class="van-sku-row__title">цвет</div>
-                                        <span class="van-sku-row__item"><div class="van-image van-sku-row__item-img"><img
-                                                src="https://b.yzcdn.cn/vant/sku/shoes-1.png" class="van-image__img"
-                                                style="object-fit: cover;"></div><div
-                                                class="van-sku-row__item-name">粉色</div></span><span
-                                            class="van-sku-row__item"><div class="van-image van-sku-row__item-img"><img
-                                            src="https://b.yzcdn.cn/vant/sku/shoes-2.png" class="van-image__img"
-                                            style="object-fit: cover;"></div><div
-                                            class="van-sku-row__item-name">黄色</div></span><span class="van-sku-row__item"><div
-                                            class="van-image van-sku-row__item-img"><img
-                                            src="https://b.yzcdn.cn/vant/sku/shoes-3.png" class="van-image__img"
-                                            style="object-fit: cover;"></div><div
-                                            class="van-sku-row__item-name">蓝色</div></span></div>
-                                    <!--<div class="van-sku-row van-hairline&#45;&#45;bottom">
-                                        <div class="van-sku-row__title">尺寸</div>
-                                        <span class="van-sku-row__item"><div
-                                                class="van-sku-row__item-name">大</div></span><span
-                                            class="van-sku-row__item"><div class="van-sku-row__item-name">小</div></span>
-                                    </div>-->
+                                <div class="van-sku-group-container" v-if="properties.spe">
+                                    <div class="van-sku-row van-hairline--bottom" v-for="(item, index) in properties.spe" :key="index">
+                                        <div class="van-sku-row__title">{{item.name}}</div>
+                                        <span class="van-sku-row__item" v-for="(v, k) in item.values" :key="k">
+                                            <div class="van-sku-row__item-name" :id="attrselected == v.id ? 'selected' : ''" @click="selectattr(v.id)">{{v.label}}</div>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="van-sku-stepper-stock">
                                     <div class="van-sku__stepper-title">Количество</div>
@@ -185,7 +177,9 @@
                 selected: 0,
                 provice: '',
                 cityname: '',
-                aging: ''
+                aging: 'Пожалуйста, выберите регион доставки',
+                attrselected: 0,
+                properties: []
             };
         },
         mounted() {
@@ -193,6 +187,9 @@
             this.getCity(3)
         },
         methods: {
+            selectattr(id) {
+                this.attrselected = id
+            },
             onChange(index) {
                 this.showList = false;
                 this.chosenCoupon = index;
@@ -229,6 +226,7 @@
                 this.show1 = true
             },
             getGoodsDetail() {
+                console.log(this.$route.query.goods_id)
                 this.$axios.post('api/goods/getGoodsDetail', {
                     goods_id: this.$route.query.goods_id
                 }).then((res) => {
@@ -244,6 +242,8 @@
                             })
                         })
                         this.provice = this.items[0].text
+                        this.properties = res.data.data.properties
+                        this.attrselected = this.properties.spe[0].values[0].id
                     }
                 })
             },
@@ -272,6 +272,9 @@
         width: 100%;
         height: 100%;
         background-color: #fff;
+    }
+    .van-sku-header-item {
+        margin-top: unset;
     }
     .van-cell__value--alone {
         color: #ff362c;
@@ -303,7 +306,6 @@
         font-size: 20px;
         line-height: 150px;
         text-align: center;
-        background-color: #39a9ed;
     }
 
     #detail {
@@ -382,31 +384,18 @@
     }
 
     #attrlist {
-        height: 120px;
         margin-bottom: 10px;
-    }
-
-    #attrlist #tz {
-        height: 100%;
-        float: left;
-        line-height: 100px;
+        display:flex;
+        text-align:left;
+        align-items:center;
+        justify-content:center;
     }
 
     #attrlist #desc {
         word-break: break-all;
         width: 70%;
-        height: 100%;
-        float: right;
-        display: inline-block;
         margin: unset;
         color: #ff362c;
-    }
-
-    #attrlist .area {
-        line-height: 100px;
-        overflow: hidden;
-        text-overflow:ellipsis;
-        white-space: nowrap;
     }
 
     #skuattr {
@@ -530,5 +519,9 @@
     }
     .selected {
         color: #ff362c;
+    }
+    #selected {
+        background-color: #ff362c;
+        color: #fff;
     }
 </style>
