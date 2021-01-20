@@ -55,11 +55,11 @@
         methods: {
             sign() {
                 /*if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
-                    this.$toast.fail('手机号错误');
+                    this.$toast.fail('Ошибка номера телефона');
                     return
                 }*/
                 if (this.password == '') {
-                    this.$toast.fail('请输入密码');
+                    this.$toast.fail('введите пароль');
                     return
                 }
                 this.$axios.post('api/login/sign', {
@@ -68,13 +68,13 @@
                 }).then((e) => {
                     if (e.data.statuscode == 200) {
                         let objstr = JSON.stringify(e.data.data)
-                        localStorage.setItem('userinfo', objstr)
+                        sessionStorage.setItem('userinfo', objstr)
                         this.$toast({
                             type: 'success',
-                            message: e.data.message,
+                            message: 'Авторизация успешна',
                             onClose: () => {
-                                this.$router.push('/home')
-
+                                // this.$router.push('/home')
+                                this.$router.go(-1)
                             }
                         })
                     }

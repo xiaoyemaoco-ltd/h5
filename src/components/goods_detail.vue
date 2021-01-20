@@ -84,7 +84,30 @@
                     <!-- 规格 -->
                     <div>
                         <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
-                            <div class="van-sku-header van-hairline--bottom" style="text-align: left">
+                            <div v-if="detail.goods_type != 0" class="van-sku-header van-hairline--bottom" style="text-align: left">
+                                <div class="van-image van-sku-header__img-wrap">
+                                    <img v-lazy="detail.goods_thumb" class="van-image__img" style="object-fit: cover;">
+                                </div>
+                                <div class="van-sku-header__goods-info">
+                                    <div class="van-sku__goods-price">
+                                        <span class="van-sku__price-num">{{productprice}}тг.</span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">SKU:
+                                            <span class="van-sku__stock-num">{{productsn}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">В наличии:
+                                            <span class="van-sku__stock-num">{{productstock}}</span> шт.</span>
+                                    </div>
+                                    <div class="van-sku-header-item">
+                                        <span class="van-sku__stock">Выбрано:
+                                            <span class="van-sku__stock-num">1</span> шт.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="van-sku-header van-hairline--bottom" style="text-align: left" v-if="detail.goods_type == 0">
                                 <div class="van-image van-sku-header__img-wrap">
                                     <img v-lazy="detail.goods_thumb" class="van-image__img" style="object-fit: cover;">
                                 </div>
@@ -108,11 +131,11 @@
                                 </div>
                             </div>
                             <div class="van-sku-body" style="max-height: 440px;">
-                                <div class="van-sku-group-container" v-if="properties.spe">
+                                <div class="van-sku-group-container" v-if="detail.goods_type > 0">
                                     <div class="van-sku-row van-hairline--bottom" v-for="(item, index) in properties.spe" :key="index">
                                         <div class="van-sku-row__title">{{item.name}}</div>
                                         <span class="van-sku-row__item" v-for="(v, k) in item.values" :key="k">
-                                            <div class="van-sku-row__item-name" :id="attrselected == v.id ? 'selected' : ''" @click="selectattr(v.id)">{{v.label}}</div>
+                                            <div class="van-sku-row__item-name" :id="attrselected[index] == v.id ? 'selected' : ''" @click="selectattr(v.id, index)">{{attrselected.index}} {{v.label}}</div>
                                         </span>
                                     </div>
                                 </div>
@@ -122,8 +145,10 @@
                                 </div>
                             </div>
                             <div class="van-sku-actions">
-                                <button class="van-button van-button--warning van-button--large">
-                                    <div class="van-button__content"><span class="van-button__text">Добавить в корзину</span></div>
+                                <button class="van-button van-button--warning van-button--large" @click="addcart">
+                                    <div class="van-button__content">
+                                        <span class="van-button__text">Добавить в корзину</span>
+                                    </div>
                                 </button>
                                 <button class="van-button van-button--danger van-button--large">
                                     <div class="van-button__content"><span class="van-button__text">Купи сейчас</span></div>
@@ -178,8 +203,14 @@
                 provice: '',
                 cityname: '',
                 aging: 'Пожалуйста, выберите регион доставки',
-                attrselected: 0,
-                properties: []
+                attrselected: [],
+                properties: [],
+                products: [],
+                productprice: 0,
+                productsn: 0,
+                productstock: 0,
+                product_id: '',
+                attr_id: ''
             };
         },
         mounted() {
@@ -187,8 +218,24 @@
             this.getCity(3)
         },
         methods: {
-            selectattr(id) {
-                this.attrselected = id
+            selectattr(id, index) {
+                this.attrselected[index] = id
+                // let attr = JSON.parse(JSON.stringify(this.attrselected))
+                let key = ''
+                if (Object.keys(this.attrselected).length > 1) {
+                    key = Object.values(this.attrselected).join('|')
+                    console.log(key)
+                    let reg=new RegExp(/\|/,'g')//g代表全部
+                    this.attr_id = key.replace(reg,',');
+                } else {
+                    key = this.attrselected[0]
+                    this.attr_id = key
+                }
+                let resdata = this.products[key];
+                this.productprice = resdata.price
+                this.productsn = resdata.product_sn
+                this.productstock = resdata.product_number
+                this.product_id = resdata.product_id
             },
             onChange(index) {
                 this.showList = false;
@@ -242,8 +289,56 @@
                             })
                         })
                         this.provice = this.items[0].text
-                        this.properties = res.data.data.properties
-                        this.attrselected = this.properties.spe[0].values[0].id
+                        if (res.data.data.goods_type) {
+                            this.properties = res.data.data.properties
+                            this.products = this.properties.products
+                            this.productprice = this.properties.default.price
+                            this.productsn = this.properties.default.product_sn
+                            this.productstock = this.properties.default.product_number
+                            this.product_id = this.properties.default.product_id
+                            let selected = {}
+                            if (this.properties.spe.length > 1) {
+                                let i = 0
+                                this.properties.spe.map((item) => {
+                                    selected[i] = item.values[0].id
+                                    i++
+                                })
+                                this.attr_id = Object.values(selected).join(',')
+                            } else {
+                                selected[0] = this.properties.spe[0].values[0].id
+                                this.attr_id = this.properties.spe[0].values[0].id
+                            }
+                            this.attrselected = selected
+                        } else {
+                            this.productprice = this.detail.final_price
+                            this.productsn = this.detail.goods_sn
+                        }
+                    }
+                })
+            },
+            addcart() {
+                let userinfo = sessionStorage.getItem('userinfo')
+                if (!userinfo) {
+                    this.$router.push('./login')
+                }
+                this.$axios.post('api/goods/addCart', {
+                    user_id : JSON.parse(userinfo).user_id,
+                    goods_id : this.detail.goods_id,
+                    goods_sn : this.productsn,
+                    goods_name : this.detail.goods_name,
+                    market_price : this.detail.market_price,
+                    goods_price : this.productprice,
+                    product_id : this.product_id,
+                    goods_number : this.value,
+                    goods_attr_id : this.attr_id,
+                    promote_price : this.detail.promote_price
+                }).then((res) => {
+                    if (res.data.statuscode == 200) {
+                        this.show = false
+                        this.$toast({
+                            type: 'success',
+                            message: res.data.message
+                        })
                     }
                 })
             },
