@@ -7,112 +7,18 @@
                 <span class="complete" @click="complete" v-show="plete">выполнить</span>
             </div>
         </div>
-        <div id="content">
-            <div id="hw">
+        <div id="content" v-if="list.length > 0">
+            <div id="hw" v-for="(item, index) in list" :key="index">
                 <van-swipe-cell id="swipe">
                     <div id="goods">
                         <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                        <!--<van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />-->
+                        <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
                         <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
+                            <h4>{{item.goods_name}}</h4>
+                            <span id="price">{{item.goods_price}} тг.</span>
                             <span id="ch">x</span>
-                            <span id="number">1</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
-            <div id="hw">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                        <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
-                            <span id="ch">x</span>
-                            <span id="number">1</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
-            <div id="hw">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                        <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
-                            <span id="ch">x</span>
-                            <span id="number">1</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
-            <div id="hw">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                        <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
-                            <span id="ch">x</span>
-                            <span id="number">1</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
-            <div id="hw">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                        <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
-                            <span id="ch">x</span>
-                            <span id="number">1</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
-            <div id="hw">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                        <div id="detail">
-                            <h4>商品标题</h4>
-                            <span id="price">8888</span>
-                            <span id="ch">x</span>
-                            <span id="number">1</span>
+                            <span id="number">{{item.goods_number}}</span>
                         </div>
                     </div>
                     <template #right>
@@ -123,14 +29,14 @@
                 <label id="stepper"><van-stepper v-model="value" /></label>
             </div>
         </div>
-        <!--<div id="kong">
+        <div id="kong" v-else>
             <div id="cartimg">
                 <img src="../assets/image/shop/gouwuchekong@2x.png">
             </div>
             <h2>Пустая корзина</h2>
             <p>Вы ничего не купили</p>
             <van-button id="minibnt" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
-        </div>-->
+        </div>
 
         <van-submit-bar v-show="sub" label="Всего：" currency='' :price="price" button-text="Подтвердить заказ" @submit="onSubmit">
             <van-checkbox v-model="checked">все</van-checkbox>
@@ -159,10 +65,14 @@
                 checked: true,
                 checked1: false,
                 checked2: false,
+                list: []
             }
         },
         components: {
             Tabbar
+        },
+        mounted() {
+            this.getCartList()
         },
         methods: {
             adminCart() {
@@ -179,6 +89,21 @@
             },
             onSubmit() {
                 this.$router.push('./pay')
+            },
+            getCartList() {
+                let userinfo = sessionStorage.getItem('userinfo')
+                /*if (!userinfo) {
+                    this.$router.push('./login')
+                }*/
+                let user_id = JSON.parse(userinfo).user_id
+                this.$axios.post('api/goods/getUserCart', {
+                    user_id: user_id
+                }).then((e) => {
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        this.list = e.data.data
+                    }
+                })
             }
         }
     }
@@ -268,6 +193,7 @@
     }
     #goods #detail {
         margin-left: 35px;
+        text-align: left;
     }
     #goods #detail #ch {
         margin-left: 20px;
