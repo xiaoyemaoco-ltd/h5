@@ -3,12 +3,14 @@
         <van-nav-bar id="nav"/>
         <div id="header">
             <div id="avart">
-                <van-image id="img" width="80" height="80" radius="50%" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                <img id="img" v-if="islogin" :src="avart">
+                <img id="img" v-else src="../assets/image/default_head_img.png">
             </div>
-            <!--<div id="detail">
+
+            <div id="detail" v-if="islogin">
                 <div id="nickname">
-                    <span class="name">ehouse</span>
-                    <span class="role">VIP Plus</span>
+                    <span class="name">{{nickname}}</span>
+                    <span class="role">{{role}}</span>
                 </div>
                 <div id="score">
                     <label>Код приглашения：</label>
@@ -18,8 +20,8 @@
                 <img id="inviteimg" src="../assets/image/uc/m_inviteshare.png">
                 <label>Пригласить друзей</label>
               </div>
-            </div>-->
-            <div id="login" @click="login">вход</div>
+            </div>
+            <div id="login" @click="login" v-else>вход</div>
         </div>
         <div id="middle">
             <!--<div class="order">
@@ -163,10 +165,18 @@
         data () {
             return {
                 active: 'personal',
+                islogin: false,
+                avart: '',
+                nickname: '',
+                role: '',
+                invitecode: ''
             }
         },
         components: {
             Tabbar
+        },
+        mounted() {
+            this.getuserifo()
         },
         methods: {
             getOrder() {
@@ -180,6 +190,16 @@
             },
             login() {
                 this.$router.push('./login')
+            },
+            getuserifo () {
+                let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+                if (userinfo) {
+                    this.islogin = true
+                    this.avart = userinfo.headimg
+                    this.nickname = userinfo.user_name
+                    this.role = userinfo.rank_name
+                    this.invitecode = userinfo.yaoqing_code
+                }
             }
         }
     }
@@ -209,7 +229,7 @@
         color: #fff;
     }
     #header {
-        height: 180px;
+        height: 220px;
         background: url("../assets/image/uc/minebg.png") no-repeat;
         padding: 10px 20px 15px 40px;
         display: flex;
@@ -223,6 +243,8 @@
     }
     #middle {
       margin-top: 28px;
+        height: calc( 100vh - 300px);
+        overflow-y:auto;
     }
     #header #login {
         width: 15%;
@@ -356,5 +378,11 @@
       color: #ff0000;
       line-height: 50px;
       margin-left: 10px;
+    }
+    #img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #fff;
     }
 </style>

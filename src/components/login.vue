@@ -62,7 +62,7 @@
                     this.$toast.fail('введите пароль');
                     return
                 }
-                this.$axios.post('api/login/sign', {
+                this.$axios.post('api/user/sign', {
                     mobile: this.mobile,
                     password: this.password
                 }).then((e) => {

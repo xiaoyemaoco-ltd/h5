@@ -333,6 +333,7 @@
                     goods_attr_id : this.attr_id,
                     promote_price : this.detail.promote_price
                 }).then((res) => {
+                    console.log(1111)
                     if (res.data.statuscode == 200) {
                         this.show = false
                         this.$toast({

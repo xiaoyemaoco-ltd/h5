@@ -2,53 +2,27 @@
     <div id="content">
         <Header :title="title"></Header>
         <div class="box">
-            <div>
+            <div id="content" v-for="(item, index) in list" :key="index">
               <div class="addBox">
                 <div class="addradio">
                   <div class="addsmallBox">
                     <div class="userphone">
-                      <div class="user">扎克</div>
-                      <div class="phone">13366666666</div>
+                      <div class="user">{{item.consignee}}</div>
+                      <div class="phone">{{item.mobile}}</div>
                     </div>
-                    <p class="address">是打发斯蒂芬的沙发斯蒂芬的沙发斯蒂芬是打发斯蒂芬的沙发斯蒂芬的沙发斯蒂芬</p>
+                    <p class="address">{{item.province_name}} {{item.city_name}} {{item.district_name}} {{item.address}}</p>
                   </div>
                 </div>
               </div>
               <div id="edit">
                 <van-radio-group :value="radio">
-                  <van-radio icon-size="20px" name="2">настройки по умолчанию</van-radio>
+                  <van-radio position icon-size="20px" name="2">настройки по умолчанию</van-radio>
                 </van-radio-group>
                 <div id="ed">
                   <img src="../assets/image/bianji@2x.png">
                   <span>редактировать</span>
                 </div>
-                <div id="del">
-                  <img src="../assets/image/shanchu@2x.png">
-                  <span>удалять</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="addBox">
-                <div class="addradio">
-                  <div class="addsmallBox">
-                    <div class="userphone">
-                      <div class="user">扎克</div>
-                      <div class="phone">13366666666</div>
-                    </div>
-                    <p class="address">是打发斯蒂芬的沙发斯蒂芬的沙发斯蒂芬是打发斯蒂芬的沙发斯蒂芬的沙发斯蒂芬</p>
-                  </div>
-                </div>
-              </div>
-              <div id="edit">
-                <van-radio-group :value="radio">
-                  <van-radio icon-size="20px" name="2">настройки по умолчанию</van-radio>
-                </van-radio-group>
-                <div id="ed">
-                  <img src="../assets/image/bianji@2x.png">
-                  <span>редактировать</span>
-                </div>
-                <div id="del">
+                <div id="del" @click="deladdress(item.address_id)">
                   <img src="../assets/image/shanchu@2x.png">
                   <span>удалять</span>
                 </div>
@@ -67,15 +41,73 @@
         data() {
             return {
                 radio: '1',
-                title: 'мой адресс'
+                title: 'мой адресс',
+                list: [],
+                userid: 0
             }
         },
         components: {
             Header
         },
+        mounted() {
+            this.getaddresslist()
+        },
         methods: {
             add() {
                 this.$router.push('./addaddress')
+            },
+            //删除
+            deladdress(id) {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/userDelAddress', {
+                    user_id: this.userid,
+                    address_id: id
+                }).then((e) => {
+                    console.log(e)
+                    this.$toast.clear(); // 关闭加载
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.getaddresslist()
+                            }
+                        })
+                    }
+                })
+            },
+            //列表
+            getaddresslist () {
+                let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+                if (!userinfo) {
+                  this.$router.push('./login')
+                  return
+                }
+
+                this.userid = userinfo.user_id
+
+                this.$toast.loading({
+                  duration: 0,
+                  forbidClick: true,
+                  mask: true,
+                  message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/getUserAddress', {
+                  user_id: userinfo.user_id
+                }).then((e) => {
+                    console.log(e)
+                    this.$toast.clear(); // 关闭加载
+                    if (e.data.statuscode == 200) {
+                        this.list = e.data.data
+                    }
+                })
             }
         }
     }
@@ -87,6 +119,10 @@
         font-weight: 400;
         height: calc( 100vh - 100px);
         overflow-y:auto;
+        background-color: #eeeeee;
+    }
+    #content {
+        background-color: #fff;
     }
     .addBox {
         display: flex;

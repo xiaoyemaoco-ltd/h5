@@ -8,27 +8,30 @@
             </div>
         </div>
         <div id="content" v-if="list.length > 0">
-            <div id="hw" v-for="(item, index) in list" :key="index">
-                <van-swipe-cell id="swipe">
-                    <div id="goods">
-                        <van-checkbox v-model="checked2"></van-checkbox>
-                        <!--<van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />-->
-                        <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
-                        <div id="detail">
-                            <h4>{{item.goods_name}}</h4>
-                            <span id="price">{{item.goods_price}} тг.</span>
-                            <span id="ch">x</span>
-                            <span id="number">{{item.goods_number}}</span>
-                        </div>
-                    </div>
-                    <template #right>
-                        <van-button square type="danger" text="Удалить" />
-                        <van-button square type="primary" text="Избранное" />
-                    </template>
-                </van-swipe-cell>
-                <label id="stepper"><van-stepper v-model="value" /></label>
-            </div>
+            <van-checkbox-group v-model="checked2" @change="selectone" ref="checkboxGroup">
+                <div id="hw" v-for="(item, index) in list" :key="index">
+                    <van-checkbox style="width: 6%" icon-size="28rpx" :name="item.rec_id"></van-checkbox>
+                        <van-swipe-cell id="swipe">
+                            <div id="goods" @click="goToDetail(item.goods_id)">
+                                <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
+                                <div id="detail">
+                                    <h4>{{item.goods_name}}</h4>
+                                    <span id="price">{{item.total_price}} тг.</span>
+                                    <span id="ch">x</span>
+                                    <span id="number">{{item.goods_number}}</span>
+                                </div>
+                            </div>
+                            <label id="stepper"><van-stepper :value="item.goods_number" @change="changenum($event,item)" /></label>
+                            <template #right>
+                                <van-button square type="danger" text="Удалить" @click="delcartone(item.rec_id)" />
+                                <van-button square type="primary" text="Избранное" />
+                            </template>
+                        </van-swipe-cell>
+                </div>
+            </van-checkbox-group>
         </div>
+
+        <!--购物车为空-->
         <div id="kong" v-else>
             <div id="cartimg">
                 <img src="../assets/image/shop/gouwuchekong@2x.png">
@@ -38,12 +41,13 @@
             <van-button id="minibnt" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
         </div>
 
-        <van-submit-bar v-show="sub" label="Всего：" currency='' :price="price" button-text="Подтвердить заказ" @submit="onSubmit">
-            <van-checkbox v-model="checked">все</van-checkbox>
+        <van-submit-bar v-show="sub" :decimal-length="0" label="Всего：" currency='' :price="price" button-text="Подтвердить заказ" @submit="onSubmit">
+            <van-checkbox v-model="checkedAll" @click="selectall">все</van-checkbox>
         </van-submit-bar>
+
         <div id="delete" v-show="delshop">
-            <van-checkbox id="sel" v-model="checked1">выбрать все</van-checkbox>
-            <van-button id="delshop" type="danger">Удалить</van-button>
+            <van-checkbox id="sel" v-model="checkedAll" @click="delselectall">выбрать все</van-checkbox>
+            <van-button id="delshop" type="danger" @click="delcart">Удалить</van-button>
         </div>
         <tabbar :active="active"></tabbar>
     </div>
@@ -55,16 +59,15 @@
         name: "cart",
         data () {
             return {
-                value: 1,
                 sub: true,
                 delshop: false,
                 active: 'cart',
                 glcart: true,
                 plete: false,
-                price: 3050,
-                checked: true,
+                price: 0,
+                checkedAll: false,
                 checked1: false,
-                checked2: false,
+                checked2: [],
                 list: []
             }
         },
@@ -87,21 +90,171 @@
                 this.delshop = false
                 this.sub = true
             },
+            //去支付
             onSubmit() {
-                this.$router.push('./pay')
+                console.log(this.checked2)
+                if (!(this.checked2.length > 0)) {
+                    this.$toast({
+                        type: 'fail',
+                        message: 'Пожалуйста, выберите продукт',
+                    })
+                    return
+                }
+                this.$router.push({
+                    path: './pay',
+                    query: {
+                        rec_ids: this.checked2,
+                        price: this.price
+                    }
+                })
             },
+            //改变数量
+            changenum($event, item) {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/goods/changeCartGoodsNumber', {
+                    rec_id: item.rec_id,
+                    goods_number: $event
+                }).then((e) => {
+                    this.$toast.clear(); // 关闭加载
+                    if (e.data.statuscode == 200) {
+                        this.getCartList()
+                    }
+                })
+            },
+            //单个删除
+            delcartone(id) {
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/goods/delCartGoods', {
+                    rec_ids: id
+                }).then((e) => {
+                    this.$toast.clear(); // 关闭加载
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.getCartList()
+                            }
+                        })
+                    } else {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                        })
+                    }
+                })
+            },
+            //全部删除
+            delcart() {
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/goods/delCartGoods', {
+                    rec_ids: this.checked2
+                }).then((e) => {
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.getCartList()
+                            }
+                        })
+                    } else {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                        })
+                    }
+                })
+            },
+            //购物车列表
             getCartList() {
                 let userinfo = sessionStorage.getItem('userinfo')
-                /*if (!userinfo) {
+                if (!userinfo) {
                     this.$router.push('./login')
-                }*/
+                    return
+                }
                 let user_id = JSON.parse(userinfo).user_id
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
                 this.$axios.post('api/goods/getUserCart', {
                     user_id: user_id
                 }).then((e) => {
                     console.log(e)
+                    this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
+                    }
+                })
+            },
+            //全选
+            selectall() {
+                if (this.checkedAll == false) {
+                    this.$refs.checkboxGroup.toggleAll();
+                    this.price = 0
+                } else {
+                    this.$refs.checkboxGroup.toggleAll(true);
+                    this.price = 0
+                    this.list.map((item) => {
+                        this.price += parseInt(item.total_price) * 100
+                    })
+                }
+            },
+            //删除全选
+            delselectall() {
+                if (this.checkedAll == false) {
+                    this.$refs.checkboxGroup.toggleAll();
+                } else {
+                    this.$refs.checkboxGroup.toggleAll(true);
+                }
+            },
+            //单选
+            selectone() {
+                if (this.checked2.length == Object.keys(this.list).length) {
+                    this.checkedAll = true
+                } else {
+                    this.checkedAll = false
+                }
+                console.log(this.checked2)
+                this.price = 0
+                this.list.map((item) => {
+                    this.checked2.map((v) => {
+                        if (v == item.rec_id) {
+                            this.price += parseInt(item.total_price) * 100
+                        }
+                    })
+                })
+            },
+            //去详情
+            goToDetail(goods_id) {
+                this.$router.push({
+                    path: './goodsdetail',
+                    query: {
+                        goods_id: goods_id
                     }
                 })
             }
@@ -165,7 +318,7 @@
     }
     #content {
         padding-bottom: 200px;
-        height: calc( 100vh - 100px);
+        height: calc( 100vh - 300px);
         overflow-y:auto;
     }
     #cartimg {
@@ -185,8 +338,9 @@
         display: flex;
     }
     #content #hw {
+        display: flex;
         border-bottom: 1px #eeeeee solid;
-        padding: 15px 25px;
+        padding: 15px 20px;
     }
     #goods .image {
         margin: 0 25px;
@@ -211,6 +365,6 @@
         display: inline-block;
     }
     #swipe {
-        width: 101%;
+        width: 94%;
     }
 </style>
