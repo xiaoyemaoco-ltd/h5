@@ -15,10 +15,10 @@
                 </div>
               </div>
               <div id="edit">
-                <van-radio-group :value="radio">
+                <van-radio-group v-model="radio">
                   <van-radio position icon-size="20px" name="2">настройки по умолчанию</van-radio>
                 </van-radio-group>
-                <div id="ed">
+                <div id="ed" @click="adressupdate(item.address_id)">
                   <img src="../assets/image/bianji@2x.png">
                   <span>редактировать</span>
                 </div>
@@ -40,7 +40,7 @@
         name: "address",
         data() {
             return {
-                radio: '1',
+                radio: [],
                 title: 'мой адресс',
                 list: [],
                 userid: 0
@@ -55,6 +55,14 @@
         methods: {
             add() {
                 this.$router.push('./addaddress')
+            },
+            adressupdate(id) {
+                this.$router.push({
+                    path: './updateaddress',
+                    query: {
+                        address_id: id
+                    }
+                })
             },
             //删除
             deladdress(id) {

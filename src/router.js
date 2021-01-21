@@ -13,6 +13,7 @@ import Order from './components/order'
 import OrderDetail from './components/order_detail'
 import Address from './components/address'
 import AddAddress from './components/add_address'
+import UpdateAddress from './components/update_address'
 import Coupon from './components/coupon'
 import Login from './components/login'
 import Register from './components/register'
@@ -32,6 +33,7 @@ export default new Router({
         {path: '/orderdetail', component: OrderDetail},
         {path: '/address', component: Address},
         {path: '/addaddress', component: AddAddress},
+        {path: '/updateaddress', component: UpdateAddress},
         {path: '/coupon', component: Coupon},
         {path: '/login', component: Login},
         {path: '/register', component: Register},
