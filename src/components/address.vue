@@ -3,7 +3,7 @@
         <Header :title="title"></Header>
         <div class="box">
             <div id="content" v-for="(item, index) in list" :key="index">
-              <div class="addBox">
+              <div class="addBox" @click="seladdress(item.address_id)">
                 <div class="addradio">
                   <div class="addsmallBox">
                     <div class="userphone">
@@ -16,7 +16,7 @@
               </div>
               <div id="edit">
                 <van-radio-group v-model="radio">
-                  <van-radio position icon-size="20px" name="2">настройки по умолчанию</van-radio>
+                  <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">настройки по умолчанию</van-radio>
                 </van-radio-group>
                 <div id="ed" @click="adressupdate(item.address_id)">
                   <img src="../assets/image/bianji@2x.png">
@@ -40,7 +40,7 @@
         name: "address",
         data() {
             return {
-                radio: [],
+                radio: '',
                 title: 'мой адресс',
                 list: [],
                 userid: 0
@@ -53,9 +53,44 @@
             this.getaddresslist()
         },
         methods: {
+            //选择地址
+            seladdress (id) {
+                this.$axios.post('api/user/setDefaultAddress', {
+                    user_id: this.userid,
+                    address_id: id
+                }).then()
+                this.$router.go(-1);
+            },
+            //默认地址
+            defalutaddress () {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/setDefaultAddress', {
+                    user_id: this.userid,
+                    address_id: this.radio
+                }).then((e) => {
+                    this.$toast.clear(); // 关闭加载
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.getaddresslist()
+                            }
+                        })
+                    }
+                })
+            },
+            //添加地址
             add() {
                 this.$router.push('./addaddress')
             },
+            //修改地址
             adressupdate(id) {
                 this.$router.push({
                     path: './updateaddress',
@@ -114,6 +149,7 @@
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
+                        this.radio = e.data.default
                     }
                 })
             }
@@ -196,15 +232,18 @@
         margin: 50px auto;
     }
     #edit {
-      display: flex;
-      margin-left: 20px;
+        display: flex;
+        margin-left: 20px;
+        text-align: left;
     }
     #edit #ed img, #edit #del img {
-      width: 34px;
-      vertical-align: middle;
+       width: 34px;
+        height: 34px;
+       vertical-align: middle;
     }
     #edit #ed, #edit #del {
-      margin-left: 20px;
+       margin-left: 20px;
+        display: flex;
     }
     #edit #ed span, #edit #del span {
       margin-left: 10px;
