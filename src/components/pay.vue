@@ -75,7 +75,7 @@
                     <!--<van-image class="image" width="90px" height="80px" radius="5px" src="https://img.yzcdn.cn/vant/cat.jpeg" />-->
                     <img v-lazy="v.goods_thumb" style="width: 90px; height: 80px" @click="todetail(v.goods_id)">
                     <div id="detail">
-                        <h4>{{v.goods_name}}</h4>
+                        <h4 style="text-align: left">{{v.goods_name}}</h4>
                         <span id="price">{{v.goods_price}}тг.</span>
                         <span id="ch">x</span>
                         <span id="number">{{v.goods_number}}</span>
@@ -175,14 +175,39 @@
                 paydesc: '',
                 payid: 0,
                 coupondata: [],
-                postscript: ''
+                postscript: '',
+                goods_id: 0,
+                product_id: 0,
+                buy_num: 0,
+                goods_attr_id: '',
+                rec_ids: []
             }
         },
         mounted() {
             let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
             this.userinfo = userinfo
             this.totalprice = this.$route.query.price / 100
+            this.rec_ids = this.$route.query.rec_ids
             this.getuserdefaultaddress()
+            //立即购买数组
+            if (this.$route.query.goods_id) {
+                let good = []
+                good.goods_id = this.$route.query.goods_id
+                good.goods_name = this.$route.query.goods_name
+                good.goods_price = this.$route.query.goods_price
+                good.product_id = this.$route.query.product_id
+                good.goods_attr_id = this.$route.query.goods_attr_id
+                good.goods_number = this.$route.query.goods_number
+                good.goods_thumb = this.$route.query.goods_thumb
+
+                this.totalprice = this.$route.query.goods_price
+                this.goods.push(good)
+
+                this.goods_id = this.$route.query.goods_id
+                this.product_id = this.$route.query.product_id
+                this.buy_num = this.$route.query.goods_number
+                this.goods_attr_id = this.$route.query.goods_attr_id
+            }
         },
         methods: {
             //创建订单
@@ -193,22 +218,47 @@
                     mask: true,
                     message: "Загрузка..."
                 });
+                if (!this.province_id || !this.city_id) {
+                    this.$toast.fail('Выберите адрес доставки')
+                    return
+                }
 
-                this.$axios.post('api/goods/Getpickup', {
+                if (!this.payid) {
+                    this.$toast.fail('Выберите метод оплаты')
+                    return
+                }
+
+                this.$axios.post('api/order/saveOrder', {
                     district: this.district_id,
                     city: this.city_id,
                     consignee: this.username,
                     mobile: this.mobile,
-                    provice: this.province_id,
+                    province: this.province_id,
                     address: this.address,
                     postscript: this.postscript,
                     pay_id: this.payid,
                     shipping_id: this.shipping_id,
                     pickup_point_id: this.shippickup,
-
-                    goods_id: this.goods_id
+                    user_id: this.userinfo.user_id,
+                    goods_pid: this.product_id,
+                    goods_id: this.goods_id,
+                    buy_num: this.buy_num,
+                    goods_attr_id: this.goods_attr_id,
+                    rec_ids: this.rec_ids,
                 }).then((e) => {
+                    this.$toast.clear()
                     console.log(e)
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                console.log(1111)
+                            }
+                        })
+                    } else {
+                        this.$toast.fail(e.data.message)
+                    }
                 })
             },
             //读取优惠前
@@ -271,8 +321,9 @@
                 this.chosenCoupon = index;
             },
             getshipping () {
-                this.$axios.post('api/goods/getGoodsShip', {
-                    rec_ids: this.$route.query.rec_ids,
+                this.$axios.post('api/goods/getBuyGoodsMsg', {
+                    rec_ids: this.rec_ids,
+                    goods_id: this.$route.query.goods_id,
                     city_id: this.city_id
                 }).then((e) => {
                     this.$toast.clear();
@@ -283,11 +334,12 @@
                         this.shipping_desc = e.data.shipping_desc
                         this.support_pickup = e.data.support_pickup
                         this.shipping_list = e.data.shipping_list
-                        this.goods = e.data.goods
                         this.payment = e.data.payment
                         this.paydesc = e.data.paydesc
                         this.coupondata = e.data.coupon
-                        console.log(e)
+                        if (!this.$route.query.goods_id) {
+                            this.goods = e.data.goods
+                        }
                     }
                 })
             },
@@ -307,6 +359,7 @@
                 }).then((e) => {
                     if (e.data.statuscode == 200) {
                         let res = e.data.data
+                        console.log(res)
                         this.username = res.consignee
                         this.mobile = res.mobile
                         this.province_id = res.province

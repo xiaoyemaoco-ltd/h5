@@ -2,273 +2,217 @@
     <div>
         <Header :title="title"></Header>
         <div class="Allorder" id="middle">
-            <van-tabs :active="active">
+            <van-tabs :active="active" @click="changstatus">
               <van-search v-model="value" placeholder="введите ключевое слово для поиска" />
-                <van-tab title="Bce" name="a">
-                    <div id="content">
+                <van-tab title="Bce" name="-1">
+                    <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="Больше не надо"
+                        loading-text="Загрузка..."
+                        @load="onLoad"
+                    >
+                    <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
+                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                            <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
                             <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                                <img :src="item.goods_thumb" />
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
+                                    <span class="shopNumber">{{item.goods_price}}</span>
+                                    <span class="shopNums">x{{item.goods_number}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="priceNum">
                             <label id="total">Bcero：</label>
-                            <label id="num">2</label>
+                            <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
+                            <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
                             <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn" @click="getOrderDetail">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
-                    <div id="content">
-                        <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
-                        </div>
-                        <div class="Allshop">
-                            <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                            </div>
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
-                                </div>
-                                <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="priceNum">
-                            <label id="total">Bcero：</label>
-                            <label id="num">2</label>
-                            <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
-                        </div>
-                        <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
-                            <div style="clear: both;"></div>
-                        </div>
-                    </div>
-                    <div id="content">
-                        <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
-                        </div>
-                        <div class="Allshop">
-                            <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                            </div>
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
-                                </div>
-                                <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="priceNum">
-                            <label id="total">Bcero：</label>
-                            <label id="num">2</label>
-                            <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
-                        </div>
-                        <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
-                            <div style="clear: both;"></div>
-                        </div>
-                    </div>
-                    <div id="content">
-                        <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
-                        </div>
-                        <div class="Allshop">
-                            <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                            </div>
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
-                                </div>
-                                <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="priceNum">
-                            <label id="total">Bcero：</label>
-                            <label id="num">2</label>
-                            <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
-                        </div>
-                        <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
-                            <div style="clear: both;"></div>
-                        </div>
-                    </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="Ожидающий">
-                    <div id="content">
+                <van-tab title="Ожидающий" name="100">
+                    <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="Больше не надо"
+                        loading-text="Загрузка..."
+                        @load="onLoad"
+                    >
+                    <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
+                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                            <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
                             <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                                <img :src="item.goods_thumb" />
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
+                                    <span class="shopNumber">{{item.goods_price}}</span>
+                                    <span class="shopNums">x{{item.goods_number}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="priceNum">
                             <label id="total">Bcero：</label>
-                            <label id="num">2</label>
+                            <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
+                            <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
                             <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="Aктивный">
-                    <div id="content">
+                <van-tab title="Aктивный" name="101">
+                    <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="Больше не надо"
+                        loading-text="Загрузка..."
+                        @load="onLoad"
+                    >
+                    <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
+                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                            <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
                             <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                                <img :src="item.goods_thumb" />
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
+                                    <span class="shopNumber">{{item.goods_price}}</span>
+                                    <span class="shopNums">x{{item.goods_number}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="priceNum">
                             <label id="total">Bcero：</label>
-                            <label id="num">2</label>
+                            <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
+                            <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
                             <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="завершено">
-                    <div id="content">
+                <van-tab title="завершено" name="105">
+                    <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="Больше не надо"
+                        loading-text="Загрузка..."
+                        @load="onLoad"
+                    >
+                    <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
+                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                            <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
                             <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                                <img :src="item.goods_thumb" />
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
+                                    <span class="shopNumber">{{item.goods_price}}</span>
+                                    <span class="shopNums">x{{item.goods_number}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="priceNum">
                             <label id="total">Bcero：</label>
-                            <label id="num">2</label>
+                            <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
+                            <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
                             <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="Отменено">
-                    <div id="content">
+                <van-tab title="Отменено" name="102">
+                    <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="Больше не надо"
+                        loading-text="Загрузка..."
+                        @load="onLoad"
+                    >
+                    <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:1234567890</div>
-                            <div class="paid">время：13-01-2021 15:25</div>
+                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                            <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
                             <div class="shop_img">
-                                <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                                <img :src="item.goods_thumb" />
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
-                                    <span class="shopNumber">200</span>
-                                    <span class="shopNums">x2</span>
+                                    <span class="shopNumber">{{item.goods_price}}</span>
+                                    <span class="shopNums">x{{item.goods_number}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="priceNum">
                             <label id="total">Bcero：</label>
-                            <label id="num">2</label>
+                            <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
-                            <label id="num">9999</label>
+                            <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
                             <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
+                    </van-list>
                 </van-tab>
             </van-tabs>
         </div>
@@ -282,16 +226,82 @@
         data() {
             return {
                 title: 'Мой заказ',
-                active:'a',
-                value: ''
+                active:'-1',
+                value: '',
+                user_id: 0,
+                orderlist: [],
+                loading: false,     //是否处于加载状态，加载过程中不触发load事件
+                finished: false,    //是否已加载完成，加载完成后不再触发load事件
+                updata:{
+                    pageNumber: 0,  //页码
+                    pageSize:20     //每页条数
+                }
             }
         },
         components: {
             Header
         },
+        mounted() {
+            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            if (!userinfo) {
+                this.$router.push('./login')
+                return
+            }
+            this.user_id = userinfo.user_id
+            this.updata.pageNumber = 0
+            this.updata.pageSize = 20
+        },
         methods: {
-            getOrderDetail() {
-                this.$router.push('./orderdetail')
+            getuserorder () {
+                /*this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });*/
+
+
+                this.$axios.post('api/order/Getuserorder', {
+                    user_id: this.user_id,
+                    skip: this.updata.pageNumber,
+                    maxperpage: this.updata.pageSize,
+                    composite_status: this.active
+                }).then((e) => {
+                    // this.$toast.clear()
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        let list = e.data.list
+                        this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
+                        if (list == null || list.length === 0) {
+                            this.finished = true;           // 加载结束
+                            return;
+                        }
+                        this.orderlist = this.orderlist.concat(list); // 将新数据与老数据进行合并
+                    } else {
+                        this.$toast.fail(e.data.message)
+                    }
+                })
+            },
+            changstatus (e) {
+                console.log(e)
+                this.active = e
+                this.updata.pageNumber = 0
+                this.orderlist = []
+                this.getuserorder()
+            },
+            onLoad() {
+                this.updata.pageNumber++;
+                this.getuserorder();
+            },
+            //跳详情
+            getOrderDetail(order_id) {
+                this.$router.push(
+                {
+                    path: './orderdetail',
+                    query: {
+                        order_id: order_id
+                    }
+                })
             }
         }
     }
@@ -300,7 +310,10 @@
 <style scoped>
     .Allorder {
         background-color: #eee;
-        margin-bottom: 100px;
+    }
+    .van-tab__pane {
+        height: calc( 100vh - 300px);
+        overflow-y:auto;
     }
     #content {
         background-color: #fff;
@@ -351,6 +364,7 @@
     .titleTop .priceShop {
         word-break: break-all;
         margin: 10px 0;
+        height: 90px;
     }
     .shopNumber, .shopNums{
         display: inline-block;

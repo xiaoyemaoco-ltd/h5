@@ -150,8 +150,10 @@
                                         <span class="van-button__text">Добавить в корзину</span>
                                     </div>
                                 </button>
-                                <button class="van-button van-button--danger van-button--large">
-                                    <div class="van-button__content"><span class="van-button__text">Купи сейчас</span></div>
+                                <button @click="buynow" class="van-button van-button--danger van-button--large">
+                                    <div class="van-button__content">
+                                        <span class="van-button__text">Купи сейчас</span>
+                                    </div>
                                 </button>
                             </div>
                             <i role="button" tabindex="0"
@@ -219,18 +221,20 @@
         },
         methods: {
             selectattr(id, index) {
+                console.log( this.attrselected)
                 this.attrselected[index] = id
                 // let attr = JSON.parse(JSON.stringify(this.attrselected))
                 let key = ''
                 if (Object.keys(this.attrselected).length > 1) {
                     key = Object.values(this.attrselected).join('|')
-                    console.log(key)
                     let reg=new RegExp(/\|/,'g')//g代表全部
                     this.attr_id = key.replace(reg,',');
                 } else {
                     key = this.attrselected[0]
                     this.attr_id = key
                 }
+                console.log(key)
+                console.log(this.products)
                 let resdata = this.products[key];
                 this.productprice = resdata.price
                 this.productsn = resdata.product_sn
@@ -289,7 +293,8 @@
                             })
                         })
                         this.provice = this.items[0].text
-                        if (res.data.data.goods_type) {
+                        //判断商品是否有属性
+                        if (Object.keys(res.data.data.properties).length > 0) {
                             this.properties = res.data.data.properties
                             this.products = this.properties.products
                             this.productprice = this.properties.default.price
@@ -299,6 +304,7 @@
                             let selected = {}
                             if (this.properties.spe.length > 1) {
                                 let i = 0
+                                console.log(this.properties.spe)
                                 this.properties.spe.map((item) => {
                                     selected[i] = item.values[0].id
                                     i++
@@ -316,10 +322,12 @@
                     }
                 })
             },
+            //添加购物车
             addcart() {
                 let userinfo = sessionStorage.getItem('userinfo')
                 if (!userinfo) {
                     this.$router.push('./login')
+                    return
                 }
                 this.$axios.post('api/goods/addCart', {
                     user_id : JSON.parse(userinfo).user_id,
@@ -343,6 +351,31 @@
                     }
                 })
             },
+            //立即购买
+            buynow () {
+                let userinfo = sessionStorage.getItem('userinfo')
+                if (!userinfo) {
+                    this.$router.push('./login')
+                    return
+                }
+                this.$router.push({
+                    path: './pay',
+                    query: {
+                        user_id : JSON.parse(userinfo).user_id,
+                        goods_id : this.detail.goods_id,
+                        goods_sn : this.productsn,
+                        goods_name : this.detail.goods_name,
+                        market_price : this.detail.market_price,
+                        goods_price : this.productprice,
+                        product_id : this.product_id,
+                        goods_number : this.value,
+                        goods_attr_id : this.attr_id,
+                        promote_price : this.detail.promote_price,
+                        goods_thumb: this.detail.goods_thumb
+                    }
+                })
+            },
+            //获取城市
             getCity(id) {
                 this.$axios.post('api/goods/getCity', {
                     provice_id: id

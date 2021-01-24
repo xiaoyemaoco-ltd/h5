@@ -3,47 +3,47 @@
         <Header :title="title"></Header>
         <div id="content">
             <div id="personmsg">
-                <div role="button" tabindex="0"
+                <div role="button" tabindex="0" id="address"
                      class="van-cell van-cell--clickable van-cell--center van-cell--borderless van-contact-card van-contact-card--edit">
                     <div class="van-cell__value van-cell__value--alone van-contact-card__value">
-                        <div>张三 13000000000</div>
-                        <div>浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室</div>
+                        <div style="font-weight: bold; font-size: 18px">{{detail.consignee}} {{detail.mobile}}</div>
+                        <div>{{detail.province}}  {{detail.city}} {{detail.district}} {{detail.address}}</div>
                     </div>
                 </div>
                     <!--<i class="van-icon van-icon-arrow van-cell__right-icon">&lt;!&ndash;&ndash;&gt;</i></div>-->
             </div>
-            <div class="Allshop">
+            <div class="Allshop" v-for="(v, k) in detail.goods" :key="k">
                 <div class="shop_img">
-                    <img src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                    <img :src="v.thumb" />
                 </div>
                 <div class="shop_price">
                     <div class="titleTop">
-                        <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                        <p class="priceShop">sfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskflsfasdfsflklasdlfksfieidskfl</p>
+                        <h3>{{v.goods_name}}</h3>
+                        <p class="priceShop">{{v.goods_attr}}</p>
                     </div>
                     <div class="titleBottom">
-                        <span class="shopNumber">200</span>
-                        <span class="shopNums">x2</span>
+                        <span class="shopNumber">{{v.goods_price}}</span>
+                        <span class="shopNums">x{{v.goods_number}}</span>
                     </div>
                 </div>
             </div>
             <div id="message">
                 <div id="text">
                     <label class="bh">номер заказа</label>
-                    <label class="number">011315250060</label>
+                    <label class="number">{{detail.order_sn}}</label>
                     <span class="copy">копировать</span>
                 </div>
                 <div id="text">
                     <label class="bh">время</label>
-                    <label class="number">13-01-2021 15:25</label>
+                    <label class="number">{{detail.addtime}}</label>
                 </div>
                 <div id="text">
                     <label class="bh">Общая сумма</label>
-                    <label class="number">99999</label>
+                    <label class="number">{{detail.goods_amount}}</label>
                 </div>
                 <div id="text">
                     <label class="bh">поставке</label>
-                    <label class="number">0</label>
+                    <label class="number">{{detail.shipping_fee}}</label>
                 </div>
                 <div id="text">
                     <label class="bh">купон</label>
@@ -51,7 +51,7 @@
                 </div>
                 <div id="text">
                     <label class="bh">Cумма заказа</label>
-                    <label class="number">99999</label>
+                    <label class="number">{{detail.order_total_amount}}</label>
                 </div>
             </div>
         </div>
@@ -64,11 +64,44 @@
         name: "order_detail",
         data() {
             return {
-                title: 'спецификация заказа '
+                title: 'спецификация заказа',
+                user_id: 0,
+                detail: []
             }
         },
         components: {
             Header
+        },
+        mounted() {
+            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            if (!userinfo) {
+                this.$router.push('./login')
+                return
+            }
+            this.user_id = userinfo.user_id
+            this.getorderdetail()
+        },
+        methods: {
+            getorderdetail () {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+                this.$axios.post('api/order/getorderdetail', {
+                    order_id: this.$route.query.order_id,
+                    user_id: this.user_id
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        this.detail = e.data.data
+                        console.log(this.detail)
+                    } else {
+                        this.$toast.fail(e.data.message)
+                    }
+                })
+            }
         }
     }
 </script>
@@ -82,11 +115,14 @@
     }
     #content .Allshop {
         display: flex;
-        padding: 20px 30px;
+        padding: 20px 15px;
     }
     .Allshop {
         border-bottom: 1px #eee solid;
         background-color: #fff;
+    }
+    #address {
+        padding: 15px;
     }
     .Allshop .shop_img {
         width: 160px;
@@ -108,6 +144,7 @@
     .titleTop .priceShop {
         word-break: break-all;
         margin: 10px 0;
+        height: 90px;
     }
     .shopNumber, .shopNums{
         display: inline-block;
@@ -128,7 +165,7 @@
     #message #text {
         height: 55px;
         border-bottom: 1px #eee solid;
-        padding: 25px 30px 0 30px;
+        padding: 25px 15px 0 15px;
     }
     #message #text .bh {
         font-size: 28px;
@@ -142,8 +179,8 @@
         margin-left: 30px;
         text-align: center;
         display: inline-block;
-        width: 120px;
-        height: 40px;
+        width: 150px;
+        height: 45px;
         line-height: 45px;
         background-color: #EE0B0B;
         color: #fff;
