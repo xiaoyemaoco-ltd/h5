@@ -2,97 +2,78 @@
     <div>
         <Header :title="title"></Header>
         <div class="Allorder">
-            <van-tabs :active="active">
-                <van-tab title="доверенное" name="a">
-                    <div id="content">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">13-01-2021 15:25</span>
+            <van-tabs :active="active" @click="changstatus">
+                <van-tab title="доверенное" name="1">
+                    <van-list
+                            v-model="loading"
+                            :finished="finished"
+                            finished-text="Больше не надо"
+                            loading-text="Загрузка..."
+                            error-text="Больше не надо"
+                            @load="onLoad"
+                    >
+                        <div id="content" v-for="(v, k) in couponlist" :key="k">
+                            <div class="Allshop">
+                                <div class="shop_price">
+                                    <div class="titleTop">
+                                        <h3>{{v.name}}</h3>
+                                        <div id="date">
+                                            <label>Срок действия ваучера：</label>
+                                            <span class="priceShop">{{v.stoptime_show}}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="money">
-                                <h2>1000</h2>
-                                <van-button id="use" round type="info">применять</van-button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="content">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">13-01-2021 15:25</span>
-                                    </div>
+                                <div id="money">
+                                    <h2>{{v.amount}}тг.</h2>
+                                    <van-button id="use" round type="info">применять</van-button>
                                 </div>
                             </div>
-                            <div id="money">
-                                <h2>1000</h2>
-                                <van-button id="use" round type="info">применять</van-button>
-                            </div>
                         </div>
-                    </div>
-                    <div id="content">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">13-01-2021 15:25</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="money">
-                                <h2>1000</h2>
-                                <van-button id="use" round type="info">применять</van-button>
-                            </div>
-                        </div>
-                    </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="использованный">
-                    <div id="content">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">13-01-2021 15:25</span>
+                <van-tab title="использованный" name="2">
+                    <van-list v-model="loading" :finished="finished" finished-text="Больше не надо" loading-text="Загрузка..."
+                            @load="onLoad">
+                        <div id="content" v-for="(v, k) in couponlist" :key="k">
+                            <div class="Allshop">
+                                <div class="shop_price">
+                                    <div class="titleTop">
+                                        <h3>{{v.name}}</h3>
+                                        <div id="date">
+                                            <label>Срок действия ваучера：</label>
+                                            <span class="priceShop">{{v.stoptime_show}}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="money">
-                                <h2>1000</h2>
-                                <van-button id="use" round type="info">применять</van-button>
+                                <div id="money" style="background-color: #cccccc;">
+                                    <h2>{{v.amount}}тг.</h2>
+                                    <!--<van-button id="use" round type="info">применять</van-button>-->
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </van-list>
                 </van-tab>
-                <van-tab title="истекший">
-                    <div id="content">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>123456123456123456123456123456123456123456123456123456123456</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">13-01-2021 15:25</span>
+                <van-tab title="истекший" name="3">
+                    <van-list v-model="loading" :finished="finished" finished-text="Больше не надо" loading-text="Загрузка..."
+                              @load="onLoad">
+                        <div id="content" v-for="(v, k) in couponlist" :key="k">
+                            <div class="Allshop">
+                                <div class="shop_price">
+                                    <div class="titleTop">
+                                        <h3>{{v.name}}</h3>
+                                        <div id="date">
+                                            <label id="shix">Срок действия ваучера：</label>
+                                            <span id="shix" class="priceShop">{{v.stoptime_show}}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="money">
-                                <h2>1000</h2>
-                                <van-button id="use" round type="info">применять</van-button>
+                                <div id="money" style="background-color: #cccccc;">
+                                    <h2>{{v.amount}}тг.</h2>
+                                    <!--<van-button id="use" round type="info">применять</van-button>-->
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </van-list>
                 </van-tab>
             </van-tabs>
         </div>
@@ -108,17 +89,84 @@
         },
         data() {
             return {
-                active:'a',
-                title: 'Мой заказ'
+                active:'1',
+                title: 'Мой заказ',
+                user_id: 0,
+                couponlist: [],
+                loading: false,     //是否处于加载状态，加载过程中不触发load事件
+                finished: false,    //是否已加载完成，加载完成后不再触发load事件
+                updata:{
+                    pageNumber: 0,  //页码
+                    pageSize:20     //每页条数
+                }
             }
         },
+        mounted() {
+            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            if (!userinfo) {
+                this.$router.push('./login')
+                return
+            }
+            this.user_id = userinfo.user_id
+            this.updata.pageNumber = 0
+            this.updata.pageSize = 20
+        },
+        methods: {
+            changstatus (e) {
+                console.log(e)
+                this.active = e
+                this.updata.pageNumber = 0
+                this.couponlist = []
+                this.finished = false;
+                this.getusercouponlist()
+            },
+            getusercouponlist () {
+                /*this.$toast.loading({
+                   duration: 0,
+                   forbidClick: true,
+                   mask: true,
+                   message: "Загрузка..."
+               });*/
+
+                this.$axios.post('api/user/Getusercouponlist', {
+                    user_id: this.user_id,
+                    skip: this.updata.pageNumber,
+                    maxperpage: this.updata.pageSize,
+                    showtype: this.active
+                }).then((e) => {
+                    // this.$toast.clear()
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        let list = e.data.list
+                        this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
+                        if (list == null || list.length === 0) {
+                            this.finished = true;           // 加载结束
+                            return;
+                        }
+                        this.couponlist = this.couponlist.concat(list); // 将新数据与老数据进行合并
+                    } else {
+                        this.finished = true;
+                    }
+                })
+            },
+            onLoad() {
+                let timer = setTimeout(() => {	// 定时器仅针对本地数据渲染动画效果,项目中axios请求不需要定时器
+                    this.getusercouponlist();					// 调用上面方法,请求数据
+                    this.updata.pageNumber++;					// 分页数加一
+                    this.finished && clearTimeout(timer);//清除计时器
+                }, 100);
+            },
+        }
     }
 </script>
 
 <style scoped>
+    .van-tab__pane {
+        height: calc( 100vh - 210px);
+        overflow-y:auto;
+    }
     .Allorder {
         background-color: #eee;
-        margin-bottom: 100px;
     }
     #content {
         margin-top: 15px;
@@ -140,6 +188,7 @@
         display: flex;
         padding: 20px 20px;
         padding-top: unset;
+        height: 160px;
     }
     .Allshop {
         border-bottom: 1px #eee solid;
@@ -185,7 +234,7 @@
     }
     .titleTop h3 {
         word-break: break-all;
-        margin: unset;
+        height: 70px;
         margin: 15px 15px;
     }
     .titleTop #date {
@@ -209,5 +258,8 @@
     }
     .shopNums {
         font-size: 28px;
+    }
+    #shix {
+        color: #ff362c;
     }
 </style>

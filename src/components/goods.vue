@@ -4,7 +4,6 @@
         <Header :title="title"></Header>
         <div id="menu">
             <van-dropdown-menu>
-                <van-dropdown-item v-model="value" :options="option" />
                 <van-dropdown-item @change="change2" v-model="value2" :options="option2" />
             </van-dropdown-menu>
         </div>
@@ -107,7 +106,7 @@
     }
     #content {
         background-color: #eee;
-        height: calc( 100vh - 200px);
+        height: calc( 100vh - 190px);
         overflow-y:auto;
     }
     #content #list {

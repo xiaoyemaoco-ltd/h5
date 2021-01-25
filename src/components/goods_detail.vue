@@ -221,7 +221,6 @@
         },
         methods: {
             selectattr(id, index) {
-                console.log( this.attrselected)
                 this.attrselected[index] = id
                 // let attr = JSON.parse(JSON.stringify(this.attrselected))
                 let key = ''
@@ -233,8 +232,6 @@
                     key = this.attrselected[0]
                     this.attr_id = key
                 }
-                console.log(key)
-                console.log(this.products)
                 let resdata = this.products[key];
                 this.productprice = resdata.price
                 this.productsn = resdata.product_sn
@@ -257,7 +254,6 @@
                     city_id: id,
                     cang_id: this.detail.cang_id
                 }).then((res) => {
-                    console.log(res)
                     if (res.data.statuscode == 200) {
                         this.aging = res.data.aging
                     }
@@ -277,7 +273,6 @@
                 this.show1 = true
             },
             getGoodsDetail() {
-                console.log(this.$route.query.goods_id)
                 this.$axios.post('api/goods/getGoodsDetail', {
                     goods_id: this.$route.query.goods_id
                 }).then((res) => {
@@ -304,7 +299,6 @@
                             let selected = {}
                             if (this.properties.spe.length > 1) {
                                 let i = 0
-                                console.log(this.properties.spe)
                                 this.properties.spe.map((item) => {
                                     selected[i] = item.values[0].id
                                     i++
@@ -324,6 +318,11 @@
             },
             //添加购物车
             addcart() {
+                if (this.productstock < this.value && this.detail.goods_number < this.value) {
+                    this.show = false
+                    this.$toast.fail('Этот товар распродан')
+                    return;
+                }
                 let userinfo = sessionStorage.getItem('userinfo')
                 if (!userinfo) {
                     this.$router.push('./login')
@@ -341,7 +340,6 @@
                     goods_attr_id : this.attr_id,
                     promote_price : this.detail.promote_price
                 }).then((res) => {
-                    console.log(1111)
                     if (res.data.statuscode == 200) {
                         this.show = false
                         this.$toast({
@@ -353,6 +351,11 @@
             },
             //立即购买
             buynow () {
+                if (this.productstock < this.value && this.detail.goods_number < this.value) {
+                    this.show = false
+                    this.$toast.fail('Этот товар распродан')
+                    return;
+                }
                 let userinfo = sessionStorage.getItem('userinfo')
                 if (!userinfo) {
                     this.$router.push('./login')

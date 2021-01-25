@@ -1,6 +1,10 @@
 <template>
     <div id="header">
-        <van-nav-bar :title="val" left-arrow @click-left="onClickLeft"/>
+        <van-nav-bar :title="val" left-arrow @click-left="onClickLeft">
+            <template #right v-if="title == 'деталь продукции'">
+                <van-icon name="cart-o" size="28" @click="tocart"/>
+            </template>
+        </van-nav-bar>
     </div>
 </template>
 
@@ -18,6 +22,9 @@
         methods: {
             onClickLeft () {
                 this.$router.back()
+            },
+            tocart () {
+                this.$router.push('./cart')
             }
         }
     }

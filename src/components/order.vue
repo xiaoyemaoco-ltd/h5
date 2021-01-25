@@ -278,7 +278,7 @@
                         }
                         this.orderlist = this.orderlist.concat(list); // 将新数据与老数据进行合并
                     } else {
-                        this.$toast.fail(e.data.message)
+                        this.finished = true;
                     }
                 })
             },
@@ -287,6 +287,7 @@
                 this.active = e
                 this.updata.pageNumber = 0
                 this.orderlist = []
+                this.finished = false;
                 this.getuserorder()
             },
             onLoad() {

@@ -68,13 +68,20 @@
                 checkedAll: false,
                 checked1: false,
                 checked2: [],
-                list: []
+                list: [],
+                user_id: 0
             }
         },
         components: {
             Tabbar
         },
         mounted() {
+            let userinfo = sessionStorage.getItem('userinfo')
+            if (!userinfo) {
+                this.$router.push('./login')
+                return
+            }
+            this.user_id = JSON.parse(userinfo).user_id
             this.getCartList()
         },
         methods: {
@@ -189,12 +196,6 @@
             },
             //购物车列表
             getCartList() {
-                let userinfo = sessionStorage.getItem('userinfo')
-                if (!userinfo) {
-                    this.$router.push('./login')
-                    return
-                }
-                let user_id = JSON.parse(userinfo).user_id
                 this.$toast.loading({
                     duration: 0,
                     forbidClick: true,
@@ -202,12 +203,21 @@
                     message: "Загрузка..."
                 });
                 this.$axios.post('api/goods/getUserCart', {
-                    user_id: user_id
+                    user_id: this.user_id
                 }).then((e) => {
                     console.log(e)
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
+                        this.list.map((v) => {
+                            if (v.can_handsel == 1) {
+                                this.checked2.push(v.rec_id)
+                            }
+                        })
+
+                        if (this.checked2.length ==  Object.keys(this.list).length) {
+                            this.checkedAll = true
+                        }
                     }
                 })
             },
@@ -248,6 +258,8 @@
                         }
                     })
                 })
+
+                this.selected(this.checked2)
             },
             //去详情
             goToDetail(goods_id) {
@@ -256,6 +268,22 @@
                     query: {
                         goods_id: goods_id
                     }
+                })
+            },
+            //选中
+            selected ($ids) {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+                this.$axios.post('api/goods/cartSelected', {
+                    cart_ids: $ids,
+                    user_id: this.user_id
+                }).then((e) => {
+                    console.log(e)
+                    this.$toast.clear(); // 关闭加载
                 })
             }
         }

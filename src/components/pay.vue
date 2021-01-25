@@ -127,7 +127,7 @@
                 </label>
                 <label id="addr">
                   <span id="text">купон</span>
-                  <span id="cang">-10 тг.</span>
+                  <span id="cang">-0 тг.</span>
                 </label>
             </div>
         </div>
@@ -335,6 +335,7 @@
                         this.support_pickup = e.data.support_pickup
                         this.shipping_list = e.data.shipping_list
                         this.payment = e.data.payment
+                        this.payid = this.payment[0].pay_id
                         this.paydesc = e.data.paydesc
                         this.coupondata = e.data.coupon
                         if (!this.$route.query.goods_id) {

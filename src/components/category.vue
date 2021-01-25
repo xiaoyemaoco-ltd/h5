@@ -111,7 +111,7 @@
 
 <style scoped>
     #cate {
-        height: calc( 100vh - 200px );
+        height: calc( 100vh - 100px );
         /*padding-bottom: 50px;*/
     }
     #header {
@@ -137,13 +137,13 @@
     }
     #content {
         display: flex;
-        height: calc( 100vh - 250px );
+        height: calc( 100vh - 1000px );
         width: 750px;
         /*overflow:hidden;*/
     }
     #content #left {
         overflow-y:auto;
-        height: calc(100vh - 250px);
+        height: calc(100vh - 200px);
     }
     #left >>> .van-sidebar {
         width: 250px;
@@ -151,7 +151,7 @@
     #content #right {
         width: 500px;
         overflow-y:auto;
-        height: calc(100vh - 250px);
+        height: calc(100vh - 100px);
     }
     #right #list {
         /*height: 100%;*/
