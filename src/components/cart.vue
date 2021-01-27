@@ -76,7 +76,7 @@
             Tabbar
         },
         mounted() {
-            let userinfo = sessionStorage.getItem('userinfo')
+            let userinfo = localStorage.getItem('userinfo')
             if (!userinfo) {
                 this.$router.push('./login')
                 return

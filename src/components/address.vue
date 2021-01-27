@@ -16,7 +16,7 @@
               </div>
               <div id="edit">
                 <van-radio-group v-model="radio">
-                  <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">настройки по умолчанию</van-radio>
+                  <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
                 </van-radio-group>
                 <div id="ed" @click="adressupdate(item.address_id)">
                   <img src="../assets/image/bianji@2x.png">
@@ -127,7 +127,7 @@
             },
             //列表
             getaddresslist () {
-                let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
                 if (!userinfo) {
                   this.$router.push('./login')
                   return
@@ -235,6 +235,7 @@
         display: flex;
         margin-left: 20px;
         text-align: left;
+        padding-bottom: 10px;
     }
     #edit #ed img, #edit #del img {
        width: 34px;
@@ -242,7 +243,7 @@
        vertical-align: middle;
     }
     #edit #ed, #edit #del {
-       margin-left: 20px;
+        margin-left: 50px;
         display: flex;
     }
     #edit #ed span, #edit #del span {

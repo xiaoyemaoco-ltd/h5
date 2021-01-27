@@ -119,7 +119,7 @@
                     this.$toast.fail('заполните подробный адрес');
                     return
                 }
-                let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
 
                 this.$toast.loading({
                     duration: 0,

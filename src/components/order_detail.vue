@@ -12,7 +12,7 @@
                 </div>
                     <!--<i class="van-icon van-icon-arrow van-cell__right-icon">&lt;!&ndash;&ndash;&gt;</i></div>-->
             </div>
-            <div class="Allshop" v-for="(v, k) in detail.goods" :key="k">
+            <div class="Allshop" v-for="(v, k) in detail.goods" :key="k" @click="goodsdetail(v.goods_id)">
                 <div class="shop_img">
                     <img :src="v.thumb" />
                 </div>
@@ -29,28 +29,28 @@
             </div>
             <div id="message">
                 <div id="text">
-                    <label class="bh">номер заказа</label>
-                    <label class="number">{{detail.order_sn}}</label>
-                    <span class="copy">копировать</span>
+                    <label class="bh">номер заказа:</label>
+                    <label class="number ordersn" >{{detail.order_sn}}</label>
+                    <span class="copy" v-clipboard:copy="detail.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">копировать</span>
                 </div>
                 <div id="text">
-                    <label class="bh">время</label>
+                    <label class="bh">время:</label>
                     <label class="number">{{detail.addtime}}</label>
                 </div>
                 <div id="text">
-                    <label class="bh">Общая сумма</label>
+                    <label class="bh">Общая сумма:</label>
                     <label class="number">{{detail.goods_amount}}</label>
                 </div>
                 <div id="text">
-                    <label class="bh">поставке</label>
+                    <label class="bh">поставке:</label>
                     <label class="number">{{detail.shipping_fee}}</label>
                 </div>
                 <div id="text">
-                    <label class="bh">купон</label>
+                    <label class="bh">купон:</label>
                     <label class="number">0</label>
                 </div>
                 <div id="text">
-                    <label class="bh">Cумма заказа</label>
+                    <label class="bh">Cумма заказа:</label>
                     <label class="number">{{detail.order_total_amount}}</label>
                 </div>
             </div>
@@ -73,7 +73,7 @@
             Header
         },
         mounted() {
-            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if (!userinfo) {
                 this.$router.push('./login')
                 return
@@ -99,6 +99,21 @@
                         console.log(this.detail)
                     } else {
                         this.$toast.fail(e.data.message)
+                    }
+                })
+            },
+            onCopy(e){
+                console.log(e)
+                this.$toast.success('Копировать успешно')
+            },
+            onError () {
+
+            },
+            goodsdetail (goods_id) {
+                this.$router.push({
+                    path: './goodsdetail',
+                    query: {
+                        goods_id: goods_id
                     }
                 })
             }

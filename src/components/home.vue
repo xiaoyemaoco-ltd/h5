@@ -1,10 +1,9 @@
 <template>
   <div class="hello">
     <div id="header">
-      <van-search v-model="value" placeholder="поиска товар" />
+      <van-search v-model="value" @click="search" placeholder="поиска товар" />
     </div>
-    <van-tabs v-model="tab" :animated="true" :swipeable="true">
-      <van-tab title="标签 1">
+    <div id="content">
         <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
           <van-swipe-item>
             <img id="swiperimages" src="https://img.yzcdn.cn/vant/apple-3.jpg">
@@ -15,54 +14,24 @@
         </van-swipe>
         <van-notice-bar left-icon="volume-o" text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"/>
 
-        <div id="content">
-          <van-list id="list">
-            <div id="goods">
-              <img src="https://img.yzcdn.cn/vant/apple-3.jpg">
-              <p>Продажи：100</p>
-              <P class="text">name</P>
+          <van-list id="list" v-model="loading" offset="10"
+                    :finished="finished"
+                    finished-text="Больше не надо"
+                    loading-text="Загрузка..."
+                    @load="onLoad">
+            <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.id)">
+              <img v-lazy="item.thumb">
+              <p v-if="item.count > 0" id="sales">Продажи：{{item.count}}</p>
+              <p v-else id="sales"></p>
+              <P class="text">{{item.name}}</P>
               <label id="attr">
-                <span id="price">1000</span>
+                <span id="price">{{item.shop_price}}</span>
                 <span id="dw">тг.</span>
-                <span id="cang">CN</span>
+                <span :id="item.cang == 'CN' ? 'cang' : 'hskst'">{{item.showkeyname}}</span>
               </label>
             </div>
           </van-list>
         </div>
-      </van-tab>
-      <van-tab title="标签 2">
-        <div id="content">
-          <van-list id="list">
-            <div id="goods">
-              <img src="https://img.yzcdn.cn/vant/apple-3.jpg">
-              <p>Продажи：100</p>
-              <P class="text">name</P>
-              <label id="attr">
-                <span id="price">1000</span>
-                <span id="dw">тг.</span>
-                <span id="cang">CN</span>
-              </label>
-            </div>
-          </van-list>
-        </div>
-      </van-tab>
-      <van-tab title="标签 3">
-        <div id="content">
-          <van-list id="list">
-            <div id="goods">
-              <img src="https://img.yzcdn.cn/vant/apple-3.jpg">
-              <p>Продажи：100</p>
-              <P class="text">name</P>
-              <label id="attr">
-                <span id="price">1000</span>
-                <span id="dw">тг.</span>
-                <span id="cang">CN</span>
-              </label>
-            </div>
-          </van-list>
-        </div>
-      </van-tab>
-    </van-tabs>
 
     <tabbar :active="active"></tabbar>
   </div>
@@ -77,12 +46,59 @@ export default {
       active: 'home',
       value: '',
       tab: 0,
+      list: [],
+      updata:{
+        pageNumber: 0,  //页码
+        pageSize:20     //每页条数
+      },
+      loading: false,
+      finished: false,
     };
   },
   components: {
     Tabbar,
   },
   mounted() {
+    this.updata.pageNumber = 0
+    this.updata.pageSize = 20
+  },
+  methods: {
+    onLoad() {
+      this.getgoodslist();
+    },
+    getgoodslist () {
+      this.$axios.post('api/index/get_index_best', {
+        skip: this.updata.pageNumber,
+        maxperpage: this.updata.pageSize
+      }).then((e) => {
+        this.$toast.clear()
+        if (e.data.statuscode == 200) {
+          let list = e.data.data
+          this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
+          if (list == null || list.length === 0) {
+            this.finished = true;           // 加载结束
+            return;
+          }
+          this.updata.pageNumber = e.data.skip;
+          this.list = this.list.concat(list); // 将新数据与老数据进行合并
+        } else {
+          this.finished = true;
+        }
+      })
+    },
+    getGoodsDetail (goods_id) {
+      this.$router.push({
+        path: './goodsdetail',
+        query: {
+          goods_id: goods_id
+        }
+      })
+    },
+    search () {
+      this.$router.push({
+        path: './search'
+      })
+    }
   }
 }
 </script>
@@ -101,6 +117,9 @@ export default {
   .van-search__content {
     border-radius: 30px;
   }
+  #list >>> .van-list__finished-text, #list >>>.van-list__loading {
+    margin: 0 auto;
+  }
   .van-search {
     width: 80%;
     padding: unset;
@@ -108,8 +127,8 @@ export default {
     background-color: unset;
     border-radius: 50%;
   }
-  .van-tabs >>> .van-tabs__content {
-    height: calc( 100vh - 260px);
+  #content {
+    height: calc( 100vh - 200px);
     overflow-y:auto;
     background-color: #eee;
   }
@@ -142,22 +161,31 @@ export default {
     margin: 0 0 12px 12px;
     background-color: #ffffff;
     padding: 10px 0;
-    border-radius: 15px;
   }
   #goods #sales {
-    margin: 0 20px;
+    margin: 0 15px;
     color: #cccccc;
     text-align: left;
     height: 30px;
   }
   #goods #attr {
     display: inline-block;
-    width: 300px;
+    /*width: 300px;*/
+    width: 93%;
+    margin: 0 15px;
   }
   #goods .text {
     text-align: left;
-    margin-left: 20px;
-    height: 70px;
+    margin: 15px;
+    height: 60px;
+    line-height: 30px;
+    /*兩行換行省略號*/
+    text-overflow: -o-ellipsis-lastline;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   #goods img {
     width: 220px;

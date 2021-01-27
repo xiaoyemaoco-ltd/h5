@@ -15,12 +15,12 @@ if (process.env.NODE_ENV === 'production') {
     }
 } else {
     //dev 开发环境
-    host = 'http://test.liuqiang1qqcom.yxnat.softdev.top';
+    host = 'http://test.liuqiang2qqcom.yxnat.softdev.top';
 }
 
 module.exports = {
     // 选项...
-    publicPath: "/",
+    publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
     outputDir: process.env.outputDir,
     assetsDir: 'static',
     devServer: {
@@ -54,6 +54,19 @@ module.exports = {
                         minPixelValue: 3 //设置要替换的最小像素值(3px会被转rem)。 默认 0
                     })
                 ]
+            }
+        }
+    },
+    configureWebpack : {
+        performance: {
+            hints:'warning',
+            //入口起点的最大体积 整数类型（以字节为单位）
+            maxEntrypointSize: 50000000,
+            //生成文件的最大体积 整数类型（以字节为单位 300k）
+            maxAssetSize: 30000000,
+            //只给出 js 文件的性能提示
+            assetFilter: function(assetFilename) {
+                return assetFilename.endsWith('.js');
             }
         }
     }

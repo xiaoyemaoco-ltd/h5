@@ -102,7 +102,7 @@
             }
         },
         mounted() {
-            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if (!userinfo) {
                 this.$router.push('./login')
                 return
@@ -121,21 +121,12 @@
                 this.getusercouponlist()
             },
             getusercouponlist () {
-                /*this.$toast.loading({
-                   duration: 0,
-                   forbidClick: true,
-                   mask: true,
-                   message: "Загрузка..."
-               });*/
-
                 this.$axios.post('api/user/Getusercouponlist', {
                     user_id: this.user_id,
                     skip: this.updata.pageNumber,
                     maxperpage: this.updata.pageSize,
                     showtype: this.active
                 }).then((e) => {
-                    // this.$toast.clear()
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
@@ -143,6 +134,7 @@
                             this.finished = true;           // 加载结束
                             return;
                         }
+                        this.updata.pageNumber = e.data.skip;
                         this.couponlist = this.couponlist.concat(list); // 将新数据与老数据进行合并
                     } else {
                         this.finished = true;
@@ -150,11 +142,12 @@
                 })
             },
             onLoad() {
-                let timer = setTimeout(() => {	// 定时器仅针对本地数据渲染动画效果,项目中axios请求不需要定时器
-                    this.getusercouponlist();					// 调用上面方法,请求数据
-                    this.updata.pageNumber++;					// 分页数加一
+                /*let timer = setTimeout(() => {	// 定时器仅针对本地数据渲染动画效果,项目中axios请求不需要定时器
+                     					// 调用上面方法,请求数据
+                    // this.updata.pageNumber++;					// 分页数加一
                     this.finished && clearTimeout(timer);//清除计时器
-                }, 100);
+                }, 100);*/
+                this.getusercouponlist();
             },
         }
     }

@@ -16,10 +16,10 @@
                     <label>Код приглашения：</label>
                     <label>10029</label>
                 </div>
-              <div id="invite">
+              <!--<div id="invite">
                 <img id="inviteimg" src="../assets/image/uc/m_inviteshare.png">
                 <label>Пригласить друзей</label>
-              </div>
+              </div>-->
             </div>
             <div id="login" @click="login" v-else>вход</div>
         </div>
@@ -192,7 +192,7 @@
                 this.$router.push('./login')
             },
             getuserifo () {
-                let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
                 if (userinfo) {
                     this.islogin = true
                     this.avart = userinfo.headimg
@@ -242,7 +242,7 @@
         width: 55%;
     }
     #middle {
-      margin-top: 28px;
+        margin-top: 28px;
         height: calc( 100vh - 300px);
         overflow-y:auto;
     }

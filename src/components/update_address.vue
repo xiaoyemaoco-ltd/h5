@@ -100,7 +100,7 @@ export default {
     },
     methods: {
         getaddess () {
-            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             this.userid = userinfo.user_id
             this.$axios.post('api/user/getUserAddress', {
                 address_id: this.$route.query.address_id,

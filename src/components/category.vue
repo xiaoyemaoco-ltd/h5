@@ -4,14 +4,14 @@
             <h2 id="cart">классификация</h2>
         </div>
         <div id="content">
-            <div id="left">
+            <div id="left" ref="left">
                 <van-sidebar v-model="activeKey" @change="onChange">
-                    <van-sidebar-item v-for="(item, index) in category" :key="index" :title="item.cat_name" />
+                    <van-sidebar-item v-for="(item, index) in category" :key="index" :title="item.cat_name" :class="{current: currentIndex == index}" />
                 </van-sidebar>
             </div>
             <div id="right">
-                <van-list id="list" finished-text="Больше нет">
-                    <h3>{{catename}}</h3>
+                <h3>{{catename}}</h3>
+                <van-list id="list" class="list right-item-hook" finished-text="Больше нет" ref="right">
                     <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsList(item.cat_id)">
                         <lazy-component>
                             <!--<van-image class="image" :show-loading="false" width="90px" height="80px" radius="5px" v-lazy="item.cat_img" />-->
@@ -28,6 +28,7 @@
 
 <script>
     import Tabbar from "./tabbar";
+    import BScroll from 'better-scroll'
     export default {
         name: "goods",
         data() {
@@ -41,7 +42,10 @@
                 activeKey: 0,
                 category: [],
                 catename: '',
-                loadtext: 'продолжить просмотр '
+                loadtext: 'продолжить просмотр ',
+                listHeight: [],
+                scrollY: 0, //实时获取当前y轴的高度
+                clickEvent: false
             };
         },
         components: {
@@ -49,6 +53,32 @@
         },
         mounted() {
             this.getCategory()
+            /*this.$nextTick( () => {
+                this._initScroll()
+                this._getHeight()
+            })*/
+        },
+        computed: {
+            currentIndex () {
+                for(let i = 0; i < this.listHeight.length; i ++){
+                    let height = this.listHeight[i]
+                    let height2 = this.listHeight[i + 1]
+                    //当height2不存在的时候，或者落在height和height2之间的时候，直接返回当前索引
+                    //>=height，是因为一开始this.scrollY=0,height=0
+                    if(!height2 || (this.scrollY >= height && this.scrollY < height2)){
+                        return i
+                    }
+                    if(this.listHeight[this.listHeight.length - 1] - this.$refs.right.clientHeight <= this.scrollY){
+                        if(this.clickTrue){
+                            return this.currentNum
+                        }else{
+                            return (this.listHeight.length - 1)
+                        }
+                    }
+                }
+                //如果this.listHeight没有的话，就返回0
+                return 0
+            }
         },
         methods: {
             load() {
@@ -80,6 +110,16 @@
                         this.catename = this.category[index].cat_name
                     }
                 })
+                /*this.clickEvent = true
+                //在better-scroll的派发事件的event和普通浏览器的点击事件event有个属性区别_constructed
+                //浏览器原生点击事件没有_constructed所以当时浏览器监听到该属性的时候return掉
+                if(!event._constructed){
+                    return
+                }else{
+                    let rightItems = this.$refs.right.getElementsByClassName('right-item-hook')
+                    let el = rightItems[index]
+                    this.rights.scrollToElement(el, 300)
+                }*/
             },
             getGoodsList (cate_id) {
                 this.$router.push({
@@ -104,7 +144,32 @@
                         })
                     }
                 })
-            }
+            },
+            _initScroll () {
+                //better-scroll的实现原理是监听了touchStart,touchend事件，所以阻止了默认的事件（preventDefault）
+                //所以在这里做点击的话，需要在初始化的时候传递属性click,派发一个点击事件
+                //在pc网页浏览模式下，点击事件是不会阻止的，所以可能会出现2次事件，所以为了避免2次，可以在绑定事件的时候把$event传递过去
+                this.lefts = new BScroll(this.$refs.left, {
+                    click: true
+                })
+                this.rights = new BScroll(this.$refs.right, {
+                    probeType: 3  //探针的效果，实时获取滚动高度
+                })
+                //rights这个对象监听事件，实时获取位置pos.y
+                this.rights.on('scroll', (pos) => {
+                    this.scrollY = Math.abs(Math.round(pos.y))
+                })
+            },
+            _getHeight () {
+                let rightItems = this.$refs.right.getElementsByClassName('right-item-hook')
+                let height = 0
+                this.listHeight.push(height)
+                for(let i = 0; i < rightItems.length; i++){
+                    let item = rightItems[i]
+                    height += item.clientHeight
+                    this.listHeight.push(height)
+                }
+            },
         }
     }
 </script>
@@ -150,13 +215,13 @@
     }
     #content #right {
         width: 500px;
-        overflow-y:auto;
-        height: calc(100vh - 100px);
     }
     #right #list {
         /*height: 100%;*/
         display: flex;
         flex-wrap: wrap;
+        overflow-y:auto;
+        height: calc(100vh - 250px);
     }
     #right #goods {
         /*padding-left: 10px;*/
@@ -171,10 +236,9 @@
         margin-top: unset;
         word-break: break-all;
     }
-    #list h3 {
-        width: 100%;
+    #right h3 {
         text-align: left;
-        margin-left: 30px;
+        margin: 15px;
     }
     #list >>> .van-list__finished-text {
         width: 100%;

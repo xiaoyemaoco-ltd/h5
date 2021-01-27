@@ -323,7 +323,7 @@
                     this.$toast.fail('Этот товар распродан')
                     return;
                 }
-                let userinfo = sessionStorage.getItem('userinfo')
+                let userinfo = localStorage.getItem('userinfo')
                 if (!userinfo) {
                     this.$router.push('./login')
                     return
@@ -356,7 +356,7 @@
                     this.$toast.fail('Этот товар распродан')
                     return;
                 }
-                let userinfo = sessionStorage.getItem('userinfo')
+                let userinfo = localStorage.getItem('userinfo')
                 if (!userinfo) {
                     this.$router.push('./login')
                     return

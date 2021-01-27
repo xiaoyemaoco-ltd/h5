@@ -17,7 +17,7 @@
                             <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
                             <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
                                 <img :src="item.goods_thumb" />
                             </div>
@@ -39,8 +39,9 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
+                            <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
+                            <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
@@ -59,7 +60,7 @@
                             <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
                             <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
                                 <img :src="item.goods_thumb" />
                             </div>
@@ -81,8 +82,9 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
+                            <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
+                            <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
@@ -101,7 +103,7 @@
                             <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
                             <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
                                 <img :src="item.goods_thumb" />
                             </div>
@@ -123,8 +125,7 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
@@ -143,7 +144,7 @@
                             <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
                             <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
                                 <img :src="item.goods_thumb" />
                             </div>
@@ -165,8 +166,8 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
+                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
@@ -185,7 +186,7 @@
                             <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
                             <div class="paid">время：{{v.add_time}}</div>
                         </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index">
+                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
                                 <img :src="item.goods_thumb" />
                             </div>
@@ -207,7 +208,6 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn paid_detail">пожалуйста</button>
                             <button class="paid_btn" @click="getOrderDetail(v.order_id)">спецификация</button>
                             <div style="clear: both;"></div>
                         </div>
@@ -242,7 +242,7 @@
             Header
         },
         mounted() {
-            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if (!userinfo) {
                 this.$router.push('./login')
                 return
@@ -251,7 +251,18 @@
             this.updata.pageNumber = 0
             this.updata.pageSize = 20
         },
+        inject: ['reload'],
         methods: {
+            pay (pay_id, order_sn, price) {
+                this.$router.push({
+                    path: './confirmorder',
+                    query: {
+                        pay_id: pay_id,
+                        amount: price,
+                        ordersn:order_sn
+                    }
+                })
+            },
             getuserorder () {
                 /*this.$toast.loading({
                     duration: 0,
@@ -276,6 +287,7 @@
                             this.finished = true;           // 加载结束
                             return;
                         }
+                        this.updata.pageNumber = e.data.skip;
                         this.orderlist = this.orderlist.concat(list); // 将新数据与老数据进行合并
                     } else {
                         this.finished = true;
@@ -291,7 +303,7 @@
                 this.getuserorder()
             },
             onLoad() {
-                this.updata.pageNumber++;
+                // this.updata.pageNumber++;
                 this.getuserorder();
             },
             //跳详情
@@ -301,6 +313,37 @@
                     path: './orderdetail',
                     query: {
                         order_id: order_id
+                    }
+                })
+            },
+            //取消订单
+            cancel (id) {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/order/cancelOrder', {
+                    user_id: this.user_id,
+                    order_id: id
+                }).then((e) => {
+                    this.$toast.clear()
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                               this.reload()
+                            }
+                        })
+                    } else {
+                        this.$toast({
+                            type: 'fail',
+                            message: e.data.message
+                        })
                     }
                 })
             }
@@ -391,7 +434,7 @@
     #status {
         text-align: right;
         height: 50px;
-        padding: 20px 30px 0 0;
+        padding: 20px 15px 0 0;
     }
     #status .paid_btn {
         margin-right: 20px;

@@ -6,6 +6,10 @@ import 'lib-flexible'
 import axios from 'axios'
 import router from "./router";
 import qs from 'qs'
+import VueClipboard from 'vue-clipboard2';
+
+// Vue.prototype.Clipboard=Clipboard;
+
 axios.interceptors.request.use(function (config) {
   if(config.method!='get'){
     config.data=qs.stringify(config.data);
@@ -22,6 +26,7 @@ Vue.use(Lazyload,{
   loading: require('./assets/image/loading.gif')
 });
 Vue.use(Vant)
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 

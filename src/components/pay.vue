@@ -87,7 +87,7 @@
             </van-cell-group>
             <div id="coupon">
                 <van-cell is-link @click="showPopup">купон</van-cell>
-                <van-popup round  v-model="show2" closeable position="bottom">
+                <van-popup round style="height: 400px" v-model="show2" closeable position="bottom">
                     <div id="coupon1" v-for="(item, index) in coupondata" :key="index">
                         <div class="Allshop">
                             <div class="shop_price">
@@ -105,6 +105,10 @@
                                 <van-button id="use" @click="usecoupon(item.couponid)" round type="info">применять</van-button>
                             </div>
                         </div>
+                    </div>
+                    <div style="height: 100%; margin-top: 10px">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-popup>
             </div>
@@ -184,7 +188,7 @@
             }
         },
         mounted() {
-            let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             this.userinfo = userinfo
             this.totalprice = this.$route.query.price / 100
             this.rec_ids = this.$route.query.rec_ids
@@ -249,19 +253,27 @@
                     this.$toast.clear()
                     console.log(e)
                     if (e.data.statuscode == 200) {
-                        this.$toast({
+                        this.$router.push({
+                            path: './confirmorder',
+                            query: {
+                                pay_id: this.payid,
+                                amount: this.totalprice,
+                                ordersn: e.data.order_sn
+                            }
+                        })
+                        /*this.$toast({
                             type: 'success',
                             message: e.data.message,
                             onClose: () => {
-                                console.log(1111)
+
                             }
-                        })
+                        })*/
                     } else {
                         this.$toast.fail(e.data.message)
                     }
                 })
             },
-            //读取优惠前
+            //读取优惠券
             showPopup() {
                 this.show2 = true
             },
@@ -327,6 +339,7 @@
                     city_id: this.city_id
                 }).then((e) => {
                     this.$toast.clear();
+                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.ship = e.data.data
                         this.shipping_id = e.data.shipping_id

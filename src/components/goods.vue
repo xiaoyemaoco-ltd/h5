@@ -133,7 +133,14 @@
     #goods .text {
         text-align: left;
         margin-left: 20px;
-        height: 70px;
+        height: 60px;
+        line-height: 30px;
+        text-overflow: -o-ellipsis-lastline;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
     #goods img {
         width: 220px;

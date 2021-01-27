@@ -17,25 +17,37 @@ import UpdateAddress from './components/update_address'
 import Coupon from './components/coupon'
 import Login from './components/login'
 import Register from './components/register'
+import Confirmorder from './components/confirmorder'
+import Search from './components/search'
 
 Vue.use(Router)
 
-export default new Router({
-    routes: [
-        {path: '/home', component: Home},
-        {path: '/category', component: Category},
-        {path: '/cart', component: Cart},
-        {path: '/personal', component: Personal},
-        {path: '/goods', component: Goods},
-        {path: '/goodsdetail', component: GoodsDetail},
-        {path: '/pay', component: Pay},
-        {path: '/order', component: Order},
-        {path: '/orderdetail', component: OrderDetail},
-        {path: '/address', component: Address},
-        {path: '/addaddress', component: AddAddress},
-        {path: '/updateaddress', component: UpdateAddress},
-        {path: '/coupon', component: Coupon},
-        {path: '/login', component: Login},
-        {path: '/register', component: Register},
-    ]
-})
+const routes = [
+    {path: '/home', component: Home},
+    {path: '/category', component: Category},
+    {path: '/cart', component: Cart},
+    {path: '/personal', component: Personal},
+    {path: '/goods/:id', component: Goods},
+    {path: '/goodsdetail/:id', component: GoodsDetail},
+    {path: '/pay', component: Pay},
+    {path: '/order', component: Order},
+    {path: '/orderdetail', component: OrderDetail},
+    {path: '/address', component: Address},
+    {path: '/addaddress', component: AddAddress},
+    {path: '/updateaddress', component: UpdateAddress},
+    {path: '/coupon', component: Coupon},
+    {path: '/login', component: Login},
+    {path: '/register', component: Register},
+    {path: '/confirmorder', component: Confirmorder},
+    {path: '/search', component: Search},
+]
+
+
+const router = new Router({
+    mode: 'hash',
+    // base: 'D-Square',
+    routes
+});
+
+
+export default router

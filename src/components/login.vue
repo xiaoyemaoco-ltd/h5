@@ -9,19 +9,30 @@
         <van-row type="flex" justify="center" class="line">
             <van-col span="18">
                 <van-cell-group class="username">
-                    <van-field class="border" v-model="mobile" placeholder="введите номер телефона" type="text" left-icon="manager"/>
+                    <van-field label="+7" class="border" v-model="mobile" placeholder="введите номер телефона" type="text" left-icon="manager"/>
                 </van-cell-group>
-                <van-cell-group class="username">
+
+                <van-cell-group class="username" v-show="show">
                   <van-field class="border" v-model="password" placeholder="введите пароль"  type="password"  left-icon="lock"/>
                 </van-cell-group>
-                <!--<van-cell-group class="username">
-                  <van-field class="border" placeholder="код проверки ввода"  type="number"  left-icon="eye"/>
-                </van-cell-group>-->
-                <!--<van-button id="minibnt" round type="danger" size="mini">получение кода проверки</van-button>-->
+
+                <van-cell-group class="username" v-show="show1">
+                  <van-field class="border" v-model="code" placeholder="код проверки ввода"  type="number"  left-icon="eye"/>
+                </van-cell-group>
+
+                <van-button v-show="codebtn" id="minibnt" @click="getcode" round type="danger" size="mini">получение кода проверки</van-button>
+
+                <van-count-down :time="time" @finish="finish" v-show="show2" :auto-start="false" ref="countDown">
+                    <template #default="timeData">
+                        <span class="block">{{timeData.seconds}}</span>
+                    </template>
+                </van-count-down>
+
             </van-col>
         </van-row>
         <div class="text">
-            <p class="code">использовать код проверки</p>
+            <p class="code" @click="codesign" v-show="codetext">использовать код проверки</p>
+            <p class="code" @click="pwdsign" v-show="pwdtext">Пароль логин</p>
             <p>забыть пароль</p>
         </div>
 
@@ -46,7 +57,16 @@
             return {
                 mobile: '',
                 password: '',
-                title: 'вход'
+                code: '',
+                title: 'вход',
+                show: true,
+                show1: false,
+                show2: false,
+                codebtn: false,
+                codetext: true,
+                pwdtext: false,
+                time: 60 * 1000,
+                timeData: {},
             }
         },
         components: {
@@ -54,21 +74,23 @@
         },
         methods: {
             sign() {
-                /*if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
+                /*if (this.mobile == '' || !(/^\d{1}\d{9}$/.test(this.mobile))) {
                     this.$toast.fail('Ошибка номера телефона');
                     return
                 }*/
-                if (this.password == '') {
-                    this.$toast.fail('введите пароль');
+                if (this.password == '' && this.code == '') {
+                    this.$toast.fail('Пожалуйста, введите пароль или проверочный код');
                     return
                 }
                 this.$axios.post('api/user/sign', {
                     mobile: this.mobile,
-                    password: this.password
+                    password: this.password,
+                    verifycode: this.code,
                 }).then((e) => {
                     if (e.data.statuscode == 200) {
                         let objstr = JSON.stringify(e.data.data)
-                        sessionStorage.setItem('userinfo', objstr)
+                        localStorage.setItem('userinfo', objstr)
+                        // sessionStorage.setItem('userinfo', objstr)
                         this.$toast({
                             type: 'success',
                             message: 'Авторизация успешна',
@@ -82,12 +104,88 @@
             },
             register() {
                 this.$router.push('./register')
-            }
+            },
+            //獲取驗證碼
+            getcode () {
+                /*if (this.mobile == '' || !(/^\d{1}\d{9}$/.test(this.mobile))) {
+                    this.$toast.fail('Ошибка номера телефона');
+                    return
+                }*/
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/v1/Sendsms', {
+                    mobile: this.mobile,
+                    snum: 'tt7d3tyr',
+                    fn: 'mobileverify',
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.codebtn = false
+                                this.show2 = true
+                                this.$refs.countDown.start();
+                            }
+                        })
+                    } else {
+                        this.$toast.fail(e.data.message)
+                    }
+                })
+            },
+            //驗證碼登錄
+            codesign () {
+                this.show = false
+                this.show1 = true
+                this.codetext = false
+                this.pwdtext = true
+                this.codebtn = true
+            },
+            //密碼登錄
+            pwdsign () {
+                this.show = true
+                this.show1 = false
+                this.codetext = true
+                this.pwdtext = false
+                this.codebtn = false
+                this.show2 = false
+            },
+            //倒計時函數
+            finish () {
+                this.codebtn = true
+                this.show2 = false
+                this.$refs.countDown.reset();
+            },
+            reset() {
+                this.$refs.countDown.reset();
+            },
         }
     }
 </script>
 
 <style scoped>
+    .van-count-down {
+        background-color: #ff362c;
+        width: 100%;
+        height: 64px;
+        border-radius: 32px;
+    }
+    .border >>> .van-field__label {
+        width: 40px;
+        margin-right: 10px;
+    }
+    .van-count-down span {
+        font-size: 28px;
+        color: #fff;
+        line-height: 64px;
+    }
     #header h1 {
         height: 100%;
         margin: unset;
@@ -100,13 +198,13 @@
     }
     .username {
         margin-bottom: 50px;
-      border: unset;
+        border: unset;
     }
     .btns {
         margin-top: 100px;
     }
     .jumpBtn {
-        background-color: #ee2325;
+        background-color: #ff362c;
         border: unset;
     }
     [class*=van-hairline]::after {
@@ -124,9 +222,10 @@
         border: unset;
     }
     #minibnt {
-      width: 100%;
-      height: 65px;
-      font-size: 28px;
+       width: 100%;
+       height: 65px;
+       font-size: 28px;
+        background-color: #ff362c;
     }
     .text p{
         width: 100%;
