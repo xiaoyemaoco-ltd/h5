@@ -20,12 +20,8 @@ export default {
     };
   },
   mounted() {
-    this.onChange();
   },
   methods: {
-    onChange () {
-      this.$router.push('./home')
-    },
     reload() {
       this.isRouterAlive = false;
       this.$nextTick(function() {

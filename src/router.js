@@ -19,11 +19,18 @@ import Login from './components/login'
 import Register from './components/register'
 import Confirmorder from './components/confirmorder'
 import Search from './components/search'
+import Collect from './components/collect'
+import Myuser from './components/myuser'
+import Vipuser from './components/vipuser'
+import Brokerage from './components/brokerage'
 
 Vue.use(Router)
 
 const routes = [
-    {path: '/home', component: Home},
+    {
+        path: '/',
+        component: Home
+    },
     {path: '/category', component: Category},
     {path: '/cart', component: Cart},
     {path: '/personal', component: Personal},
@@ -40,6 +47,10 @@ const routes = [
     {path: '/register', component: Register},
     {path: '/confirmorder', component: Confirmorder},
     {path: '/search', component: Search},
+    {path: '/collect', component: Collect},
+    {path: '/myuser', component: Myuser},
+    {path: '/vipuser', component: Vipuser},
+    {path: '/brokerage', component: Brokerage},
 ]
 
 

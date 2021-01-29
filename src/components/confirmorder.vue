@@ -44,6 +44,10 @@
             Header
         },
         mounted() {
+            if (!this.$route.query.amount || !this.$route.query.ordersn) {
+                this.$router.push('./home')
+                return
+            }
             this.amount = this.$route.query.amount
             this.ordersn = this.$route.query.ordersn
             this.getpaytype()

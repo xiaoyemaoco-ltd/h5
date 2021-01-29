@@ -44,7 +44,12 @@
         },
         methods: {
             onChange(index) {
-                this.$router.push('./' + index)
+                if (index == 'home') {
+                  this.$router.push('./')
+                } else {
+                  this.$router.push('./' + index)
+                }
+
             }
         }
     }

@@ -15,12 +15,12 @@ if (process.env.NODE_ENV === 'production') {
     }
 } else {
     //dev 开发环境
-    host = 'http://test.liuqiang2qqcom.yxnat.softdev.top';
+    host = 'http://test.liuqiang3qqcom.yxnat.softdev.top';
 }
 
 module.exports = {
     // 选项...
-    publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
+    publicPath: "/",
     outputDir: process.env.outputDir,
     assetsDir: 'static',
     devServer: {
