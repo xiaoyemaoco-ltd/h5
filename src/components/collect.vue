@@ -11,13 +11,21 @@
                         <p>{{v.goods_name}}</p>
                         <div class="price">
                             <div>
-                                <span>{{v.shop_price}}тг.</span>
-                                <span>SKU:</span><span>{{v.goods_sn}}</span>
+                                <span class="money first">{{v.shop_price}}тг.</span>
+                                <div class="bottom">
+                                    <span class="text1">SKU:</span>
+                                    <span class="first text2">{{v.goods_sn}}</span>
+                                </div>
+
                             </div>
 
                             <div>
-                                <span>комиссия:</span><span>{{v.brokerage}}</span>
-                                <span>в наличии:</span><span>{{v.goods_number}}</span>
+                                <span class="text1">бонус:</span><span class="money money1">{{v.brokerage}}тг.</span>
+                                <div class="bottom">
+                                    <span class="text1">в наличии:</span>
+                                    <span class="text2">{{v.goods_number}}</span>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -129,5 +137,61 @@
 </script>
 
 <style scoped>
-
+    .content {
+        background-color: #eee;
+        height: calc( 100vh - 100px );
+        overflow-y:auto;
+    }
+    .cell {
+        width: 100%;
+        background-color: #fff;
+        border-bottom: 1px #eee solid;
+        display: flex;
+    }
+    .cell .image{
+        width: 30%;
+        margin: 30px;
+    }
+    .image img{
+        width: 100%;
+    }
+    .cell .text {
+        width: 70%;
+        padding-right: 15px;
+    }
+    .cell .text p{
+        font-size: 32px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .cell .price {
+        text-align: left;
+        display: flex;
+    }
+    .price span {
+        display: inline-block;
+    }
+    .price .money {
+        width: 100%;
+        color: #ff362c;
+        font-size: 30px;
+    }
+    .first {
+        margin-right: 50px;
+    }
+    .text1 {
+        color: #686868;
+        font-size: 26px;
+    }
+    .bottom {
+        margin-top: 15px;
+    }
+    .price .money1 {
+        width: auto;
+    }
+    .text2 {
+        font-size: 28px;
+    }
 </style>

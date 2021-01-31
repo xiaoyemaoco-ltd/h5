@@ -38,7 +38,7 @@
                     </van-tabbar>
                 </div>
             </div>-->
-            <div class="other1 other">
+            <div class="other1 other" v-if="rank != 0">
                 <div id="left">
                   <p id="money">0</p>
                   <p id="text">Моя прибыль</p>
@@ -81,7 +81,7 @@
                   </van-tabbar-item>
                 </van-tabbar>
             </div>
-            <div class="other">
+            <div class="other" v-if="rank != 0">
                 <van-tabbar id="select">
                   <van-tabbar-item @click="brokerage">
                     <span>Мой бонус</span>
@@ -103,7 +103,7 @@
                   </van-tabbar-item>
                 </van-tabbar>
             </div>
-          <div class="other">
+          <div class="other" v-if="rank == 3">
             <van-tabbar id="select">
               <van-tabbar-item @click="vipuser">
                 <span>моя команда</span>
@@ -127,7 +127,7 @@
           </div>
             <div class="other">
                 <van-tabbar id="select">
-                  <van-tabbar-item>
+                  <van-tabbar-item @click="stationmsg">
                     <span>Cообщение</span>
                     <template #icon="props">
                       <img src="../assets/image/uc/m_privatemsg.png" />
@@ -169,7 +169,8 @@
                 avart: '',
                 nickname: '',
                 role: '',
-                invitecode: ''
+                invitecode: '',
+                rank: 0
             }
         },
         components: {
@@ -211,6 +212,10 @@
             brokerage() {
                 this.$router.push('./brokerage')
             },
+            //站内信
+            stationmsg () {
+                this.$router.push('./stationletter')
+            },
             //用户信息
             getuserifo () {
                 let userinfo = JSON.parse(localStorage.getItem('userinfo'))
@@ -220,6 +225,7 @@
                     this.nickname = userinfo.user_name
                     this.role = userinfo.rank_name
                     this.invitecode = userinfo.yaoqing_code
+                    this.rank = userinfo.user_rank
                 }
             }
         }

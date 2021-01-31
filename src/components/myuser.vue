@@ -4,13 +4,13 @@
         <div class="content">
             <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
             <div class="option">
-                <span @click="all">Все</span>
-                <span @click="day">эа день</span>
-                <span @click="week">эа неделя</span>
-                <span @click="month">эа месяц</span>
-                <span class="img" @click="selectdate">
+                <span :class="date.indexOf('-') >= 0 ? 'active' : ''" class="img" @click="selectdate">
                     <img src="../assets/image/month.png" >
                 </span>
+                <span :class="date == 'month' ? 'active' : ''" @click="month">эа месяц</span>
+                <span :class="date == 'week' ? 'active' : ''" @click="week">эа неделя</span>
+                <span :class="date == 'day' ? 'active' : ''" @click="day">эа день</span>
+                <span :class="date == 'all' ? 'active' : ''" @click="all">Все</span>
 
                 <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
                     <van-datetime-picker v-model="currentDate" type="year-month" title="Выберите год и месяц" confirm-button-text="подтвердить"
@@ -19,21 +19,28 @@
             </div>
             <div class="desc">
                 <span>Всего: {{count}}</span>
-                <span></span>
-                <span>{{allperformance}}</span>
+                <span class="text">сумма заказа:</span>
+                <span class="money">{{allperformance}}</span>
                 <span>тг.</span>
             </div>
 
             <div class="list" v-for="(v, k) in list" :key="k">
-                <div>
+                <div class="images">
                     <img id="img" v-if="v.headimg" :src="v.headimg">
                     <img id="img" v-else src="../assets/image/default_head_img.png">
                     <p>{{v.user_name}}</p>
                 </div>
-                <div>
-                    <span></span><span>{{v.performance}}</span><span>тг.</span>
-                    <span>+7 {{v.mobile_phone}}</span>
-                    <span></span>
+                <div class="other">
+                    <div class="top">
+                        <span class="text1">сумма заказа:</span>
+                        <span class="money">{{v.performance}}</span>
+                        <span>тг.</span>
+                    </div>
+                    <div class="middle">
+                        <span>+7 {{v.mobile_phone}}</span>
+                    </div>
+                    <div class="bottom ing" v-if="v.status == 1">в Процесс проверки</div>
+                    <div class="bottom" v-else>настроить как VIP</div>
                 </div>
             </div>
         </div>
@@ -55,7 +62,7 @@
                 value: '',
                 user_id: 0,
                 list: [],
-                date: '',
+                date: 'month',
                 allperformance: 0,
                 count: 0
             }
@@ -143,16 +150,21 @@
     }
     .option {
         display: flex;
-        padding: 0 20px;
-        align-self:flex-end
+        padding: 0 30px 15px 30px;
+        align-self:flex-end;
+        border-bottom: 1px #eee solid;
+        flex-direction: row-reverse;
+        background-color: #fff;
     }
     .option span {
+        float: right;
         display: inline-block;
         background-color: #cccccc;
         color: #fff;
         font-size: 18px;
         border-radius: 30px;
         padding: 10px 15px;
+        margin-left: 10px;
     }
     .option .img {
         width: 50px;
@@ -160,5 +172,80 @@
     }
     .option .img img{
         width: 30px;
+    }
+    .option .active {
+        color: #fff;
+        background-color: #ff362c;
+    }
+    .desc {
+        padding: 30px 15px;
+        text-align: left;
+        background-color: #fff;
+    }
+    .desc span {
+        display: inline-block;
+        font-size: 30px;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+    .desc .money, .other .money {
+        color: #ff362c;
+        font-size: 30px;
+    }
+    .desc .text {
+        margin-left: 15px;
+    }
+    .list {
+        display: flex;
+        margin-top: 20px;
+        background-color: #fff;
+        border-radius: 15px;
+    }
+    .content {
+        background-color: #eee;
+        height: calc( 100vh - 100px );
+        overflow-y:auto;
+    }
+    .images {
+        margin: 15px 40px;
+    }
+    .images #img {
+        width: 140px;
+        border-radius: 50%;
+    }
+    .images P {
+        font-size: 26px;
+        margin-bottom: unset;
+    }
+    .other {
+        margin: 15px 20px;
+        padding-top: 10px;
+        text-align: left;
+    }
+    .other span {
+        display: inline-block;
+        font-size: 26px;
+    }
+    .other .top,  .other .middle, .other .bottom{
+        margin: 20px 0;
+    }
+    .top .text1 {
+        color: #686868;
+    }
+    .other .middle span {
+        color: #1989fa;
+    }
+    .other .bottom {
+        background-color: #ff362c;
+        color: #fff;
+        font-size: 30px;
+        height: 50px;
+        border-radius: 25px;
+        padding: 0 15px;
+        line-height: 50px;
+    }
+    .other .ing {
+        background-color: #686868;
+        color: #fff;
     }
 </style>

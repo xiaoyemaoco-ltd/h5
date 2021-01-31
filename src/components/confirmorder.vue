@@ -7,19 +7,21 @@
                 <div class="text">Ваша заявка на покупку успешно отправлена. Пожалуйста, оплатите заказ в течение 30 минут.</div>
             </div>
             <div class="detail">
-                <div>
-                    <span>номер заказа</span>
-                    <span>{{ordersn}}</span>
+                <div class="sn">
+                    <span class="text1">номер заказа:</span>
+                    <span class="text2">{{ordersn}}</span>
                 </div>
-                <div>
-                    <span>Количество</span>
-                    <span>{{amount}}</span>
+                <div class="sn amount">
+                    <span class="text1">Количество:</span>
+                    <span class="text2">{{amount}}</span>
                 </div>
             </div>
             <div class="images">
-                <img :src="imgs">
-                <img src="../assets/image/pay/visa.jpg">
-                <img src="../assets/image/pay/mastercard.jpg">
+                <div class="img">
+                    <img :src="imgs">
+                </div>
+                <div class="img"><img src="../assets/image/pay/visa.png"></div>
+                <div class="img"><img src="../assets/image/pay/mastercard.png"></div>
             </div>
             <van-button round class="btn" @click="pay">Оплата</van-button>
         </div>
@@ -107,20 +109,72 @@
     .desc {
         display: flex;
         width: 95%;
-        margin: 20px auto;
+        margin: 20px 15px;
         border: 1px #f60 solid;
-        border-radius: 5px;
+        border-radius: 15px;
     }
 
     .desc .text {
-        font-size: 9px;
+        width: 90%;
+        font-size: 20px;
         color: #f60;
+        padding: 15px;
         text-align: left;
     }
     .icon {
         margin: 0 auto;
+        width: 10%;
     }
     .van-icon {
         vertical-align: center;
+    }
+    .detail {
+        text-align: left;
+        margin: 0 15px;
+    }
+    .detail span {
+        display: inline-block;
+    }
+    .detail .text1{
+        font-size: 26px;
+        margin-right: 10px;
+    }
+    .detail .text2{
+        font-size: 32px;
+        color: #ff362c;
+    }
+    .sn {
+        margin: 20px 0;
+        padding: 15px 0;
+        border-bottom: 1px #eee solid;
+        border-top: 1px #eee solid;
+    }
+    .images {
+        margin: 30px 15px;
+        padding-left: 5px;
+        display: flex;
+    }
+    .images .img {
+        padding: 10px;
+        margin-right: 20px;
+        border:1px #ccc solid;
+        margin: 0 auto;
+    }
+    .img img {
+        margin: 0 auto;
+        width: 80%;
+    }
+    .btn {
+        width: 80%;
+        background-color: #ff362c;
+        color: #fff;
+        height: 80px;
+        border-radius: 40px;
+        font-size: 34px;
+        margin-top: 30px;
+    }
+    .detail .amount {
+        border-top: unset;
+        padding-top: unset;
     }
 </style>

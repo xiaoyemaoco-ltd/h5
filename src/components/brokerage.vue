@@ -17,52 +17,61 @@
 
             <div class="count">
                 <div class="all">
-                    <span>Все:</span>
-                    <span class="money">0тг.</span>
-                    <span>0шт.</span>
+                    <span>Всего:</span>
+                    <span class="money">{{split_total}}тг.</span>
+                    <span>{{split_total_count}}шт.</span>
                 </div>
                 <div class="all">
-                    <span>Все:</span>
-                    <span class="money">0тг.</span>
-                    <span>0 шт.</span>
+                    <span>Мои подписчики:</span>
+                    <span class="money">{{split_mobile}}тг.</span>
+                    <span>{{split_mobile_count}} шт.</span>
                 </div>
                 <div class="all">
-                    <span>Все:</span>
-                    <span class="money">0тг.</span>
-                    <span>0 шт.</span>
+                    <span>Поделись:</span>
+                    <span class="money">{{split_h5}}тг.</span>
+                    <span>{{split_h5_count}} шт.</span>
                 </div>
                 <div class="all">
-                    <span>Все:</span>
-                    <span class="money">0тг.</span>
-                    <span>0 шт.</span>
+                    <span>Мой заказ:</span>
+                    <span class="money">{{split_self}}тг.</span>
+                    <span>{{split_self_count}} шт.</span>
                 </div>
             </div>
 
-            <div class="list">
-                <div class="top">
-                    <h3>420</h3>
-                    <span class="unit">тг.</span>
-                    <span class="status">yiwancheng</span>
-                </div>
-                <div class="second">
-                    <span class="proname text">username:</span>
-                    <span class="prome">2999</span>
-                    <span class="text">тг.</span>
-                    <div class="right">
-                        <img src="../assets/image/fenxiang@2x.png" />
-                        <span class="text">username</span>
+            <van-list
+                v-model="loading"
+                :finished="finished"
+                finished-text="Больше не надо"
+                loading-text="Загрузка..."
+                @load="onLoad"
+            >
+                <div class="list" v-for="(v, k) in list" :key="k">
+                    <div class="top">
+                        <h3>{{v.split_money}}</h3>
+                        <span class="unit">тг.</span>
+                        <span class="status">{{v.status_code}}</span>
+                    </div>
+                    <div class="second">
+                        <span class="proname text">сумма заказа:</span>
+                        <span class="prome">{{v.pay_money}}</span>
+                        <span class="text">тг.</span>
+                        <div class="right">
+                            <img src="../assets/image/fenxiang@2x.png" />
+                            <span class="text">{{v.xd_user_name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="second">
+                        <span class="text date">{{v.creat_time}}</span>
+                    </div>
+
+                    <div class="second bottom">
+                        <img src="../assets/image/icon-ok.png">
+                        <p class="text date">{{v.invalid_res}}</p>
                     </div>
                 </div>
+            </van-list>
 
-                <div class="second">
-                    <span class="text date">11-07-2020 19:27</span>
-                </div>
-
-                <div class="second bottom">
-                    <img src="../assets/image/icon-ok.png">
-                    <p class="text date">12345645sfskafllasfks12345645sfskafllasfkskfksklklsdkfkkskfksdfkfkdkkfksklklsdkfkkskfksdfkfkdk</p>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -78,12 +87,13 @@
                 show: false,
                 title: 'Мои комиссия',
                 value: '',
-                value1: 0,
+                value1: -1,
                 value2: 'e',
                 option1: [
-                    { text: 'Все', value: 0 },
-                    { text: '新款商品', value: 1 },
-                    { text: '活动商品', value: 2 },
+                    { text: 'Все', value: -1 },
+                    { text: 'В Ожидаемый', value: 0 },
+                    { text: 'Начисленные', value: 1 },
+                    { text: 'недействительным', value: 2 },
                 ],
                 option2: [
                     { text: 'Все', value: 'a' },
@@ -95,12 +105,73 @@
                 minDate: new Date(2020, 1, 1),
                 maxDate: new Date(2030, 10, 1),
                 currentDate: new Date(),
-                date: ''
+                date: '',
+                list: [],
+                loading: false,     //是否处于加载状态，加载过程中不触发load事件
+                finished: false,    //是否已加载完成，加载完成后不再触发load事件
+                updata:{
+                    pageNumber: 0,  //页码
+                    pageSize:20     //每页条数
+                },
+                user_id: 0,
+                split_total: 0,
+                split_total_count: 0,
+                split_self: 0,
+                split_self_count: 0,
+                split_mobile: 0,
+                split_mobile_count: 0,
+                split_h5: 0,
+                split_h5_count: 0,
             }
         },
+        mounted() {
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+            if (!userinfo) {
+                this.$router.push('./login')
+                return
+            }
+            this.user_id = userinfo.user_id
+            this.updata.pageNumber = 0
+            this.updata.pageSize = 20
+        },
         methods: {
+            getlist () {
+                this.$axios.post('api/v1/Getincomelist', {
+                    user_id: this.user_id,
+                    skip: this.updata.pageNumber,
+                    maxperpage: this.updata.pageSize,
+                    statustype: this.value1,
+                    keyword: this.value,
+                    datetype: this.value2,
+                    monthkey: this.date
+                }).then((e) => {
+                    console.log(e)
+                    if (e.data.statuscode == 200) {
+                        let list = e.data.list
+                        this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
+                        if (list == null || list.length === 0) {
+                            this.finished = true;           // 加载结束
+                            return;
+                        }
+                        this.updata.pageNumber = e.data.skip;
+                        this.list = this.list.concat(list); // 将新数据与老数据进行合并
+                        this.split_total = e.data.split_total
+                        this.split_total_count = e.data.split_total_count
+                        this.split_self = e.data.split_self
+                        this.split_self_count = e.data.split_self_count
+                        this.split_mobile = e.data.split_mobile
+                        this.split_mobile_count = e.data.split_mobile_count
+                        this.split_h5 = e.data.split_h5
+                        this.split_h5_count = e.data.split_h5_count
+                    } else {
+                        this.finished = true;
+                    }
+                })
+            },
+            onLoad() {
+                this.getlist();
+            },
             onchange (e) {
-                console.log(e)
                 if (e == 'f') {
                     this.show = true
                 }
@@ -111,6 +182,8 @@
                 let year = value.getFullYear()
                 let month = Number(value.getMonth()) + 1
                 this.date = year + '-' + month
+                this.list = []
+                this.getlist()
             },
             //时间取消
             cancel () {
@@ -122,8 +195,9 @@
 
 <style scoped>
     .content {
-        background-color: #eeeeee;
-        height: calc( 100vh - 100px);
+        background-color: #eee;
+        height: calc( 100vh - 100px );
+        overflow-y:auto;
     }
     .sel >>> .van-dropdown-menu__bar {
         box-shadow: unset;

@@ -23,6 +23,8 @@ import Collect from './components/collect'
 import Myuser from './components/myuser'
 import Vipuser from './components/vipuser'
 import Brokerage from './components/brokerage'
+import Stationletter from './components/stationletter'
+import Stationmsgdetail from './components/stationmsgdetail'
 
 Vue.use(Router)
 
@@ -51,6 +53,8 @@ const routes = [
     {path: '/myuser', component: Myuser},
     {path: '/vipuser', component: Vipuser},
     {path: '/brokerage', component: Brokerage},
+    {path: '/stationletter', component: Stationletter},
+    {path: '/stationmsgdetail', component: Stationmsgdetail},
 ]
 
 

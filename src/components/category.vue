@@ -153,31 +153,6 @@
                     }
                 })
             },
-            _initScroll () {
-                //better-scroll的实现原理是监听了touchStart,touchend事件，所以阻止了默认的事件（preventDefault）
-                //所以在这里做点击的话，需要在初始化的时候传递属性click,派发一个点击事件
-                //在pc网页浏览模式下，点击事件是不会阻止的，所以可能会出现2次事件，所以为了避免2次，可以在绑定事件的时候把$event传递过去
-                this.lefts = new BScroll(this.$refs.left, {
-                    click: true
-                })
-                this.rights = new BScroll(this.$refs.right, {
-                    probeType: 3  //探针的效果，实时获取滚动高度
-                })
-                //rights这个对象监听事件，实时获取位置pos.y
-                this.rights.on('scroll', (pos) => {
-                    this.scrollY = Math.abs(Math.round(pos.y))
-                })
-            },
-            _getHeight () {
-                let rightItems = this.$refs.right.getElementsByClassName('right-item-hook')
-                let height = 0
-                this.listHeight.push(height)
-                for(let i = 0; i < rightItems.length; i++){
-                    let item = rightItems[i]
-                    height += item.clientHeight
-                    this.listHeight.push(height)
-                }
-            },
         }
     }
 </script>
