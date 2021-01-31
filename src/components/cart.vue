@@ -13,6 +13,8 @@
                     <van-checkbox style="width: 6%" icon-size="28rpx" :name="item.rec_id"></van-checkbox>
                         <van-swipe-cell id="swipe">
                             <div id="goods" @click="goToDetail(item.goods_id)">
+
+
                                 <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
                                 <div id="detail">
                                     <h4>{{item.goods_name}}</h4>
@@ -40,6 +42,7 @@
             <p>Вы ничего не купили</p>
             <van-button id="minibnt" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
         </div>
+
 
         <van-submit-bar v-show="sub" :decimal-length="0" label="Всего：" currency='' :price="price" button-text="Подтвердить заказ" @submit="onSubmit">
             <van-checkbox v-model="checkedAll" @click="selectall">все</van-checkbox>

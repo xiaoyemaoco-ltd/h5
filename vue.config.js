@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'production') {
     }
 } else {
     //dev 开发环境
-    host = 'http://test.liuqiang2qqcom.yxnat.softdev.top';
+    host = 'http://www.tp3.com';
 }
 
 module.exports = {

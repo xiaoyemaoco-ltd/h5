@@ -44,7 +44,7 @@
         },
         methods: {
             onChange(index) {
-                this.$router.push('./' + index)
+                this.$router.push('/' + index)
             }
         }
     }

@@ -4,9 +4,9 @@ import Vant,{Lazyload} from 'vant'
 import 'vant/lib/index.css'
 import 'lib-flexible'
 import axios from 'axios'
-import router from "./router";
+import router from "./router"
 import qs from 'qs'
-import VueClipboard from 'vue-clipboard2';
+import VueClipboard from 'vue-clipboard2'
 
 // Vue.prototype.Clipboard=Clipboard;
 

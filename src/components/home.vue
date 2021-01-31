@@ -3,6 +3,10 @@
     <div id="header">
       <van-search v-model="value" @click="search" placeholder="поиска товар" />
     </div>
+<router-link to="/cart">
+    <p>更多</p>
+</router-link>
+
     <div id="content">
         <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
           <van-swipe-item>

@@ -23,10 +23,10 @@ import Search from './components/search'
 Vue.use(Router)
 
 const routes = [
-    {path: '/home', component: Home},
-    {path: '/category', component: Category},
-    {path: '/cart', component: Cart},
-    {path: '/personal', component: Personal},
+    {path: '/home', name: 'Home', component: Home},
+    {path: '/category', name: 'Category', component: Category},
+    {path: '/cart', name: 'Cart', component: Cart},
+    {path: '/personal', name: 'Personal', component: Personal},
     {path: '/goods', component: Goods},
     {path: '/goodsdetail', component: GoodsDetail},
     {path: '/pay', component: Pay},

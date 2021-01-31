@@ -28,7 +28,6 @@
 
 <script>
     import Tabbar from "./tabbar";
-    import BScroll from 'better-scroll'
     export default {
         name: "goods",
         data() {
