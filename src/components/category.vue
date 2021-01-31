@@ -33,6 +33,7 @@
         data() {
             return {
                 active: 'category',
+                // active: Number(window.localStorage.getItem("activeIndex")||0),
                 list: [],
                 loading: false,
                 finished: false,
@@ -47,6 +48,13 @@
                 clickEvent: false
             };
         },
+        watch: {
+            $route (to, from) {
+                // 对路由变化作出响应...
+                console.log('to.path----',to.path)//跳转后路由
+                console.log('from----',from)//跳转前路由
+            }
+        },
         components: {
             Tabbar
         },
@@ -56,6 +64,7 @@
                 this._initScroll()
                 this._getHeight()
             })*/
+            console.log(this.$route.path)
         },
         computed: {
             currentIndex () {

@@ -28,7 +28,6 @@ Vue.use(Lazyload,{
 Vue.use(Vant)
 Vue.use(VueClipboard)
 
-Vue.config.productionTip = false
 
 new Vue({
   render: h => h(App),

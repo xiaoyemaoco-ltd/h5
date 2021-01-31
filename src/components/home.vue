@@ -55,6 +55,7 @@ export default {
         pageNumber: 0,  //页码
         pageSize:20     //每页条数
       },
+      // active: Number(window.localStorage.getItem("activeIndex")||0),
       loading: false,
       finished: false,
     };
@@ -184,7 +185,6 @@ export default {
     height: 60px;
     line-height: 30px;
     /*兩行換行省略號*/
-    text-overflow: -o-ellipsis-lastline;
     text-overflow: ellipsis;
     display: -webkit-box;
     overflow: hidden;

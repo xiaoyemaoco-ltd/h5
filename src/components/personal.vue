@@ -61,7 +61,7 @@
                       <img src="../assets/image/uc/m_myorder.png" />
                     </template>
                   </van-tabbar-item>
-                  <van-tabbar-item>
+                  <van-tabbar-item @click="collect">
                     <span>Избранное</span>
                     <template #icon="props">
                       <img src="../assets/image/uc/m_enshrine.png" />
@@ -83,13 +83,13 @@
             </div>
             <div class="other">
                 <van-tabbar id="select">
-                  <van-tabbar-item>
+                  <van-tabbar-item @click="brokerage">
                     <span>Мой бонус</span>
                     <template #icon="props">
                       <img src="../assets/image/uc/m_teamorder.png" />
                     </template>
                   </van-tabbar-item>
-                  <van-tabbar-item>
+                  <van-tabbar-item @click="invited">
                     <span>Мои подписчики</span>
                     <template #icon="props">
                       <img src="../assets/image/uc/m_teamuser.png" />
@@ -105,7 +105,7 @@
             </div>
           <div class="other">
             <van-tabbar id="select">
-              <van-tabbar-item>
+              <van-tabbar-item @click="vipuser">
                 <span>моя команда</span>
                 <template #icon="props">
                   <img src="../assets/image/uc/m_teamvip.png" />
@@ -179,18 +179,39 @@
             this.getuserifo()
         },
         methods: {
+            //订单
             getOrder() {
                 this.$router.push('./order')
             },
+            //地址
             address() {
                 this.$router.push('./address')
             },
+            //优惠券
             coupon() {
                 this.$router.push('./coupon')
             },
+            //登录
             login() {
                 this.$router.push('./login')
             },
+            //收藏
+            collect() {
+                this.$router.push('./collect')
+            },
+            //user
+            invited() {
+                this.$router.push('./myuser')
+            },
+            //vip列表
+            vipuser() {
+                this.$router.push('./vipuser')
+            },
+            //佣金
+            brokerage() {
+                this.$router.push('./brokerage')
+            },
+            //用户信息
             getuserifo () {
                 let userinfo = JSON.parse(localStorage.getItem('userinfo'))
                 if (userinfo) {

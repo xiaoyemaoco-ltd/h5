@@ -167,10 +167,11 @@
                     <div class="detailimg" v-html="detail.goods_desc"></div>
                 </div>
             </div>
-            <div>
+            <div class="bottom">
                 <van-goods-action>
-                    <van-goods-action-icon icon="like-o" />
-                    <van-goods-action-icon icon="chat-o"><a href="tel:13828172679"></a></van-goods-action-icon>
+                    <van-icon name="like" v-if="detail.is_collect" color="#ff362c" @click="cancelcollect" />
+                    <van-goods-action-icon v-else icon="like-o" @click="collect" />
+                    <a href="tel:13828172679"><van-goods-action-icon icon="chat-o"></van-goods-action-icon></a>
                     <van-goods-action-button type="danger" text="Купи сейчас" @click="selectsku"
                     />
                 </van-goods-action>
@@ -212,10 +213,17 @@
                 productsn: 0,
                 productstock: 0,
                 product_id: '',
-                attr_id: ''
+                attr_id: '',
+                user_id: 0
             };
         },
+        inject: ['reload'],
         mounted() {
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+            if (userinfo) {
+                this.user_id = userinfo.user_id
+            }
+
             this.getGoodsDetail()
             this.getCity(3)
         },
@@ -274,7 +282,8 @@
             },
             getGoodsDetail() {
                 this.$axios.post('api/goods/getGoodsDetail', {
-                    goods_id: this.$route.query.goods_id
+                    goods_id: this.$route.query.goods_id,
+                    user_id: this.user_id
                 }).then((res) => {
                     if (res.data.statuscode == 200) {
                         this.detail = res.data.data
@@ -323,13 +332,12 @@
                     this.$toast.fail('Этот товар распродан')
                     return;
                 }
-                let userinfo = localStorage.getItem('userinfo')
-                if (!userinfo) {
+                if (this.user_id == 0) {
                     this.$router.push('./login')
                     return
                 }
                 this.$axios.post('api/goods/addCart', {
-                    user_id : JSON.parse(userinfo).user_id,
+                    user_id : this.user_id,
                     goods_id : this.detail.goods_id,
                     goods_sn : this.productsn,
                     goods_name : this.detail.goods_name,
@@ -356,15 +364,15 @@
                     this.$toast.fail('Этот товар распродан')
                     return;
                 }
-                let userinfo = localStorage.getItem('userinfo')
-                if (!userinfo) {
+
+                if (this.user_id == 0) {
                     this.$router.push('./login')
                     return
                 }
                 this.$router.push({
                     path: './pay',
                     query: {
-                        user_id : JSON.parse(userinfo).user_id,
+                        user_id : this.user_id,
                         goods_id : this.detail.goods_id,
                         goods_sn : this.productsn,
                         goods_name : this.detail.goods_name,
@@ -375,6 +383,66 @@
                         goods_attr_id : this.attr_id,
                         promote_price : this.detail.promote_price,
                         goods_thumb: this.detail.goods_thumb
+                    }
+                })
+            },
+            //收藏
+            collect () {
+                if (this.user_id == 0) {
+                    this.$router.push('./login')
+                    return
+                }
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/collectGoods', {
+                    user_id: this.user_id,
+                    goods_id: this.detail.goods_id
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.reload()
+                            }
+                        })
+                    }
+                })
+            },
+            //取消收藏
+            cancelcollect () {
+                if (this.user_id == 0) {
+                    this.$router.push('./login')
+                    return
+                }
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/deleteCollectGoods', {
+                    user_id: this.user_id,
+                    goods_id: this.detail.goods_id
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.reload()
+                            }
+                        })
                     }
                 })
             },
@@ -399,6 +467,13 @@
         width: 750px;
         height: calc( 100vh - 100px);
         overflow-y:auto;
+    }
+    .bottom >>> .van-goods-action-icon__icon {
+        font-size: 60px;
+    }
+    .van-icon-like {
+        font-size: 60px;
+        margin: 0 15px;
     }
     .detailimg img{
         width: 100%;
