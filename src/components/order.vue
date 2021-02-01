@@ -167,7 +167,6 @@
                         </div>
                         <div id="status">
                             <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>

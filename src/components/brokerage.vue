@@ -5,7 +5,7 @@
             <div>
                 <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
                 <van-dropdown-menu class="sel">
-                    <van-dropdown-item v-model="value1" :options="option1" />
+                    <van-dropdown-item v-model="value1" :options="option1" @change="onchange1"/>
                     <van-dropdown-item v-model="value2" :options="option2" @change="onchange" />
                 </van-dropdown-menu>
 
@@ -87,8 +87,8 @@
                 show: false,
                 title: 'Мои комиссия',
                 value: '',
-                value1: -1,
-                value2: 'e',
+                value1: 1,
+                value2: '3',
                 option1: [
                     { text: 'Все', value: -1 },
                     { text: 'В Ожидаемый', value: 0 },
@@ -96,16 +96,17 @@
                     { text: 'недействительным', value: 2 },
                 ],
                 option2: [
-                    { text: 'Все', value: 'a' },
-                    { text: 'эа день', value: 'b' },
-                    { text: 'эа неделя', value: 'c' },
-                    { text: 'эа месяц', value: 'e' },
-                    { text: 'период отбора', value: 'f' },
+                    { text: 'Все', value: '0' },
+                    { text: 'эа день', value: '1' },
+                    { text: 'эа неделя', value: '2' },
+                    { text: 'эа месяц', value: '3' },
+                    { text: 'период отбора', value: '-1' },
                 ],
                 minDate: new Date(2020, 1, 1),
                 maxDate: new Date(2030, 10, 1),
                 currentDate: new Date(),
                 date: '',
+                startdate: '',
                 list: [],
                 loading: false,     //是否处于加载状态，加载过程中不触发load事件
                 finished: false,    //是否已加载完成，加载完成后不再触发load事件
@@ -172,9 +173,21 @@
                 this.getlist();
             },
             onchange (e) {
-                if (e == 'f') {
+                if (e == '-1') {
                     this.show = true
                 }
+                this.list = []
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.getlist()
+            },
+            onchange1 (e) {
+                console.log(e)
+                this.value1 = e
+                this.list = []
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.getlist()
             },
             //确认时间
             confirmdate (value) {
@@ -194,6 +207,9 @@
 </script>
 
 <style scoped>
+    .van-list >>> .van-list__finished-text {
+        display: none;
+    }
     .content {
         background-color: #eee;
         height: calc( 100vh - 100px );

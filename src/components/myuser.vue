@@ -40,7 +40,7 @@
                         <span>+7 {{v.mobile_phone}}</span>
                     </div>
                     <div class="bottom ing" v-if="v.status == 1">в Процесс проверки</div>
-                    <div class="bottom" v-else>настроить как VIP</div>
+                    <div class="bottom" v-else @click="applyvip(v.user_id)">настроить как VIP</div>
                 </div>
             </div>
         </div>
@@ -67,6 +67,7 @@
                 count: 0
             }
         },
+        inject: ['reload'],
         mounted() {
             let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if (!userinfo) {
@@ -101,6 +102,7 @@
                     user_id: this.user_id,
                     date: this.date,
                 }).then((e) => {
+                    console.log(e)
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
@@ -137,6 +139,43 @@
             //时间取消
             cancel () {
                 this.show = false
+            },
+            //申请vip
+            applyvip (user_id) {
+                this.$dialog.confirm({
+                    title: 'Удалить избранное',
+                    message: 'Вы хотите удалить товар?',
+                    confirmButtonText: 'подтвердить',
+                    cancelButtonText: 'отменить',
+                    cancelButtonColor: '#2196f3',
+                    confirmButtonColor: '#2196f3'
+                })
+                .then(() => {
+                    this.$toast.loading({
+                        duration: 0,
+                        forbidClick: true,
+                        mask: true,
+                        message: "Загрузка..."
+                    });
+
+                    this.$axios.post('api/user/applyVip', {
+                        plus_user_id: this.user_id,
+                        user_id: user_id
+                    }).then((e) => {
+                        this.$toast.clear()
+                        if (e.data.statuscode == 200) {
+                            this.$toast({
+                                type: 'success',
+                                message: e.data.message,
+                                onClose: () => {
+                                    this.reload()
+                                }
+                            })
+                        } else {
+                            this.$toast.fail(e.data.message)
+                        }
+                    })
+                })
             }
         }
     }
@@ -207,6 +246,7 @@
         overflow-y:auto;
     }
     .images {
+        width: 30%;
         margin: 15px 40px;
     }
     .images #img {
@@ -236,6 +276,7 @@
         color: #1989fa;
     }
     .other .bottom {
+        width: 100%;
         background-color: #ff362c;
         color: #fff;
         font-size: 30px;
@@ -243,6 +284,7 @@
         border-radius: 25px;
         padding: 0 15px;
         line-height: 50px;
+        text-align: center;
     }
     .other .ing {
         background-color: #686868;

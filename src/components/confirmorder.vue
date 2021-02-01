@@ -3,7 +3,7 @@
         <Header :title="title"></Header>
         <div class="content">
             <div class="desc">
-                <div class="icon"><van-icon name="todo-list-o" /></div>
+                <div class="icon"><img src="../assets/image/msg-pending.svg"></div>
                 <div class="text">Ваша заявка на покупку успешно отправлена. Пожалуйста, оплатите заказ в течение 30 минут.</div>
             </div>
             <div class="detail">
@@ -124,6 +124,13 @@
     .icon {
         margin: 0 auto;
         width: 10%;
+        /*图片居中*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .icon img {
+        width: 70%;
     }
     .van-icon {
         vertical-align: center;
