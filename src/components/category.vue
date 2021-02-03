@@ -1,171 +1,210 @@
 <template>
-    <div id="cate">
-        <div id="header">
-            <h2 id="cart">классификация</h2>
-        </div>
-        <div id="content">
-            <div id="left" ref="left">
-                <van-sidebar v-model="activeKey" @change="onChange" ref="menuList">
-                    <van-sidebar-item ref="l_item" v-for="(item, index) in category" :key="index" :title="item.cat_name"
-                    />
-                </van-sidebar>
-            </div>
-            <div id="right" ref="right">
-                <div id="list" class="list right-item-hook">
-                    <div class="right" v-for="(item, index) in category" :key="index" ref="good" style="width: 100%;display: flex;flex-wrap: wrap;">
-                        <h3>{{item.cat_name}}</h3>
-                        <div id="goods" v-for="(v, k) in item.sub_cat_id" :key="k" @click="getGoodsList(v.cat_id)">
-                            <lazy-component>
-                                <!--<van-image class="image" :show-loading="false" width="90px" height="80px" radius="5px" v-lazy="item.cat_img" />-->
-                                <img id="images" v-lazy="v.cat_img" >
-                            </lazy-component>
-                            <P class="text">{{v.cat_name}}</P>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <tabbar :active="active"></tabbar>
-    </div>
+   <div id="cate">
+       <div id="header">
+           <h2 id="cart">классификация</h2>
+       </div>
+
+       <div id="classifyContent">
+           <div id="scrollTitle" ref="scrollTitle">
+               <ul class="classify-title" ref="titleDetail">
+                   <li v-for="(item,index) in categories" :class="{'active':currentIndex===index}" :key="index" @click="onShortcutTouchStart(index)" ref="titleText">
+                       <p>
+                           <span v-html="item.cat_name"></span>
+                       </p>
+                   </li>
+               </ul>
+           </div>
+           <div id="scrollDetail" ref="scrollDetail">
+               <ul class="classify-detail">
+                   <li class="classify-detail-all" ref="listGroup" v-for="(item,index) in categories" :key="index">
+                       <p class="classify-detail-title">
+                           <img v-lazy="item.cat_img"/>
+                       </p>
+                       <div class="sub2list fixed-flex fixed-flex-fs-s flex-wrap">
+                           <div class="sub2item fixed-flexv fixed-flex-fs-s" v-for="(v, k) in item.sub_cat_id" :key="k" @click="jumpMerchandise(v.cat_id)">
+                               <div class="img fixed-flex fixed-flex-c-c">
+                                   <img v-lazy="v.cat_img"/>
+                               </div>
+                               <h3>{{v.cat_name}}</h3>
+                           </div>
+                       </div>
+                   </li>
+               </ul>
+           </div>
+       </div>
+       <tabbar :active="active"></tabbar>
+   </div>
 </template>
 
-<script>
-    import Tabbar from "./tabbar";
-    import BScroll from "better-scroll"
 
+<script>
+    import BScroll from "better-scroll";
+    import Tabbar from "./tabbar";
     export default {
-        name: "goods",
         data() {
             return {
-
-
                 active: 'category',
-                // active: Number(window.localStorage.getItem("activeIndex")||0),
-                list: [],
-                loading: false,
-                finished: false,
-                refreshing: false,//清空列表数据
-                pageNo: 0, //当前页码
-                category: [],
-                catename: '',
-                activeKey: 0,
-                loadtext: 'продолжить просмотр ',
-
+                categories: [],
+                currentIndex: 0,
+                scrollTitle: "",
+                scrollDetail: "",
+                scrollY: -1,
                 listHeight: [],
-                scrollY: 0, //实时获取当前y轴的高度
-                clickEvent: false
-
-            };
+                touch: {},
+                fixedLoading: false,
+                titleHeight: 0,
+                fixedImgHeight: 0,
+            }
         },
         components: {
             Tabbar
         },
         mounted() {
-            this.getCategory()
-        },
-        computed: {
-            //动态绑定class类名
+            this.getClassifyData()
         },
         methods: {
-            //点击左侧
-            onChange(index) {
-                this.clickEvent = true
-                //在better-scroll的派发事件的event和普通浏览器的点击事件event有个属性区别_constructed
-                //浏览器原生点击事件没有_constructed所以当时浏览器监听到该属性的时候return掉
-
-                let rightItems = this.$refs.right.getElementsByClassName('right')
-                let el = rightItems[index]
-                this.rights.scrollToElement(el, 300)
-
-
-                /*this.$axios.post('api/v1/Getclassdata', {
-                    parent_id: this.category[index].cat_id
-                }).then((res) => {
-                    if (res.data.statuscode == 200) {
-                        console.log(res)
-                        this.list = []
-                        this.list = res.data.list
-                        this.catename = this.category[index].cat_name
+            getClassifyData: function() {
+                this.$axios.post('api/v1/getallclassdata').then((e) =>{
+                    if (e.data.statuscode == 200) {
+                        this.categories = e.data.list
+                        console.log(this.categories)
+                        this.initScroll()
+                    }
+                })
+                /*var that = this;
+                $clg.showLoading()
+                $api.get($api.URL + '/catelog.php', function(ret) {
+                    $clg.hideLoading()
+                    if (ret) {
+                        if (ret.error === "0") {
+                            // console.log(JSON.stringify(ret.content.categories));
+                            that.categories = ret.content.categories
+                            $api.byId('scrollDetail').style.opacity = 1;
+                            var now_index = "";
+                            that.categories.forEach(function(item, index) {
+                                if (item.id == api.pageParam.cat_index) {
+                                    now_index = index;
+                                }
+                            })
+                            that.initScroll(now_index)
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
                     }
                 })*/
             },
-            //商品列表
-            getGoodsList (cate_id) {
-                this.$router.push({
-                    path: './goods',
-                    query: {
-                        cate_id: cate_id
-                    }
-                })
-            },
-            getCategory() {
-                this.$axios.post('api/v1/getallclassdata').then((e) => {
-                    console.log(e)
-                    if (e.data.statuscode == 200) {
-                        this.category = e.data.list
-                        this.catename = e.data.list[0].cat_name
-                        this.loadtext += e.data.list[1].cat_name
-
-                        this.$nextTick(() => {
-                            this._initBScroll()
-                            // 获取某个分类下商品列表离顶部距离
-                            this._initRightHeight();
-                        })
-
-                        /*this.$axios.post('api/v1/Getclassdata', {
-                            parent_id: e.data.list[0].cat_id
-                        }).then((res) => {
-                            if (res.data.statuscode == 200) {
-                                this.list = res.data.list
-                            }
-                        })*/
-                    }
-                })
-            },
-            _initBScroll() {
-                if (!this.Scroll) {
-                    this.rights = new BScroll(this.$refs.right, {
+            initScroll: function(now_index) {
+                var that = this;
+                setTimeout(function() {
+                    that.scrollDetail = new BScroll('#scrollDetail', {
                         startY: true,
-                        click: true, // 配置允许点击事件
-                        scrollY: true, // 可以开启纵向滚动
-                        probeType: 3, // 开启滚动监听
-                        bounce: false // 关闭弹性效果
+                        click: true,
+                        bounce: false,
+                        probeType: 3
                     })
-                    //rights这个对象监听事件，实时获取位置pos.y
-                    this.rights.on('scroll', (pos) => {
-                        this.scrollY = pos.y
+                    that.scrollTitle = new BScroll('#scrollTitle', {
+                        click: true
                     })
-                } else {
-                    this.Scroll.refresh()
-                }
-                this.lefts = new BScroll(this.$refs.left, {
-                    click: true,
-                    startY: true,
-                })
+                    that.scrollDetail.on('scroll', function(pos) {
+                        that.scrollY = pos.y
+                    })
+                    setTimeout(function() {
+                        if (now_index) {
+                            that.onShortcutTouchStart(now_index)
+                        }
+                    }, 20)
+                }, 20)
             },
-            //求出右边列表的高度
-            _initRightHeight(){
-                let rightItems = this.$refs.right.getElementsByClassName('right')
-                let height = 0
+            onShortcutTouchStart: function(index) {
+                this.touch.anchorIndex = index
+                this._scrollTo(index)
+            },
+            _calculateHeight: function() {
+                this.listHeight = []
+                var list = this.$refs.listGroup
+                var height = 0
                 this.listHeight.push(height)
-                for(let i = 0; i < rightItems.length; i++){
-                    let item = rightItems[i]
+                if (!list) {
+                    return
+                }
+                for (var i = 0; i < list.length; i++) {
+                    var item = list[i]
                     height += item.clientHeight
                     this.listHeight.push(height)
                 }
+            },
+            _scrollTo: function(index) {
+                if (!index && index !== 0) {
+                    return
+                }
+                if (index < 0) {
+                    index = 0
+                } else if (index > this.listHeight.length - 2) {
+                    index = this.listHeight.length - 2
+                }
+                index = Math.max(0, index);
+                this.ListenScroll = true;
+                this.currentIndex = index;
+                this.scrollDetail.scrollToElement(this.$refs.listGroup[index], 300)
+                var that = this;
+                setTimeout(function() {
+                    that.ListenScroll = false;
+                }, 400)
 
             },
-            //左右联调
-            _initLeftScroll(index){
-                let menu = this.$refs.menuList;
-                let el = menu[index];
-                this.leftBscroll.scrollToElement(el,300,0,-300)
+            jumpMerchandise: function(catId) {
+                this.$router.push({
+                    path: './goods',
+                    query: {
+                        cate_id: catId
+                    }
+                })
+            },
+        },
+        watch: {
+            categories: function() {
+                var that = this;
+                setTimeout(function() {
+                    that._calculateHeight()
+                }, 20)
+            },
+            scrollY: function(newY) {
+                if (this.ListenScroll) {
+                    return
+                }
+                var listHeight = this.listHeight
+                if (newY > 0) {
+                    this.currentIndex = 0
+                    return
+                }
+                for (var i = 0; i < listHeight.length - 1; i++) {
+                    var height1 = listHeight[i]
+                    var height2 = listHeight[i + 1]
+                    if (!height2 || (-newY >= height1 && -newY < height2)) {
+                        this.currentIndex = i
+                        return
+                    }
+                }
+                this.currentIndex = listHeight.length - 2
+            },
+            currentIndex: function() {
+                // newIndex < 0 ? newIndex = 0 : ""
+                /*var theTitle = this.$refs.titleText[newIndex].offsetTop
+                var theTitleHeight = this.$refs.titleText[newIndex].clientHeight
+                var detailHeight = this.$refs.titleDetail.clientHeight*/
+                /*if (this.titleHeight - theTitleHeight < theTitle) {
+                    this.scrollTitle.scrollTo(0, this.titleHeight - theTitle - theTitleHeight)
+                } else {
+                    this.scrollTitle.scrollTo(0, 0)
+
+                }*/
             }
         }
     }
 </script>
 
-<style scoped>
+
+<style lang="scss" scoped>
     #cate {
         height: calc( 100vh - 100px );
         /*padding-bottom: 50px;*/
@@ -181,59 +220,198 @@
         margin: unset;
         color: #fff;
     }
-    .van-sidebar-item--select {
-        font-weight: bold;
-    }
-    .van-sidebar .van-sidebar-item {
-        padding: 30px 2px;
+    #classifyContent {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        background: #fff;
+        height: 100%;
     }
 
-    .van-sidebar-item >>> .van-sidebar-item__text {
-        font-size: 12px;
+    #classifyContent #scrollTitle {
+        width: 33%;
+        height: 100%;
+        border-right: 1px solid #efefef;
+        overflow: auto;
     }
-    #content {
-        display: flex;
-        height: calc( 100vh - 100px );
-        width: 750px;
-        /*overflow:hidden;*/
-    }
-    #content #left {
-        overflow-y:auto;
-        height: calc(100vh - 200px);
-    }
-    #left >>> .van-sidebar {
-        width: 250px;
-    }
-    #content #right {
-        width: 500px;
-        height: calc(100vh - 200px);
+
+    #classifyContent #scrollDetail {
+        width: 67%;
+        height: 100%;
         overflow: hidden;
+        /*opacity: 0;*/
     }
-    #right #list {
+
+    .classify-title {
+        padding-top: 10px;
+        width: 100%;
+    }
+
+    .classify-title li {
+        text-align: center;
+        font-size: 14px;
+        /*height: 40px;*/
+        padding-bottom: 12px;
+    }
+
+    .classify-title li p {
+        width: 100%;
+        /*height: 26px;*/
+        /*line-height: 26px;*/
+        color: #444444;
+        border-left: 3px solid transparent;
+    }
+
+    .classify-title li p span {
+        display: block;
+        width: 100%;
+        /*height: 26px;*/
+        /*line-height: 26px;*/
+        padding: 8px 0;
+        color: #444444;
+        -webkit-transform: scale(.9);
+        transform: scale(.9);
+        transition: all .1s linear;
+    }
+
+    .classify-title li.active p {
+        border-left-color: #CF021B;
+    }
+
+    .classify-title li.active p span {
+        color: #000;
+        font-weight: bolder;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    .classify-detail {
+        padding: 0 12px;
+        padding-top: 12px;
+        padding-bottom: 20px;
+        margin-top: 100px;
+    }
+
+    .classify-detail .classify-detail-all .classify-detail-title {
+        overflow: hidden;
+        padding-bottom: 38%;
+        position: relative;
+        background-size: contain;
+    }
+
+    .classify-detail .classify-detail-all .classify-detail-title img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .classify-small {
+        margin-top: 22px;
+        color: #333;
+        text-align: center;
+        padding-bottom: 40px;
+    }
+
+    .classify-small div {
+        margin-bottom: 13px;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .classify-small div i {
+        display: inline-block;
+        width: 17px;
+        height: 0.5px;
+        background: #333;
+        margin-bottom: 4px;
+    }
+
+    .classify-small div i span {
+        padding: 0 10px;
+    }
+
+    .classify-small .classify-definite {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-box-pack: start;
+        -webkit-justify-content: start;
+        -ms-flex-pack: start;
+        justify-content: start;
+    }
+
+    .classify-small .classify-definite li {
+        width: 32%;
+        margin-left: 1%;
+    }
+
+    .classify-small .classify-definite li p {
+        overflow: hidden;
+        padding-bottom: 100%;
+        position: relative;
+        background-size: contain;
+    }
+
+    .classify-small .classify-definite li p img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .classify-small .classify-definite li h3 {
+        margin: 10px;
+        font-size: 13px;
+    }
+
+    .classify-detail-all:last-child {
+        min-height: 100vh;
+    }
+
+    .sub2list {
+        padding-top: 15px;
         display: flex;
         flex-wrap: wrap;
     }
-    #right #goods {
+
+    .sub2list .sub2item {
+        margin: unset;
         width: 49%;
     }
-    #goods #images {
-        width: 190px;
-        height: 180px;
+
+    .sub2list .sub2item .img {}
+
+    .sub2list .sub2item .img img {
+        height: 160px;
+        width: 160px;
     }
-    #right .text {
-        width: 90%;
-        margin-top: unset;
-        word-break: break-all;
+
+    .sub2list .sub2item h3 {
+        margin-top: 15px;
+        padding: 0 .3rem;
+        font-size: 22px;
+        /*line-height: .8rem;
+        height: .6rem;*/
+        text-align: center;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        text-align: center;
     }
-    #right h3 {
-        text-align: left;
-        padding: 15px;
-        width: 100%;
-    }
-    #list >>> .van-list__finished-text {
-        width: 100%;
-    }
-    #list >>> .van-list__loading {
-        width: 100%;
+
+    .searchbox-class {
+        padding: .8rem 0;
     }
 </style>

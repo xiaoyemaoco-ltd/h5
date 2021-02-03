@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <Header :title="title"></Header>
         <div id="menu">
@@ -11,7 +10,11 @@
             <van-nav-bar title="列表" left-text="返回" left-arrow @click-left="onClickLeft"/>
         </div>-->
         <div id="content">
-            <van-list id="list">
+            <van-list id="list" v-model="loading"
+                      :finished="finished"
+                      finished-text=""
+                      loading-text="Загрузка..."
+                      @load="onLoad">
                 <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.goods_id)">
                     <img v-lazy="item.goods_thumb">
                     <p v-if="item.sales > 0" id="sales">Продажи：{{item.sales}}</p>
@@ -48,13 +51,28 @@
                     { text: 'цена', value: 'price' },
                     { text: 'объем Продажи', value: 'sales' },
                 ],
-                list: []
+                list: [],
+                keyword: '',
+                cate_id: '',
+                updata:{
+                    pageNumber: 0,  //页码
+                    pageSize:20     //每页条数
+                },
+                loading: false,
+                finished: false,
             };
         },
         mounted() {
-            this.getGoodsList()
+            this.keyword = this.$route.query.keyword
+            this.cate_id = this.$route.query.cate_id
+            this.updata.pageNumber = 0
+            this.updata.pageSize = 20
+            // this.getGoodsList()
         },
         methods: {
+            onLoad() {
+                this.getGoodsList();
+            },
             onClickLeft () {
                 this.$router.back()
             },
@@ -67,19 +85,44 @@
                 })
             },
             getGoodsList() {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
                 this.$axios.post('api/goods/getGoodsListByCate', {
-                    cate_id: this.$route.query.cate_id
+                    cate_id: this.$route.query.cate_id,
+                    keyword: this.keyword,
+                    skip: this.updata.pageNumber,
+                    maxperpage: this.updata.pageSize
                 }).then((res) => {
+                    this.$toast.clear()
                     if (res.data.statuscode == 200) {
-                        console.log(res)
-                        this.list = res.data.data
+                        let e = Object.values(res.data.data)
+                        this.loading = false;
+                        if (e == null || e.length === 0) {
+                            this.finished = true;           // 加载结束
+                            return;
+                        } else {
+                            this.updata.pageNumber = res.data.skip;
+                            this.list = this.list.concat(e);
+                        }
+                    } else {
+                        this.finished = true;
                     }
                 })
             },
             change2() {
-                console.log(this.value2)
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.updata.list = []
                 this.$axios.post('api/goods/getGoodsListByCate', {
                     cate_id: this.$route.query.cate_id,
+                    keyword: this.keyword,
+                    skip: this.updata.pageNumber,
+                    maxperpage: this.updata.pageSize,
                     order: this.value2
                 }).then((res) => {
                     if (res.data.statuscode == 200) {
@@ -103,6 +146,9 @@
     }
     #header >>> .van-nav-bar .van-icon, #header >>> .van-nav-bar .van-nav-bar__text, #header >>> .van-nav-bar .van-nav-bar__title {
         color: #fff;
+    }
+    #list >>> .van-list__finished-text, #list >>>.van-list__loading {
+        margin: 0 auto;
     }
     #content {
         background-color: #eee;

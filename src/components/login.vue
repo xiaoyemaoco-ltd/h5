@@ -99,6 +99,16 @@
                                 this.$router.go(-1)
                             }
                         })
+                    } else if (e.data.statuscode == 400) {
+                        this.$toast({
+                            type: 'fail',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.$router.push('/register')
+                            }
+                        })
+                    } else {
+                        this.$toast.fail(e.data.message)
                     }
                 })
             },

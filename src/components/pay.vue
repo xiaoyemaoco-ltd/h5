@@ -88,25 +88,28 @@
             <div id="coupon">
                 <van-cell is-link @click="showPopup">купон</van-cell>
                 <van-popup round style="height: 400px" v-model="show2" closeable position="bottom">
-                    <div id="coupon1" v-for="(item, index) in coupondata" :key="index">
-                        <div class="Allshop">
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>{{item.name}}</h3>
-                                    <div id="date">
-                                        <label>Срок действия ваучера：</label>
-                                        <span class="priceShop">{{item.stoptime_show}}</span>
+                    <div v-if="coupondata.length > 0">
+                        <div id="coupon1" v-for="(item, index) in coupondata" :key="index">
+                            <div class="Allshop">
+                                <div class="shop_price">
+                                    <div class="titleTop">
+                                        <h3>{{item.name}}</h3>
+                                        <div id="date">
+                                            <label>Срок действия ваучера：</label>
+                                            <span class="priceShop">{{item.stoptime_show}}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="money">
-                                <h2>{{item.amount}}</h2>
-                                <!--<label>满20000可用</label>-->
-                                <van-button id="use" @click="usecoupon(item.couponid)" round type="info">применять</van-button>
+                                <div id="money">
+                                    <h2>{{item.amount}}</h2>
+                                    <!--<label>满20000可用</label>-->
+                                    <van-button id="use" @click="usecoupon(item.couponid)" round type="info">применять</van-button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div style="height: 100%; margin-top: 10px">
+
+                    <div style="height: 100%; margin-top: 10px" v-if="coupondata.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>

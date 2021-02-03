@@ -3,20 +3,15 @@
     <div id="header">
       <van-search v-model="value" @click="search" placeholder="поиска товар" />
     </div>
-<router-link to="/cart">
-    <p>更多</p>
-</router-link>
 
     <div id="content">
         <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-          <van-swipe-item>
-            <img id="swiperimages" src="https://img.yzcdn.cn/vant/apple-3.jpg">
-          </van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="https://img.yzcdn.cn/vant/apple-3.jpg"></van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="https://img.yzcdn.cn/vant/apple-3.jpg"></van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="https://img.yzcdn.cn/vant/apple-3.jpg"></van-swipe-item>
+          <van-swipe-item><img id="swiperimages" src="../assets/image/index1.png"></van-swipe-item>
+          <van-swipe-item><img id="swiperimages" src="../assets/image/index2.png"></van-swipe-item>
+          <van-swipe-item><img id="swiperimages" src="../assets/image/index3.png"></van-swipe-item>
+          <van-swipe-item><img id="swiperimages" src="../assets/image/index4.png"></van-swipe-item>
         </van-swipe>
-        <van-notice-bar left-icon="volume-o" text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"/>
+        <!--<van-notice-bar left-icon="volume-o" text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"/>-->
 
           <van-list id="list" v-model="loading" offset="10"
                     :finished="finished"
@@ -55,7 +50,6 @@ export default {
         pageNumber: 0,  //页码
         pageSize:20     //每页条数
       },
-      // active: Number(window.localStorage.getItem("activeIndex")||0),
       loading: false,
       finished: false,
     };
@@ -86,6 +80,7 @@ export default {
           }
           this.updata.pageNumber = e.data.skip;
           this.list = this.list.concat(list); // 将新数据与老数据进行合并
+          console.log(e)
         } else {
           this.finished = true;
         }
@@ -138,6 +133,10 @@ export default {
     background-color: #eee;
   }
 
+  .my-swipe {
+    background-color: #ffffff;
+  }
+
   .van-tabs >>> .van-tab--active {
     color: #ff362c;
   }
@@ -149,7 +148,8 @@ export default {
     height: 300px;
   }
   #swiperimages {
-    width: 100%;
+    padding-top: 15px;
+    width: 96%;
   }
   .van-notice-bar {
     height: 45px;

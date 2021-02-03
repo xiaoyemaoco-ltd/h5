@@ -1,6 +1,6 @@
 <template>
     <div id="content">
-        <van-nav-bar id="nav"/>
+        <van-nav-bar id="nav" :right-text="islogin ?'выход' : ''" @click-right="signout"/>
         <div id="header">
             <div id="avart">
                 <img id="img" v-if="islogin" :src="avart">
@@ -170,12 +170,15 @@
                 nickname: '',
                 role: '',
                 invitecode: '',
-                rank: 0
+                rank: 0,
+                user_id: 0,
+                text: ''
             }
         },
         components: {
             Tabbar
         },
+        inject: ['reload'],
         mounted() {
             this.getuserifo()
         },
@@ -226,7 +229,31 @@
                     this.role = userinfo.rank_name
                     this.invitecode = userinfo.yaoqing_code
                     this.rank = userinfo.user_rank
+                    this.user_id = userinfo.user_id
                 }
+            },
+            signout () {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                });
+
+                this.$axios.post('api/user/signOut', {
+                    user_id: this.user_id
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        localStorage.removeItem('userinfo')
+                        this.$toast({
+                            type: 'success',
+                            message: e.data.message,
+                            onClose: () => {
+                                this.reload()
+                            }
+                        })
+                    }
+                })
             }
         }
     }
@@ -253,6 +280,9 @@
         border: unset;
     }
     #nav >>> .van-nav-bar__title {
+        color: #fff;
+    }
+    #nav >>> .van-nav-bar__text {
         color: #fff;
     }
     #header {
