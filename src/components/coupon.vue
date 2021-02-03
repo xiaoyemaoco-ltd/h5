@@ -174,11 +174,9 @@
         },
         methods: {
             changstatus (e) {
-                console.log(e)
                 this.active = e
                 this.updata.pageNumber = 0
                 this.couponlist = []
-                this.finished = false;
                 this.getusercouponlist()
             },
             getusercouponlist () {
@@ -193,7 +191,8 @@
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
                         if (list == null || list.length === 0) {
-                            this.finished = true;           // 加载结束
+                            this.finished = true;// 加载结束
+                            return
                         }
                         this.updata.pageNumber = e.data.skip;
                         this.couponlist = this.couponlist.concat(list); // 将新数据与老数据进行合并
