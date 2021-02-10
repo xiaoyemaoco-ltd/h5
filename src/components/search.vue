@@ -17,7 +17,7 @@
             <div class="history">
                 <p>Поиск найден</p>
                 <div class="keywords">
-                    <span v-for="(v, k) in keywords" :key="k">{{v}}</span>
+                    <span v-for="(v, k) in keywords" :key="k" @click="goods(v)">{{v}}</span>
                 </div>
             </div>
         </div>
@@ -50,6 +50,14 @@
                     path: './goods',
                     query: {
                         keyword: this.value
+                    }
+                })
+            },
+            goods (val) {
+                this.$router.push({
+                    path: './goods',
+                    query: {
+                        keyword: val
                     }
                 })
             },
@@ -100,7 +108,7 @@
     }
     .history P {
         color: #a0a0a0;
-        font-size: 9px;
+        font-size: 15px;
     }
     .keywords {
         padding: 10px;

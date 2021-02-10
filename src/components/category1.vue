@@ -41,8 +41,6 @@
         name: "goods",
         data() {
             return {
-
-
                 active: 'category1',
                 // active: Number(window.localStorage.getItem("activeIndex")||0),
                 list: [],
@@ -86,7 +84,6 @@
                         if (list == null || list.length === 0) {
                             this.finished = true;           // 加载结束
                             return;
-
                         }
                         // this.list = this.list.concat(list);
                         this.list = list;

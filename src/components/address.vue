@@ -3,7 +3,7 @@
         <Header :title="title"></Header>
         <div class="box">
             <div id="content" v-for="(item, index) in list" :key="index">
-              <div class="addBox" @click="seladdress(item.address_id)">
+              <div class="addBox">
                 <div class="addradio">
                   <div class="addsmallBox">
                     <div class="userphone">
@@ -50,17 +50,20 @@
             Header
         },
         mounted() {
+            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+            if (!userinfo) {
+                this.$router.push({
+                    path: './login',
+                    query: {
+                        path: '/personal'
+                    }
+                })
+                return
+            }
+            this.userid = userinfo.user_id
             this.getaddresslist()
         },
         methods: {
-            //选择地址
-            seladdress (id) {
-                this.$axios.post('api/user/setDefaultAddress', {
-                    user_id: this.userid,
-                    address_id: id
-                }).then()
-                this.$router.go(-1);
-            },
             //默认地址
             defalutaddress () {
                 this.$toast.loading({
@@ -76,13 +79,7 @@
                 }).then((e) => {
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
-                        this.$toast({
-                            type: 'success',
-                            message: e.data.message,
-                            onClose: () => {
-                                this.getaddresslist()
-                            }
-                        })
+                        this.getaddresslist()
                     }
                 })
             },
@@ -112,28 +109,14 @@
                     user_id: this.userid,
                     address_id: id
                 }).then((e) => {
-                    console.log(e)
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
-                        this.$toast({
-                            type: 'success',
-                            message: e.data.message,
-                            onClose: () => {
-                                this.getaddresslist()
-                            }
-                        })
+                        this.getaddresslist()
                     }
                 })
             },
             //列表
             getaddresslist () {
-                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
-                if (!userinfo) {
-                  this.$router.push('./login')
-                  return
-                }
-
-                this.userid = userinfo.user_id
 
                 this.$toast.loading({
                   duration: 0,
@@ -143,9 +126,8 @@
                 });
 
                 this.$axios.post('api/user/getUserAddress', {
-                  user_id: userinfo.user_id
+                  user_id: this.userid
                 }).then((e) => {
-                    console.log(e)
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data

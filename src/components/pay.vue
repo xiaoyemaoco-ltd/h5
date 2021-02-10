@@ -52,7 +52,7 @@
             </div>
             <div>
                 <van-popup v-model="show1" closeable round position="bottom" style="z-index: 2113;" >
-                    <div class="van-sku-body" style="height: 400px;">
+                    <div class="van-sku-body">
                         <div class="van-sku-group-container">
                             <div id="title" class="van-sku-row van-hairline--bottom">
                                 <van-radio-group v-model="radio">
@@ -83,10 +83,14 @@
                 </div>
             </div>
             <van-cell-group id="beizhu">
-                <van-field v-model="postscript" label="комментарий:" label-width="92" placeholder="" />
+                <van-field v-model="postscript" label="комментарий:" label-width="100" placeholder="" />
             </van-cell-group>
             <div id="coupon">
-                <van-cell is-link @click="showPopup">купон</van-cell>
+                <van-cell is-link @click="showPopup">купон
+                    <span v-show="couponnum != 0 && showCoupprice == false" class="couponnum">купон {{couponnum}} шт.</span>
+                    <span v-show="couponnum == 0" class="couponnum">Нет в наличии</span>
+                    <span v-show="showCoupprice" class="couponnum showCoupprice">- {{couponprice}} тг.</span>
+                </van-cell>
                 <van-popup round style="height: 400px" v-model="show2" closeable position="bottom">
                     <div v-if="coupondata.length > 0">
                         <div id="coupon1" v-for="(item, index) in coupondata" :key="index">
@@ -100,10 +104,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="money">
+                                <div v-if="item.is_use == 1" id="money">
                                     <h2>{{item.amount}}</h2>
                                     <!--<label>满20000可用</label>-->
-                                    <van-button id="use" @click="usecoupon(item.couponid)" round type="info">применять</van-button>
+                                    <van-button id="use" @click="usecoupon(item.id, item.couponid, item.amount)" round type="info">применять</van-button>
+                                </div>
+
+                                <div v-else id="money" style="background-color: #cccccc;">
+                                    <h2>{{item.amount}}тг.</h2>
+                                    <van-button id="use" round type="info" style="color: #666666">недоступен</van-button>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +128,11 @@
                 <p>Способ оплаты</p>
                 <div style="display: flex">
                     <div v-for="(v, k) in payment" :key="k">
-                        <img class="image" :id="payid == v.pay_id ? 'active' : ''" @click="selectpay(v.pay_id, v.pay_desc)" :src="getImgUrl(v.pay_code)" style="width: 70px; height: 30px">
+                        <div class="image" :id="payid == v.pay_id ? 'active1' : ''" @click="selectpay(v.pay_id, v.pay_desc)">
+                            <img :src="getImgUrl(v.pay_code)" style="width: 70px; height: 30px">
+                            <span :class="payid == v.pay_id ? 'trag' : ''"></span>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -134,13 +147,13 @@
                 </label>
                 <label id="addr">
                   <span id="text">купон</span>
-                  <span id="cang">-0 тг.</span>
+                  <span id="cang">- {{couponprice}} тг.</span>
                 </label>
             </div>
         </div>
 
         <van-goods-action id="bottom">
-           <span id="total">{{totalprice}} тг.</span>
+           <span id="total">{{amount}} тг.</span>
             <van-goods-action-button @click="saveorder" type="danger" text="Создать заказ" id="button"/>
         </van-goods-action>
     </div>
@@ -161,6 +174,7 @@
                 mobile: '',
                 address: '',
                 totalprice: 0,
+                amount: 0,
                 province_id: 0,
                 city_id: 0,
                 district_id: 0,
@@ -187,13 +201,18 @@
                 product_id: 0,
                 buy_num: 0,
                 goods_attr_id: '',
-                rec_ids: []
+                rec_ids: [],
+                couponnum: 0,
+                couponId: 0,
+                couponprice: 0,
+                showCoupprice: false,
             }
         },
         mounted() {
             let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             this.userinfo = userinfo
             this.totalprice = this.$route.query.price / 100
+            this.amount = this.$route.query.price / 100
             this.rec_ids = this.$route.query.rec_ids
             this.getuserdefaultaddress()
             //立即购买数组
@@ -208,6 +227,7 @@
                 good.goods_thumb = this.$route.query.goods_thumb
 
                 this.totalprice = this.$route.query.goods_price
+                this.amount = this.$route.query.goods_price
                 this.goods.push(good)
 
                 this.goods_id = this.$route.query.goods_id
@@ -252,15 +272,15 @@
                     buy_num: this.buy_num,
                     goods_attr_id: this.goods_attr_id,
                     rec_ids: this.rec_ids,
+                    coupon_id: this.couponId
                 }).then((e) => {
                     this.$toast.clear()
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.$router.push({
                             path: './confirmorder',
                             query: {
                                 pay_id: this.payid,
-                                amount: this.totalprice,
+                                amount: this.amount,
                                 ordersn: e.data.order_sn
                             }
                         })
@@ -322,27 +342,22 @@
                     city_id: this.city_id
                 }).then((e) => {
                     if (e.data.statuscode == 200) {
-                        console.log(e.data)
                         this.point = e.data.data
                     }
                 })
                 this.show1 = true
             },
-            onEdit() {
-                console.log(1111)
-            },
-            onChange(index) {
-                this.showList = false;
-                this.chosenCoupon = index;
-            },
+            //获取去页面参数
             getshipping () {
                 this.$axios.post('api/goods/getBuyGoodsMsg', {
                     rec_ids: this.rec_ids,
                     goods_id: this.$route.query.goods_id,
-                    city_id: this.city_id
+                    city_id: this.city_id,
+                    buy_num: this.buy_num,
+                    product_id: this.product_id,
+                    user_id: this.userinfo.user_id
                 }).then((e) => {
                     this.$toast.clear();
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.ship = e.data.data
                         this.shipping_id = e.data.shipping_id
@@ -354,6 +369,7 @@
                         this.payid = this.payment[0].pay_id
                         this.paydesc = e.data.paydesc
                         this.coupondata = e.data.coupon
+                        this.couponnum = e.data.coupon.length
                         if (!this.$route.query.goods_id) {
                             this.goods = e.data.goods
                         }
@@ -395,6 +411,14 @@
             selectaddress () {
                 this.$router.push('./address')
             },
+            //点击使用优惠券
+            usecoupon (id, couponId, money) {
+                this.couponId = id
+                this.couponprice = money
+                this.amount = this.totalprice - money
+                this.show2 = false
+                this.showCoupprice = true
+            }
         },
     }
 </script>
@@ -407,7 +431,7 @@
         background-color: #eeeeee;
     }
     #att {
-        height: calc(100vh - 200px);
+        height: calc(100vh - 190px);
         overflow-y:auto;
     }
     #skuattr {
@@ -468,6 +492,7 @@
         width: 70%;
         height: 100%;
         display: inline-block;
+        text-align: left;
     }
     #attrlist #tz {
         /*vertical-align:middle;*/
@@ -517,6 +542,11 @@
         text-align: left;
         margin-bottom: 10px;
     }
+    #coupon .couponnum {
+        font-size: 20px;
+        float: right;
+        color: #a0a0a0;
+    }
     #paytype {
         padding: 15px 0;
         text-align: left;
@@ -527,8 +557,19 @@
     }
     #paytype .image {
         margin-left: 15px;
+        border: 1px #cccccc solid;
+        position: relative;
     }
-    #paytype #active {
+    #paytype .image .trag {
+        position: absolute;
+        right: 0;
+        bottom: 0px;
+        background: url('../assets/image/ico_yes.png') no-repeat 0 0;
+        height: 25px;
+        width: 25px;
+        z-index: 1;
+    }
+    #paytype #active1 {
         border: 2px #ff362c solid;
     }
     #money1 {
@@ -604,7 +645,8 @@
     }
     #money #use {
         height: 40px;
-        margin: 0 10px;
+        display: block;
+        margin: 0 auto;
         font-size: 16px;
         padding: 0 20px;
         margin-top: 30px;
@@ -628,6 +670,7 @@
         word-break: break-all;
         margin: unset;
         margin: 15px 15px;
+        height: 60px;
     }
     .titleTop #date {
         margin: 30px 15px 25px 15px;
@@ -639,5 +682,8 @@
         font-weight: bold;
         display: inline-block;
         font-size: 26px;
+    }
+    #coupon .showCoupprice {
+        color: #ff362c;
     }
 </style>

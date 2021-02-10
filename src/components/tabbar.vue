@@ -60,7 +60,7 @@
    height: 48px;
  }
   #text {
-    font-size: 4px;
+    font-size: 15px;
     display: inline-block;
   }
 </style>

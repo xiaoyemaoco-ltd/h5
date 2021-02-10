@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <router-view v-if="isRouterAlive"></router-view>
   </div>
 </template>
@@ -10,7 +12,6 @@ export default {
   name: 'app',
   data() {
     return {
-      active: 'home',
       isRouterAlive: true
     };
   },
@@ -37,6 +38,7 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-overflow-scrolling: touch;
   text-align: center;
   color: #2c3e50;
   /*margin-top: 60px;*/

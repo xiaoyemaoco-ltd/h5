@@ -2,7 +2,6 @@
     <div id="content">
         <Header :title="title"></Header>
 
-
         <van-row type="flex" justify="center" class="line">
             <!--<van-col span="3">&nbsp</van-col>-->
             <van-col span="18">

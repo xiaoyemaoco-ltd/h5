@@ -3,23 +3,24 @@
         <Header :title="title"></Header>
         <div class="create">
             <div class="borBox">
-              Имя<input v-model="name" placeholder="введите Имя" type="text" />
+              Имя: <input v-model="name" placeholder="введите Имя" type="text" />
             </div>
             <div class="borBox">
-              Фамилия<input v-model="lastname" placeholder="введите Фамилия" type="text" />
+              Фамилия: <input v-model="lastname" placeholder="введите Фамилия" type="text" />
             </div>
             <div class="borBox">
-              <label>номер телефона</label>
-              <input style="width: 50%" v-model="mobile" placeholder="введите номер телефона" type="number"/>
+              <label>номер телефона:</label>
+              <span class="seven">+7</span>
+              <input style="width: 50%; margin-left: unset" v-model="mobile" placeholder="введите номер телефона" type="number"/>
             </div>
             <div class="borBox" id="area" @click="borBox">
-              район
+                <label>район:</label>
                 <input placeholder="Выберите" type="text" class="inputBox" v-model="areavalue"/>
                 <i class="van-icon van-icon-arrow van-cell__right-icon"><!----></i>
             </div>
 
             <div class="borBox">
-              Адрес<input placeholder="введите Адрес" v-model="address" type="text" />
+              Адрес:<input placeholder="введите Адрес" v-model="address" type="text" />
             </div>
             <!--省市選取-->
             <div>
@@ -164,7 +165,6 @@
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.items = e.data.data
-                        console.log()
                         this.provice_id = this.items[0].region_id
                         this.provice = this.items[0].text
                     }
@@ -215,7 +215,6 @@
                         this.city = []
                         this.city = res.data.data
                         this.selected = this.city[0].region_id
-                        console.log(this.city)
                     }
                 })
             },
@@ -244,21 +243,21 @@
         font-weight: 400;
     }
     .create {
-        margin: 20px 30px;
+        margin: 20px 15px;
         text-align: left;
     }
     .borBox {
         border-bottom: 1px solid #eee;
         font-size: 28px;
         color: #333333;
-        padding: 20px 0 20px 20px;
+        padding: 20px 0;
     }
     .borBox input {
         width: 75%;
         height: 50px;
         display: inline-block;
         vertical-align: middle;
-        margin-left: 30px;
+        margin-left: 15px;
         border: unset;
     }
     .inputBox {
@@ -284,6 +283,10 @@
     #area {
         display: flex;
     }
+    #area label {
+        height: 50px;
+        line-height: 50px;
+    }
     #coupon1 #left {
         float: left;
         width: 45%;
@@ -304,5 +307,9 @@
     }
     .van-sidebar-item--select {
         font-weight: bold;
+    }
+    .seven {
+        margin: 0 15px;
+        color: #ff362c;
     }
 </style>

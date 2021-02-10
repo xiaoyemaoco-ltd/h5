@@ -13,7 +13,7 @@
         </van-swipe>
         <!--<van-notice-bar left-icon="volume-o" text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"/>-->
 
-          <van-list id="list" v-model="loading" offset="10"
+          <van-list id="list" v-model="loading" offset="1"
                     :finished="finished"
                     finished-text="Больше не надо"
                     loading-text="Загрузка..."
@@ -80,7 +80,6 @@ export default {
           }
           this.updata.pageNumber = e.data.skip;
           this.list = this.list.concat(list); // 将新数据与老数据进行合并
-          console.log(e)
         } else {
           this.finished = true;
         }
@@ -131,6 +130,7 @@ export default {
     height: calc( 100vh - 200px);
     overflow-y:auto;
     background-color: #eee;
+    bounce: true;
   }
 
   .my-swipe {
@@ -192,7 +192,7 @@ export default {
     -webkit-box-orient: vertical;
   }
   #goods img {
-    width: 220px;
+    width: 250px;
     height: 250px;
   }
   #attr #price, #attr #dw {
@@ -205,7 +205,7 @@ export default {
     margin-right: 10px;
   }
   #attr #dw {
-    font-size: 8px;
+    font-size: 24px;
     padding-top: 6px;
   }
   #attr #cang {

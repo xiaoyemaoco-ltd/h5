@@ -67,7 +67,6 @@
                 this.$axios.post('api/v1/getallclassdata').then((e) =>{
                     if (e.data.statuscode == 200) {
                         this.categories = e.data.list
-                        console.log(this.categories)
                         this.initScroll()
                     }
                 })
@@ -272,6 +271,7 @@
         width: 100%;
         /*height: 26px;*/
         /*line-height: 26px;*/
+        font-size: 20px;
         padding: 8px 0;
         color: #444444;
         -webkit-transform: scale(.9);

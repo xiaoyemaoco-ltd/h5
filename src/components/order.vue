@@ -2,15 +2,15 @@
     <div>
         <Header :title="title"></Header>
         <div class="Allorder" id="middle">
-            <van-tabs :active="active" @click="changstatus">
-              <van-search v-model="value" placeholder="введите ключевое слово для поиска" />
+            <van-tabs :active="active" @change="changstatus" swipeable>
+                <van-search v-model="value" placeholder="введите ключевое слово для поиска" search="search"/>
                 <van-tab title="Bce" name="-1">
                     <van-list
-                        v-model="loading"
+                        v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
                         loading-text="Загрузка..."
-                        @load="onLoad"
+                        @load="onLoad" v-if="orderlist.length > 0"
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
@@ -46,14 +46,19 @@
                         </div>
                     </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="Ожидающий" name="100">
                     <van-list
-                        v-model="loading"
+                        v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
                         loading-text="Загрузка..."
-                        @load="onLoad"
+                        @load="onLoad" v-if="orderlist.length > 0"
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
@@ -89,14 +94,19 @@
                         </div>
                     </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="Aктивный" name="101">
                     <van-list
-                        v-model="loading"
+                        v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
                         loading-text="Загрузка..."
-                        @load="onLoad"
+                        @load="onLoad" v-if="orderlist.length > 0"
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
@@ -130,14 +140,19 @@
                         </div>
                     </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="завершено" name="105">
                     <van-list
-                        v-model="loading"
+                        v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
                         loading-text="Загрузка..."
-                        @load="onLoad"
+                        @load="onLoad" v-if="orderlist.length > 0"
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
@@ -171,14 +186,19 @@
                         </div>
                     </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="Отменено" name="102">
                     <van-list
                         v-model="loading"
-                        :finished="finished"
+                        :finished="finished" offset="10"
                         finished-text="Больше не надо"
                         loading-text="Загрузка..."
-                        @load="onLoad"
+                        @load="onLoad" v-if="orderlist.length > 0"
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
@@ -212,6 +232,11 @@
                         </div>
                     </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
             </van-tabs>
         </div>
@@ -241,14 +266,23 @@
             Header
         },
         mounted() {
-            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
-            if (!userinfo) {
-                this.$router.push('./login')
-                return
-            }
-            this.user_id = userinfo.user_id
-            this.updata.pageNumber = 0
-            this.updata.pageSize = 20
+            setTimeout(() => {
+                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+                if (!userinfo) {
+                    this.$router.push({
+                        path: './login',
+                        query: {
+                            path: '/personal'
+                        }
+                    })
+                    return
+                }
+                this.user_id = userinfo.user_id
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.active = localStorage.getItem('order_active')
+                this.getuserorder();
+            }, 0)
         },
         inject: ['reload'],
         methods: {
@@ -263,6 +297,7 @@
                 })
             },
             getuserorder () {
+
                 /*this.$toast.loading({
                     duration: 0,
                     forbidClick: true,
@@ -270,15 +305,14 @@
                     message: "Загрузка..."
                 });*/
 
-
                 this.$axios.post('api/order/Getuserorder', {
                     user_id: this.user_id,
                     skip: this.updata.pageNumber,
                     maxperpage: this.updata.pageSize,
-                    composite_status: this.active
+                    composite_status: this.active,
+                    keyword: this.value
                 }).then((e) => {
                     // this.$toast.clear()
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
@@ -293,9 +327,12 @@
                     }
                 })
             },
+            search () {
+                this.getuserorder()
+            },
             changstatus (e) {
-                console.log(e)
                 this.active = e
+                localStorage.setItem('order_active', this.active)
                 this.updata.pageNumber = 0
                 this.orderlist = []
                 this.finished = false;
@@ -303,7 +340,9 @@
             },
             onLoad() {
                 // this.updata.pageNumber++;
+
                 this.getuserorder();
+
             },
             //跳详情
             getOrderDetail(order_id) {
@@ -329,7 +368,6 @@
                     order_id: id
                 }).then((e) => {
                     this.$toast.clear()
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.$toast({
                             type: 'success',
@@ -424,7 +462,7 @@
         text-align: right;
         border-bottom: 1px #eee solid;
         height: 50px;
-        padding: 20px 30px 0 0;
+        padding: 10px 15px 0 0;
     }
     .priceNum #num {
         color: #EE0B0B;
@@ -432,12 +470,15 @@
     }
     #status {
         text-align: right;
-        height: 50px;
-        padding: 20px 15px 0 0;
+        height: 55px;
+        padding: 5px 15px 0 0;
     }
     #status .paid_btn {
         margin-right: 20px;
-        border-radius: 3px;
+        border-radius: 5px;
+        background-color: #fff;
+        border: 1px #666666 solid;
+        height: 50px;
     }
     .paid_detail {
         color: #EE0B0B;

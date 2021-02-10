@@ -301,21 +301,37 @@
                         if (Object.keys(res.data.data.properties).length > 0) {
                             this.properties = res.data.data.properties
                             this.products = this.properties.products
-                            this.productprice = this.properties.default.price
-                            this.productsn = this.properties.default.product_sn
-                            this.productstock = this.properties.default.product_number
-                            this.product_id = this.properties.default.product_id
                             let selected = {}
+                            let pro = Object.values(this.properties.products)
                             if (this.properties.spe.length > 1) {
-                                let i = 0
+                                pro.map((v) => {
+                                    if (v.product_number > 0) {
+                                        selected = v.goods_attr.split('|')
+                                        this.attr_id = v.goods_attr
+                                        this.productprice = v.price
+                                        this.productsn = v.product_sn
+                                        this.productstock = v.product_number
+                                        this.product_id = v.product_id
+                                    }
+                                })
+                                /*let i = 0
                                 this.properties.spe.map((item) => {
                                     selected[i] = item.values[0].id
                                     i++
-                                })
+                                })*/
                                 this.attr_id = Object.values(selected).join(',')
                             } else {
-                                selected[0] = this.properties.spe[0].values[0].id
-                                this.attr_id = this.properties.spe[0].values[0].id
+                                pro.map((v) => {
+                                    if (v.product_number > 0) {
+                                        selected[0] = v.goods_attr
+                                        this.attr_id = v.goods_attr
+                                        this.productprice = v.price
+                                        this.productsn = v.product_sn
+                                        this.productstock = v.product_number
+                                        this.product_id = v.product_id
+                                    }
+                                })
+
                             }
                             this.attrselected = selected
                         } else {
@@ -327,15 +343,37 @@
             },
             //添加购物车
             addcart() {
-                if (this.productstock < this.value && this.detail.goods_number < this.value) {
-                    this.show = false
-                    this.$toast.fail('Этот товар распродан')
-                    return;
+                //判断库存
+                if (this.detail.goods_type != 0) {
+                    if (this.productstock < this.value) {
+                        this.$toast({
+                            message: 'Этот товар распродан',
+                            position: 'top',
+                        });
+                        return;
+                    }
+                } else {
+                    if (this.detail.goods_number < this.value) {
+                        this.$toast({
+                            message: 'Этот товар распродан',
+                            position: 'top',
+                        });
+                        return;
+                    }
                 }
+
                 if (this.user_id == 0) {
                     this.$router.push('./login')
                     return
                 }
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
                 this.$axios.post('api/goods/addCart', {
                     user_id : this.user_id,
                     goods_id : this.detail.goods_id,
@@ -348,6 +386,7 @@
                     goods_attr_id : this.attr_id,
                     promote_price : this.detail.promote_price
                 }).then((res) => {
+                    this.$toast.clear()
                     if (res.data.statuscode == 200) {
                         this.show = false
                         this.$toast({
@@ -359,16 +398,24 @@
             },
             //立即购买
             buynow () {
-                if (this.productstock < this.value && this.detail.goods_number < this.value) {
-                    this.show = false
-                    this.$toast.fail('Этот товар распродан')
-                    return;
+                //判断库存
+                if (this.detail.goods_type != 0) {
+                    if (this.productstock < this.value) {
+                        this.$toast.fail('Этот товар распродан')
+                        return;
+                    }
+                } else {
+                    if (this.detail.goods_number < this.value) {
+                        this.$toast.fail('Этот товар распродан')
+                        return;
+                    }
                 }
 
                 if (this.user_id == 0) {
                     this.$router.push('./login')
                     return
                 }
+
                 this.$router.push({
                     path: './pay',
                     query: {
@@ -406,13 +453,7 @@
                 }).then((e) => {
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
-                        this.$toast({
-                            type: 'success',
-                            message: e.data.message,
-                            onClose: () => {
-                                this.reload()
-                            }
-                        })
+                        this.reload()
                     }
                 })
             },
@@ -436,13 +477,7 @@
                 }).then((e) => {
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
-                        this.$toast({
-                            type: 'success',
-                            message: e.data.message,
-                            onClose: () => {
-                                this.reload()
-                            }
-                        })
+                        this.reload()
                     }
                 })
             },

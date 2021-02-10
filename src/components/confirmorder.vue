@@ -89,12 +89,13 @@
                     mask: true,
                     message: "Загрузка..."
                 });
-                this.$axios.post('api/' + this.pay_code + '/payorder', {
+                this.$axios.post('pay/' + this.pay_code + '/payorder', {
                     order_sn: this.ordersn
                 }).then((e) => {
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
-                        window.open(e.data.url,"_blank");
+                        // window.open(e.data.url,"_blank");
+                        window.location = e.data.url
                     }
                 })
             }
@@ -163,11 +164,18 @@
     }
     .images .img {
         padding: 10px;
-        margin-right: 20px;
+        margin: 0 15px;
         border:1px #ccc solid;
-        margin: 0 auto;
+        /*margin: 0 auto;*/
+        width: 33%;
+        position: relative;
+        height: 100px;
     }
     .img img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
         margin: 0 auto;
         width: 80%;
     }

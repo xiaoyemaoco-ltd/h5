@@ -10,7 +10,7 @@
             <van-nav-bar title="列表" left-text="返回" left-arrow @click-left="onClickLeft"/>
         </div>-->
         <div id="content">
-            <van-list id="list" v-model="loading"
+            <van-list id="list" v-model="loading" offset="1"
                       :finished="finished"
                       finished-text=""
                       loading-text="Загрузка..."
@@ -85,20 +85,12 @@
                 })
             },
             getGoodsList() {
-                this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });
-
                 this.$axios.post('api/goods/getGoodsListByCate', {
                     cate_id: this.$route.query.cate_id,
                     keyword: this.keyword,
                     skip: this.updata.pageNumber,
                     maxperpage: this.updata.pageSize
                 }).then((res) => {
-                    this.$toast.clear()
                     if (res.data.statuscode == 200) {
                         let e = Object.values(res.data.data)
                         this.loading = false;
@@ -126,7 +118,6 @@
                     order: this.value2
                 }).then((res) => {
                     if (res.data.statuscode == 200) {
-                        console.log(res)
                         this.list = res.data.data
                     }
                 })
@@ -189,7 +180,7 @@
         -webkit-box-orient: vertical;
     }
     #goods img {
-        width: 220px;
+        width: 250px;
         height: 250px;
     }
     #attr #price, #attr #dw {
@@ -202,7 +193,7 @@
         margin-right: 10px;
     }
     #attr #dw {
-        font-size: 8px;
+        font-size: 24px;
         padding-top: 6px;
     }
     #attr #cang {

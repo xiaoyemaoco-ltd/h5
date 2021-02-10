@@ -4,8 +4,6 @@
         <!--<van-row type="flex" justify="center" class="img">
             <van-col span="22"><img src="../assets/logo.png" /></van-col>
         </van-row>-->
-
-
         <van-row type="flex" justify="center" class="line">
             <van-col span="18">
                 <van-cell-group class="username">
@@ -181,6 +179,24 @@
 </script>
 
 <style scoped>
+    #head {
+        height: 100px;
+        background-color: #ef423a;
+    }
+    #head .van-nav-bar{
+        background-color: unset;
+        height: 100px;
+    }
+    #head >>> .van-nav-bar .van-icon, #head >>> .van-nav-bar .van-nav-bar__text, #head >>> .van-nav-bar .van-nav-bar__title {
+        color: #fff;
+    }
+    #head >>> .van-nav-bar__title {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+    .content {
+        width: 750px;
+    }
     .van-count-down {
         background-color: #ff362c;
         width: 100%;

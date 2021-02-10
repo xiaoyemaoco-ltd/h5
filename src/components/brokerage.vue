@@ -146,7 +146,6 @@
                     datetype: this.value2,
                     monthkey: this.date
                 }).then((e) => {
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
@@ -182,7 +181,6 @@
                 this.getlist()
             },
             onchange1 (e) {
-                console.log(e)
                 this.value1 = e
                 this.list = []
                 this.updata.pageNumber = 0

@@ -26,7 +26,7 @@ module.exports = {
     devServer: {
         port: 8080,
         proxy: {
-            '/api': {
+            '/': {
                 // logLevel: 'debug',
                 target: host, //对应自己的接口
                 changeOrigin: true,

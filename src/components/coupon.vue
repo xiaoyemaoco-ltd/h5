@@ -2,14 +2,10 @@
     <div>
         <Header :title="title"></Header>
         <div class="Allorder">
-            <van-tabs :active="active" @click="changstatus">
+            <van-tabs :active="active" @change="changstatus" swipeable>
                 <van-tab title="доверенное" name="1">
-                    <van-list
-                            v-model="loading"
-                            :finished="finished"
-                            loading-text="Загрузка..."
-                            error-text="Больше не надо"
-                            @load="onLoad"
+                    <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." error-text="Больше не надо"
+                            @load="onLoad" v-if="couponlist.length > 0"
                     >
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
@@ -33,25 +29,38 @@
                                 </div>
                             </div>
                             <div class="lookdetail" v-if="currentActive == k">
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222222222222222222222222222222222</p>
+                                <div class="desc border">
+                                    <h4>Ограничения на использовать</h4>
+                                    <p class="border">При покупке превышать <span>{{v.limitamount}} тг.</span> Можно использовать купоны</p >
                                 </div>
                                 <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222</p>
+                                    <h4>правило использовать</h4>
+                                    <p class="border" v-html="v.memo"></p >
                                 </div>
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p>222222222222222222222222222222</p>
+                                <div class="desc" v-if="v.forgoodslist">
+                                    <h4>ограниченного использования товар</h4>
+                                    <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
+                                        <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
+                                    </ul>
+                                    <button class="button">Посмотреть больше продуктов</button>
+                                </div>
+                                <div class="order" v-if="v.order_sn != ''">
+                                    <h4>Заказы с купонами</h4>
+                                    <p>Купон использован, номер</p>
+                                    <p>Заказа: {{v.order_sn}}</p>
                                 </div>
                             </div>
                         </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="использованный" name="2">
                     <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." offset="10"
-                            @load="onLoad">
+                            @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
                                 <div class="shop_price">
@@ -74,24 +83,37 @@
                                 </div>
                             </div>
                             <div class="lookdetail" v-if="currentActive1 == k">
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222222222222222222222222222222222</p>
+                                <div class="desc border">
+                                    <h4>Ограничения на использовать</h4>
+                                    <p class="border">При покупке превышать <span>{{v.limitamount}} тг.</span> Можно использовать купоны</p >
                                 </div>
                                 <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222</p>
+                                    <h4>правило использовать</h4>
+                                    <p class="border" v-html="v.memo"></p >
                                 </div>
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p>222222222222222222222222222222</p>
+                                <div class="desc" v-if="v.forgoodslist">
+                                    <h4>ограниченного использования товар</h4>
+                                    <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
+                                        <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
+                                    </ul>
+                                    <button class="button">Посмотреть больше продуктов</button>
+                                </div>
+                                <div class="order" v-if="v.order_sn != ''">
+                                    <h4>Заказы с купонами</h4>
+                                    <p>Купон использован, номер</p>
+                                    <p>Заказа: {{v.order_sn}}</p>
                                 </div>
                             </div>
                         </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
                 <van-tab title="истекший" name="3">
-                    <van-list v-model="loading" offset="10" :finished="finished" loading-text="Загрузка..." @load="onLoad">
+                    <van-list v-model="loading" offset="10" :finished="finished" loading-text="Загрузка..." @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
                                 <div class="shop_price">
@@ -114,21 +136,34 @@
                                 </div>
                             </div>
                             <div class="lookdetail" v-if="currentActive2 == k">
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222222222222222222222222222222222</p>
+                                <div class="desc border">
+                                    <h4>Ограничения на использовать</h4>
+                                    <p class="border">При покупке превышать <span>{{v.limitamount}} тг.</span> Можно использовать купоны</p >
                                 </div>
                                 <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p class="border">222222222222222222222222222222</p>
+                                    <h4>правило использовать</h4>
+                                    <p class="border" v-html="v.memo"></p >
                                 </div>
-                                <div class="desc">
-                                    <h4>11111111111111111111</h4>
-                                    <p>222222222222222222222222222222</p>
+                                <div class="desc" v-if="v.forgoodslist">
+                                    <h4>ограниченного использования товар</h4>
+                                    <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
+                                        <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
+                                    </ul>
+                                    <button class="button">Посмотреть больше продуктов</button>
+                                </div>
+                                <div class="order" v-if="v.order_sn != ''">
+                                    <h4>Заказы с купонами</h4>
+                                    <p>Купон использован, номер</p>
+                                    <p>Заказа: {{v.order_sn}}</p>
                                 </div>
                             </div>
                         </div>
                     </van-list>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
                 </van-tab>
             </van-tabs>
         </div>
@@ -137,10 +172,11 @@
 
 <script>
     import Header from './header'
+
     export default {
         name: "coupon",
         components: {
-            Header
+            Header,
         },
         data() {
             return {
@@ -163,18 +199,28 @@
             }
         },
         mounted() {
-            let userinfo = JSON.parse(localStorage.getItem('userinfo'))
-            if (!userinfo) {
-                this.$router.push('./login')
-                return
-            }
-            this.user_id = userinfo.user_id
-            this.updata.pageNumber = 0
-            this.updata.pageSize = 20
+            setTimeout(() => {
+                let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+                if (!userinfo) {
+                    this.$router.push({
+                        path: './login',
+                        query: {
+                            path: '/personal'
+                        }
+                    })
+                    return
+                }
+                this.user_id = userinfo.user_id
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.active = localStorage.getItem('coupon_active')
+                this.getusercouponlist();
+            }, 0)
         },
         methods: {
             changstatus (e) {
                 this.active = e
+                localStorage.setItem('coupon_active', this.active)
                 this.updata.pageNumber = 0
                 this.couponlist = []
                 this.getusercouponlist()
@@ -186,7 +232,6 @@
                     maxperpage: this.updata.pageSize,
                     showtype: this.active
                 }).then((e) => {
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
@@ -208,7 +253,6 @@
                     this.finished && clearTimeout(timer);//清除计时器
                 }, 100);*/
                 this.getusercouponlist();
-
             },
             showdetail (id) {
                 if (this.show == true) {
@@ -236,6 +280,15 @@
                     this.currentActive2 = -1
                     this.show2 = true
                 }
+            },
+            goodsdetail (id) {
+                this.$router.push({
+                    path: './goodsdetail',
+                    query: {
+                        goods_id: id,
+                        active: this.active
+                    }
+                })
             }
         }
     }
@@ -243,7 +296,7 @@
 
 <style scoped>
     .van-tab__pane {
-        height: calc( 100vh - 190px);
+        height: calc( 100vh - 180px);
         overflow-y:auto;
     }
     .Allorder {
@@ -285,6 +338,7 @@
     }
     .detail img {
         width: 7%;
+        height: 7%;
         margin-left: auto;
     }
     .detail .text {
@@ -365,25 +419,57 @@
         margin: 0 15px;
         text-align: left;
         border-radius: 15px;
+        padding-top: 15px;
+        margin-top: 2px;
     }
     .lookdetail h4 {
         margin: unset;
-        padding: 15px 0;
+        padding: 0 0 15px 0;
         margin: 0 15px;
     }
     .lookdetail P {
         padding: 0 5px;
         margin: 0 15px;
-        margin-top: 10px;
-        padding-bottom: 20px;
         color: #666666;
         word-wrap: break-word;
         line-height: 44px;
     }
-    .lookdetail .border {
-        border-bottom: 1px #ccc solid;
+    #content .lookdetail .border {
+        border-top: unset;
     }
     .lookdetail .desc {
         padding-bottom: 20px;
+        margin: 0 15px;
+        padding-top: 15px;
+        border-top: 1px #ccc solid;
+    }
+    .border p p {
+        margin: 10px 0;
+    }
+    .forgood li{
+        padding-bottom: 10px;
+        font-size: 9px;
+        line-height: 40px;
+        list-style: disc;
+        margin-left:45px;
+    }
+    .button {
+        display: block;
+        margin: 0 auto;
+        border: unset;
+        background-color: #ff362c;
+        color: #fff;
+        height: 50px;
+        border-radius: 25px;
+        padding: 0 25px;
+    }
+    .order {
+        padding-top: 20px;
+        border-top: 1px #ccc solid;
+        margin: 0 15px;
+    }
+    .order p{
+        margin-top: unset;
+        padding: 0 5px;
     }
 </style>

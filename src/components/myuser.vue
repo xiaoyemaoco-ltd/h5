@@ -2,7 +2,7 @@
     <div>
         <Header :title="title"></Header>
         <div class="content">
-            <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
+            <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" search="search"/>
             <div class="option">
                 <span :class="date.indexOf('-') >= 0 ? 'active' : ''" class="img" @click="selectdate">
                     <img src="../assets/image/month.png" >
@@ -89,6 +89,9 @@
             selectdate () {
                 this.show = true
             },
+            search () {
+                this.getlist()
+            },
             //获取列表
             getlist () {
                 this.$toast.loading({
@@ -101,6 +104,7 @@
                 this.$axios.post('api/user/vipInviteUser', {
                     user_id: this.user_id,
                     date: this.date,
+                    keyword: this.value
                 }).then((e) => {
                     console.log(e)
                     this.$toast.clear()
@@ -196,6 +200,8 @@
         background-color: #fff;
     }
     .option span {
+        height: 30px;
+        line-height: 30px;
         float: right;
         display: inline-block;
         background-color: #cccccc;

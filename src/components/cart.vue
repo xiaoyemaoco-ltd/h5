@@ -26,7 +26,7 @@
                             <label id="stepper"><van-stepper :value="item.goods_number" @change="changenum($event,item)" /></label>
                             <template #right>
                                 <van-button square type="danger" text="Удалить" @click="delcartone(item.rec_id)" />
-                                <van-button square type="primary" text="Избранное" />
+                                <van-button square type="primary" text="Избранное" @click="collect(item.goods_id)" />
                             </template>
                         </van-swipe-cell>
                 </div>
@@ -40,7 +40,7 @@
             </div>
             <h2>Пустая корзина</h2>
             <p>Вы ничего не купили</p>
-            <van-button id="minibnt" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
+            <van-button id="minibnt" @click="toindex" round type="danger" size="mini">Перейди на домашнюю страницу</van-button>
         </div>
 
 
@@ -80,14 +80,20 @@
         },
         mounted() {
             let userinfo = localStorage.getItem('userinfo')
-            if (!userinfo) {
-                this.$router.push('./login')
-                return
+            // if (!userinfo) {
+            //     this.$router.push('./login')
+            //     return
+            // }
+
+            if (userinfo) {
+                this.user_id = JSON.parse(userinfo).user_id
+                this.getCartList()
             }
-            this.user_id = JSON.parse(userinfo).user_id
-            this.getCartList()
         },
         methods: {
+            toindex () {
+                this.$router.push('/')
+            },
             adminCart() {
                 this.glcart = false
                 this.plete = true
@@ -102,7 +108,6 @@
             },
             //去支付
             onSubmit() {
-                console.log(this.checked2)
                 if (!(this.checked2.length > 0)) {
                     this.$toast({
                         type: 'fail',
@@ -180,7 +185,6 @@
                 this.$axios.post('api/goods/delCartGoods', {
                     rec_ids: this.checked2
                 }).then((e) => {
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.$toast({
                             type: 'success',
@@ -208,19 +212,25 @@
                 this.$axios.post('api/goods/getUserCart', {
                     user_id: this.user_id
                 }).then((e) => {
-                    console.log(e)
                     this.$toast.clear(); // 关闭加载
+                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
                         this.list.map((v) => {
                             if (v.can_handsel == 1) {
                                 this.checked2.push(v.rec_id)
+                                this.price += parseInt(v.goods_price) * 100
                             }
                         })
 
                         if (this.checked2.length ==  Object.keys(this.list).length) {
                             this.checkedAll = true
                         }
+                        if (Object.keys(this.list).length == 0) {
+                            this.checkedAll = false
+                        }
+
+
                     }
                 })
             },
@@ -252,7 +262,6 @@
                 } else {
                     this.checkedAll = false
                 }
-                console.log(this.checked2)
                 this.price = 0
                 this.list.map((item) => {
                     this.checked2.map((v) => {
@@ -284,11 +293,34 @@
                 this.$axios.post('api/goods/cartSelected', {
                     cart_ids: $ids,
                     user_id: this.user_id
-                }).then((e) => {
-                    console.log(e)
+                }).then(() => {
                     this.$toast.clear(); // 关闭加载
                 })
-            }
+            },
+            //收藏
+            collect (id) {
+                if (this.user_id == 0) {
+                    this.$router.push('./login')
+                    return
+                }
+
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+
+                this.$axios.post('api/user/collectGoods', {
+                    user_id: this.user_id,
+                    goods_id: id
+                }).then((e) => {
+                    this.$toast.clear()
+                    if (e.data.statuscode == 200) {
+                        this.reload()
+                    }
+                })
+            },
         }
     }
 </script>

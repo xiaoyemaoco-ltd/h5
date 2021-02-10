@@ -49,7 +49,12 @@ export default {
     mounted() {
         let userinfo = JSON.parse(localStorage.getItem('userinfo'))
         if (!userinfo) {
-            this.$router.push('./login')
+            this.$router.push({
+                path: './login',
+                query: {
+                    path: '/personal'
+                }
+            })
             return
         }
         this.user_id = userinfo.user_id

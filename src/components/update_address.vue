@@ -3,23 +3,24 @@
         <Header :title="title"></Header>
         <div class="create">
             <div class="borBox">
-                Имя<input v-model="name" placeholder="введите Имя" type="text" />
+                Имя: <input v-model="name" placeholder="введите Имя" type="text" />
             </div>
             <div class="borBox">
-                Фамилия<input v-model="lastname" placeholder="введите Фамилия" type="text" />
+                Фамилия: <input v-model="lastname" placeholder="введите Фамилия" type="text" />
             </div>
             <div class="borBox">
-                <label>номер телефона</label>
+                <label>номер телефона: </label>
+                <span class="seven">+7</span>
                 <input style="width: 50%" v-model="mobile" placeholder="введите номер телефона" type="number"/>
             </div>
             <div class="borBox" id="area" @click="borBox">
-                район
+                <label>район:</label>
                 <input placeholder="Выберите" type="text" class="inputBox" v-model="areavalue"/>
                 <i class="van-icon van-icon-arrow van-cell__right-icon"><!----></i>
             </div>
 
             <div class="borBox">
-                Адрес<input placeholder="введите Адрес" v-model="address" type="text" />
+                Адрес: <input placeholder="введите Адрес" v-model="address" type="text" />
             </div>
             <!--省市選取-->
             <div>
@@ -259,73 +260,85 @@ export default {
 </script>
 
 <style scoped>
-#coupon1 {
-    margin: 85px 0;
-}
-.box {
-    font-family: Source Han Sans SC;
-    font-weight: 400;
-}
-.create {
-    margin: 20px 30px;
-    text-align: left;
-}
-.borBox {
-    border-bottom: 1px solid #eee;
-    font-size: 28px;
-    color: #333333;
-    padding: 20px 0 20px 20px;
-}
-.borBox input {
-    width: 75%;
-    height: 50px;
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 30px;
-    border: unset;
-}
-.inputBox {
-    pointer-events: none;
-}
-.borBox div {
-    float: right;
-    font-size: 35px;
-    line-height: 1;
-}
-.addadd {
-    border: unset;
-    width: 608px;
-    height: 80px;
-    line-height: 80px;
-    text-align: center;
-    background: #ef423a;
-    border-radius: 40px;
-    font-size: 40px;
-    color: #FFFFFF;
-    margin: 10px auto;
-}
-#area {
-    display: flex;
-}
-#coupon1 #left {
-    float: left;
-    width: 45%;
-}
-#coupon1 #right {
-    float: right;
-    width: 45%;
-    margin-right: 10px;
-}
-.right-content li {
-    text-align: center;
-    white-space: normal;
-    background-color: #eee;
-    margin-top: 10px;
-}
-.selected {
-    color: #ff362c;
-}
-.van-sidebar-item--select {
-    font-weight: bold;
-}
+    #coupon1 {
+        margin: 85px 0;
+    }
+    .box {
+        font-family: Source Han Sans SC;
+        font-weight: 400;
+    }
+    .create {
+        margin: 20px 15px;
+        text-align: left;
+    }
+    .borBox {
+        border-bottom: 1px solid #eee;
+        font-size: 28px;
+        color: #333333;
+        padding: 20px 0;
+    }
+    .borBox input {
+        width: 75%;
+        height: 50px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 15px;
+        border: unset;
+    }
+    .inputBox {
+        pointer-events: none;
+    }
+    .borBox div {
+        float: right;
+        font-size: 35px;
+        line-height: 1;
+    }
+    .addadd {
+        border: unset;
+        width: 608px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+        background: #ef423a;
+        border-radius: 40px;
+        font-size: 40px;
+        color: #FFFFFF;
+        margin: 10px auto;
+    }
+    #area {
+        display: flex;
+    }
+    #area label {
+        height: 50px;
+        line-height: 50px;
+    }
+    #coupon1 #left {
+        float: left;
+        width: 45%;
+    }
+    #coupon1 #right {
+        float: right;
+        width: 45%;
+        margin-right: 10px;
+    }
+    .right-content li {
+        text-align: center;
+        white-space: normal;
+        background-color: #eee;
+        margin-top: 10px;
+    }
+    .selected {
+        color: #ff362c;
+    }
+    .van-sidebar-item--select {
+        font-weight: bold;
+    }
+    .seven {
+        margin: 0 15px;
+        color: #ff362c;
+    }
+
+    #area >>> .van-icon {
+
+    }
 </style>

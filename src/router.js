@@ -26,6 +26,7 @@ import Brokerage from './components/brokerage'
 import Stationletter from './components/stationletter'
 import Stationmsgdetail from './components/stationmsgdetail'
 import Paysuccess from './components/paysuccess'
+import Test from './components/category1'
 
 Vue.use(Router)
 
@@ -57,6 +58,7 @@ const routes = [
     {path: '/stationletter', component: Stationletter},
     {path: '/stationmsgdetail', component: Stationmsgdetail},
     {path: '/paysuccess', component: Paysuccess},
+    {path: '/test', component: Test},
 ]
 
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Header :title="title"></Header>
-        <div class="content">
+        <div class="content" v-if="list.length > 0">
             <van-swipe-cell v-for="(v, k) in list" :key="k">
                 <div class="cell" @click="todetail(v.goods_id)">
                     <div class="image">
@@ -37,6 +37,11 @@
                 </template>
             </van-swipe-cell>
         </div>
+
+        <div style="height: 100%; margin-top: 10px" v-if="list.length == 0">
+            <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+            <P style="font-weight: bold; font-size: 28px; text-align: center">Нет фаворитов</P>
+        </div>
     </div>
 </template>
 
@@ -56,7 +61,12 @@
         mounted() {
             let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if (!userinfo) {
-                this.$router.push('./login')
+                this.$router.push({
+                    path: './login',
+                    query: {
+                        path: '/personal'
+                    }
+                })
                 return
             }
             this.user_id = userinfo.user_id
@@ -193,5 +203,8 @@
     }
     .text2 {
         font-size: 28px;
+    }
+    .delete-button {
+        height: 100%;
     }
 </style>

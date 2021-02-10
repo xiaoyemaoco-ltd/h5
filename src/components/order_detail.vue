@@ -7,7 +7,7 @@
                      class="van-cell van-cell--clickable van-cell--center van-cell--borderless van-contact-card van-contact-card--edit">
                     <div class="van-cell__value van-cell__value--alone van-contact-card__value">
                         <div style="font-weight: bold; font-size: 18px">{{detail.consignee}} {{detail.mobile}}</div>
-                        <div>{{detail.province}}  {{detail.city}} {{detail.district}} {{detail.address}}</div>
+                        <div>{{detail.address}}</div>
                     </div>
                 </div>
                     <!--<i class="van-icon van-icon-arrow van-cell__right-icon">&lt;!&ndash;&ndash;&gt;</i></div>-->
@@ -96,14 +96,12 @@
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.detail = e.data.data
-                        console.log(this.detail)
                     } else {
                         this.$toast.fail(e.data.message)
                     }
                 })
             },
-            onCopy(e){
-                console.log(e)
+            onCopy(){
                 this.$toast.success('Копировать успешно')
             },
             onError () {
