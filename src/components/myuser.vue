@@ -43,6 +43,10 @@
                     <div class="bottom" v-else @click="applyvip(v.user_id)">настроить как VIP</div>
                 </div>
             </div>
+
+            <div style="margin-top: 10px" v-if="list.length == 0">
+                <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+            </div>
         </div>
     </div>
 </template>
@@ -106,13 +110,11 @@
                     date: this.date,
                     keyword: this.value
                 }).then((e) => {
-                    console.log(e)
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
                         this.count =e.data.count
                         this.allperformance =e.data.allperformance
-                        console.log(e)
                     }
                 })
             },

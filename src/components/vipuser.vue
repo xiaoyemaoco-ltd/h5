@@ -46,6 +46,10 @@
                     </div>
                 </div>
             </div>
+
+            <div style="margin-top: 10px" v-if="list.length == 0">
+                <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+            </div>
         </div>
     </div>
 </template>

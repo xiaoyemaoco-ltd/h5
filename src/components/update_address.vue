@@ -11,11 +11,10 @@
             <div class="borBox">
                 <label>номер телефона: </label>
                 <span class="seven">+7</span>
-                <input style="width: 50%" v-model="mobile" placeholder="введите номер телефона" type="number"/>
+                <input style="width: 50%" v-model="mobile" placeholder="введите номер телефона" type="tel" maxlength="10"/>
             </div>
-            <div class="borBox" id="area" @click="borBox">
-                <label>район:</label>
-                <input placeholder="Выберите" type="text" class="inputBox" v-model="areavalue"/>
+            <div class="borBox" id="area" @click="borBox">район:
+                <p class="inputBox selectedaddress">{{areavalue}}</p>
                 <i class="van-icon van-icon-arrow van-cell__right-icon"><!----></i>
             </div>
 
@@ -23,41 +22,20 @@
                 Адрес: <input placeholder="введите Адрес" v-model="address" type="text" />
             </div>
             <!--省市選取-->
-            <div>
-                <van-popup round  v-model="show2" closeable position="bottom">
-                    <div id="coupon1">
-                        <van-tree-select :items="items" :active-id.sync="items.region_id"
-                                         :main-active-index.sync="activeIndex" @click-nav="getprovice">
-                            <template slot="content" v-if="city">
-                                <ul class="right-content" id="left">
-                                    <li v-for="(item, index) in city" :key="index" :class="selected == item.region_id ? 'selected' : ''"
-                                        @click="onItemClick1(item.region_id, item.region_name)"> <p>{{item.region_name}}</p>  </li>
-                                </ul>
-                            </template>
-                            <template slot="content" v-if="district">
-                                <ul class="right-content" id="right">
-                                    <li v-for="(item, index) in district" :key="index" :class="selected1 == item.region_id ? 'selected' : ''"
-                                        @click="onItemClick2(item.region_id, item.region_name)"> <p>{{item.region_name}}</p> </li>
-                                </ul>
-                            </template>
-                        </van-tree-select>
-                    </div>
-                </van-popup>
-            </div>
+            <van-popup class="provice" v-model="show2" round position="bottom">
+                <van-cascader
+                        v-model="cascaderValue"
+                        title="Ваш район"
+                        :options="options"
+                        @close="show2 = false"
+                        @change="onChange"
+                        @finish="onFinish"
+                        placeholder = "Выбрать"
+                />
+            </van-popup>
         </div>
 
         <button class="addadd" @click="addaddress">спасти</button>
-        <!--<div class="areabox">
-            <van-popup
-                    :show="show"
-                    position="bottom"
-                    custom-style="height: 60%;"
-                    @close="onClose"
-            >
-                <van-area :area-list="areaList" @confirm="getArea" @cancel="colseArea" />
-            </van-popup>
-        </div>-->
-
     </div>
 </template>
 
@@ -88,7 +66,9 @@ export default {
             lastname: '',
             mobile: '',
             address: '',
-            userid: 0
+            userid: 0,
+            options: [],
+            cascaderValue: ''
         }
     },
     components: {
@@ -107,7 +87,6 @@ export default {
                 address_id: this.$route.query.address_id,
                 user_id: this.userid
             }).then((e) => {
-                console.log(e)
                 if (e.data.statuscode == 200) {
                     let res = e.data.data
                     this.name = res.first_name
@@ -116,8 +95,10 @@ export default {
                     this.address = res.address
                     if (res.district_name) {
                         this.areavalue = res.province_name + ' ' + res.city_name + ' ' + res.district_name + ' ' + res.address
+                        this.cascaderValue = res.district
                     } else {
                         this.areavalue = res.province_name + ' ' + res.city_name + ' ' + res.address
+                        this.cascaderValue = res.city
                     }
                 }
             })
@@ -132,10 +113,10 @@ export default {
                 this.$toast.fail('введите Фамилия');
                 return
             }
-            /*if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
+            if (this.mobile == '' || !(/^\d{1}\d{9}$/.test(this.mobile))) {
                 this.$toast.fail('Ошибка номера телефона');
                 return
-            }*/
+            }
             if (this.areavalue == '') {
                 this.$toast.fail('выберите регион');
                 return
@@ -171,6 +152,11 @@ export default {
                             this.$router.back()
                         }
                     })
+                } else {
+                    this.$toast({
+                        type: 'fail',
+                        message: e.data.message,
+                    })
                 }
             })
         },
@@ -187,10 +173,12 @@ export default {
             this.$axios.post('api/user/getProvice').then((e) => {
                 this.$toast.clear(); // 关闭加载
                 if (e.data.statuscode == 200) {
-                    this.items = e.data.data
-                    console.log()
-                    this.provice_id = this.items[0].region_id
-                    this.provice = this.items[0].text
+                    this.options = e.data.data
+                    this.options.map((v, k) => {
+                        this.options[k].value = v.region_id
+                    })
+                    this.provice_id = e.data.data[0].region_id
+                    this.provice = e.data.data[0].text
                 }
             })
         },
@@ -239,7 +227,6 @@ export default {
                     this.city = []
                     this.city = res.data.data
                     this.selected = this.city[0].region_id
-                    console.log(this.city)
                 }
             })
         },
@@ -254,6 +241,18 @@ export default {
                     this.selected1 = this.district[0].region_id
                 }
             })
+        },
+        onChange () {
+
+        },
+        onFinish (value) {
+            this.show2 = false
+            this.areavalue = value.selectedOptions.map((option) => option.text).join(' ');
+            this.provice_id = value.selectedOptions[0].value
+            this.city_id = value.selectedOptions[1].value
+            if (value.selectedOptions.length == 3) {
+                this.disctrict_id = value.selectedOptions[2].value
+            }
         }
     }
 }
@@ -340,5 +339,13 @@ export default {
 
     #area >>> .van-icon {
 
+    }
+    .provice >>> .van-tab__text {
+        font-size: 12px;
+    }
+    .selectedaddress {
+        width: 80%;
+        margin: unset;
+        padding-left: 15px;
     }
 </style>
