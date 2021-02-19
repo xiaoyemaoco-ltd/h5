@@ -96,7 +96,7 @@
                                 <img src="../assets/image/uc/m_teamuser.png" />
                             </template>
                         </van-tabbar-item>
-                        <van-tabbar-item>
+                        <van-tabbar-item @click="withdraw">
                             <span>Обналичить</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_withdraw.png" />
@@ -225,6 +225,10 @@
             //站内信
             stationmsg () {
                 this.$router.push('./stationletter')
+            },
+            //提现
+            withdraw () {
+                this.$router.push('./withdraw')
             },
             //用户信息
             getuserifo () {

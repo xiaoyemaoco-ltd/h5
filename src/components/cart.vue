@@ -11,24 +11,22 @@
             <van-checkbox-group v-model="checked2" @change="selectone" ref="checkboxGroup">
                 <div id="hw" v-for="(item, index) in list" :key="index">
                     <van-checkbox style="width: 6%" icon-size="28rpx" :name="item.rec_id"></van-checkbox>
-                        <van-swipe-cell id="swipe">
-                            <div id="goods" @click="goToDetail(item.goods_id)">
-
-
-                                <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
-                                <div id="detail">
-                                    <h4>{{item.goods_name}}</h4>
-                                    <span id="price">{{item.total_price}} тг.</span>
-                                    <span id="ch">x</span>
-                                    <span id="number">{{item.goods_number}}</span>
-                                </div>
+                    <van-swipe-cell id="swipe">
+                        <div id="goods" @click="goToDetail(item.goods_id)">
+                            <img v-lazy="item.goods_thumb" style="width: 90px; height: 80px">
+                            <div id="detail">
+                                <h4>{{item.goods_name}}</h4>
+                                <span id="price">{{item.total_price}} тг.</span>
+                                <span id="ch">x</span>
+                                <span id="number">{{item.goods_number}}</span>
                             </div>
-                            <label id="stepper"><van-stepper :value="item.goods_number" @change="changenum($event,item)" /></label>
-                            <template #right>
-                                <van-button square type="danger" text="Удалить" @click="delcartone(item.rec_id)" />
-                                <van-button square type="primary" text="Избранное" @click="collect(item.goods_id)" />
-                            </template>
-                        </van-swipe-cell>
+                        </div>
+                        <label id="stepper"><van-stepper :value="item.goods_number" @change="changenum($event,item)" /></label>
+                        <template #right>
+                            <van-button square type="danger" text="Удалить" @click="delcartone(item.rec_id)" />
+                            <van-button square type="primary" text="Избранное" @click="collect(item.goods_id)" />
+                        </template>
+                    </van-swipe-cell>
                 </div>
             </van-checkbox-group>
         </div>
@@ -213,7 +211,6 @@
                     user_id: this.user_id
                 }).then((e) => {
                     this.$toast.clear(); // 关闭加载
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
                         this.list.map((v) => {
