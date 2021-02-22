@@ -5,14 +5,14 @@
     </div>
 
     <div id="content">
-        <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-          <van-swipe-item><img id="swiperimages" src="../assets/image/index1.png"></van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="../assets/image/index2.png"></van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="../assets/image/index3.png"></van-swipe-item>
-          <van-swipe-item><img id="swiperimages" src="../assets/image/index4.png"></van-swipe-item>
-        </van-swipe>
-        <!--<van-notice-bar left-icon="volume-o" text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"/>-->
-
+<!--        下拉刷新-->
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+          <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+            <van-swipe-item><img id="swiperimages" src="../assets/image/index1.png"></van-swipe-item>
+            <van-swipe-item><img id="swiperimages" src="../assets/image/index2.png"></van-swipe-item>
+            <van-swipe-item><img id="swiperimages" src="../assets/image/index3.png"></van-swipe-item>
+            <van-swipe-item><img id="swiperimages" src="../assets/image/index4.png"></van-swipe-item>
+          </van-swipe>
           <van-list id="list" v-model="loading" offset="1"
                     :finished="finished"
                     finished-text="Больше не надо"
@@ -30,7 +30,8 @@
               </label>
             </div>
           </van-list>
-        </div>
+        </van-pull-refresh>
+    </div>
 
     <tabbar :active="active"></tabbar>
   </div>
@@ -50,6 +51,7 @@ export default {
         pageNumber: 0,  //页码
         pageSize:20     //每页条数
       },
+      isLoading: false,
       loading: false,
       finished: false,
     };
@@ -97,7 +99,17 @@ export default {
       this.$router.push({
         path: './search'
       })
-    }
+    },
+    //下拉刷新
+    onRefresh() {
+      setTimeout(() => {
+        this.updata.pageNumber = 0
+        this.updata.pageSize = 20
+        this.list = []
+        this.getgoodslist();
+        this.isLoading = false;
+      }, 1000);
+    },
   }
 }
 </script>

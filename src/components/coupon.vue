@@ -4,7 +4,8 @@
         <div class="Allorder">
             <van-tabs :active="active" @change="changstatus" swipeable>
                 <van-tab title="доверенное" name="1">
-                    <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." error-text="Больше не надо"
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." error-text="Больше не надо"
                             @load="onLoad" v-if="couponlist.length > 0"
                     >
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
@@ -52,14 +53,15 @@
                             </div>
                         </div>
                     </van-list>
-
+                    </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="использованный" name="2">
-                    <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." offset="10"
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." offset="10"
                             @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
@@ -106,6 +108,7 @@
                             </div>
                         </div>
                     </van-list>
+                    </van-pull-refresh>
 
                     <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
@@ -113,7 +116,8 @@
                     </div>
                 </van-tab>
                 <van-tab title="истекший" name="3">
-                    <van-list v-model="loading" offset="10" :finished="finished" loading-text="Загрузка..." @load="onLoad" v-if="couponlist.length > 0">
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list v-model="loading" offset="10" :finished="finished" loading-text="Загрузка..." @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
                                 <div class="shop_price">
@@ -159,7 +163,7 @@
                             </div>
                         </div>
                     </van-list>
-
+                    </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
@@ -196,6 +200,7 @@
                 show: true,
                 show1: true,
                 show2: true,
+                isLoading: false,
             }
         },
         mounted() {
@@ -289,7 +294,17 @@
                         active: this.active
                     }
                 })
-            }
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.updata.pageNumber = 0
+                    this.updata.pageSize = 20
+                    this.couponlist = []
+                    this.getusercouponlist();
+                    this.isLoading = false;
+                }, 1000);
+            },
         }
     }
 </script>

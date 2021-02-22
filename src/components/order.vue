@@ -5,7 +5,58 @@
             <van-tabs :active="active" @change="changstatus" swipeable>
                 <van-search v-model="value" placeholder="введите ключевое слово для поиска" search="search"/>
                 <van-tab title="Bce" name="-1">
-                    <van-list
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list
+                                v-model="loading" offset="10"
+                                :finished="finished"
+                                finished-text="Больше не надо"
+                                loading-text="Загрузка..."
+                                @load="onLoad" v-if="orderlist.length > 0"
+                        >
+                            <div id="content" v-for="(v, k) in orderlist" :key="k">
+                                <div class="AllCode">
+                                    <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
+                                    <div class="paid">время：{{v.add_time}}</div>
+                                </div>
+                                <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
+                                    <div class="shop_img">
+                                        <img :src="item.goods_thumb" />
+                                    </div>
+                                    <div class="shop_price">
+                                        <div class="titleTop">
+                                            <h3>{{item.goods_name}}</h3>
+                                            <p class="priceShop">{{item .goods_attr}}</p>
+                                        </div>
+                                        <div class="titleBottom">
+                                            <span class="shopNumber">{{item.goods_price}}</span>
+                                            <span class="shopNums">x{{item.goods_number}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="priceNum">
+                                    <label id="total">Bcero：</label>
+                                    <label id="num">{{v.order_total_count}}</label>
+                                    <label id="total">Toвap：</label>
+                                    <label id="num">{{v.order_total_amount}}</label>
+                                </div>
+                                <div id="status">
+                                    <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
+                                    <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
+                                    <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
+                                    <div style="clear: both;"></div>
+                                </div>
+                            </div>
+                        </van-list>
+                    </van-pull-refresh>
+
+                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
+                    </div>
+                </van-tab>
+                <van-tab title="Bожиданий" name="100">
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
@@ -46,62 +97,15 @@
                         </div>
                     </div>
                     </van-list>
-
+                    </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
-                <van-tab title="Ожидающий" name="100">
-                    <van-list
-                        v-model="loading" offset="10"
-                        :finished="finished"
-                        finished-text="Больше не надо"
-                        loading-text="Загрузка..."
-                        @load="onLoad" v-if="orderlist.length > 0"
-                    >
-                    <div id="content" v-for="(v, k) in orderlist" :key="k">
-                        <div class="AllCode">
-                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                            <div class="paid">время：{{v.add_time}}</div>
-                        </div>
-                        <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
-                            <div class="shop_img">
-                                <img :src="item.goods_thumb" />
-                            </div>
-                            <div class="shop_price">
-                                <div class="titleTop">
-                                    <h3>{{item.goods_name}}</h3>
-                                    <p class="priceShop">{{item .goods_attr}}</p>
-                                </div>
-                                <div class="titleBottom">
-                                    <span class="shopNumber">{{item.goods_price}}</span>
-                                    <span class="shopNums">x{{item.goods_number}}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="priceNum">
-                            <label id="total">Bcero：</label>
-                            <label id="num">{{v.order_total_count}}</label>
-                            <label id="total">Toвap：</label>
-                            <label id="num">{{v.order_total_amount}}</label>
-                        </div>
-                        <div id="status">
-                            <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
-                            <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
-                            <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
-                            <div style="clear: both;"></div>
-                        </div>
-                    </div>
-                    </van-list>
-
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
-                        <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
-                    </div>
-                </van-tab>
-                <van-tab title="Aктивный" name="101">
-                    <van-list
+                <van-tab title="Aктивные" name="101">
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
@@ -140,14 +144,15 @@
                         </div>
                     </div>
                     </van-list>
-
+                    </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
-                <van-tab title="завершено" name="105">
-                    <van-list
+                <van-tab title="Завершенные" name="105">
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
                         finished-text="Больше не надо"
@@ -181,19 +186,22 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
+                            <button class="paid_btn comment_btn" @click="comment">Написать отзыв</button>
                             <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
                     </div>
                     </van-list>
+                    </van-pull-refresh>
 
                     <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
-                <van-tab title="Отменено" name="102">
-                    <van-list
+                <van-tab title="Отмененные" name="102">
+                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                        <van-list
                         v-model="loading"
                         :finished="finished" offset="10"
                         finished-text="Больше не надо"
@@ -232,6 +240,7 @@
                         </div>
                     </div>
                     </van-list>
+                    </van-pull-refresh>
 
                     <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
@@ -259,7 +268,8 @@
                 updata:{
                     pageNumber: 0,  //页码
                     pageSize:20     //每页条数
-                }
+                },
+                isLoading: false,
             }
         },
         components: {
@@ -383,6 +393,19 @@
                         })
                     }
                 })
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.updata.pageNumber = 0
+                    this.updata.pageSize = 20
+                    this.orderlist = []
+                    this.getuserorder();
+                    this.isLoading = false;
+                }, 1000);
+            },
+            comment () {
+                this.$router.push('/comment')
             }
         }
     }
@@ -479,6 +502,11 @@
         background-color: #fff;
         border: 1px #666666 solid;
         height: 50px;
+    }
+    #status .comment_btn {
+        background-color: #ff362c;
+        border: unset;
+        color: #fff;
     }
     .paid_detail {
         color: #EE0B0B;

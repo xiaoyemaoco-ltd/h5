@@ -2,33 +2,35 @@
     <div id="content">
         <Header :title="title"></Header>
         <div class="box">
-            <div id="content" v-for="(item, index) in list" :key="index">
-              <div class="addBox">
-                <div class="addradio">
-                  <div class="addsmallBox">
-                    <div class="userphone">
-                      <div class="user">{{item.consignee}}</div>
-                      <div class="phone">{{item.mobile}}</div>
+            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                <div id="content" v-for="(item, index) in list" :key="index">
+                  <div class="addBox">
+                    <div class="addradio">
+                      <div class="addsmallBox">
+                        <div class="userphone">
+                          <div class="user">{{item.consignee}}</div>
+                          <div class="phone">{{item.mobile}}</div>
+                        </div>
+                        <p class="address">{{item.province_name}} {{item.city_name}} {{item.district_name}} {{item.address}}</p>
+                      </div>
                     </div>
-                    <p class="address">{{item.province_name}} {{item.city_name}} {{item.district_name}} {{item.address}}</p>
+                  </div>
+                  <div id="edit">
+                    <van-radio-group v-model="radio">
+                      <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
+                    </van-radio-group>
+                    <div id="ed" @click="adressupdate(item.address_id)">
+                      <img src="../assets/image/bianji@2x.png">
+                      <span>редактировать</span>
+                    </div>
+                    <div id="del" @click="deladdress(item.address_id)">
+                      <img src="../assets/image/shanchu@2x.png">
+                      <span>удалять</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div id="edit">
-                <van-radio-group v-model="radio">
-                  <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
-                </van-radio-group>
-                <div id="ed" @click="adressupdate(item.address_id)">
-                  <img src="../assets/image/bianji@2x.png">
-                  <span>редактировать</span>
-                </div>
-                <div id="del" @click="deladdress(item.address_id)">
-                  <img src="../assets/image/shanchu@2x.png">
-                  <span>удалять</span>
-                </div>
-              </div>
-            </div>
-            <div class="addadd" @click="add">Добавить адрес</div>
+                <div class="addadd" @click="add">Добавить адрес</div>
+            </van-pull-refresh>
         </div>
     </div>
 
@@ -43,7 +45,8 @@
                 radio: '',
                 title: 'мой адресс',
                 list: [],
-                userid: 0
+                userid: 0,
+                isLoading: false,
             }
         },
         components: {
@@ -134,7 +137,15 @@
                         this.radio = e.data.default
                     }
                 })
-            }
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.list = []
+                    this.getaddresslist();
+                    this.isLoading = false;
+                }, 1000);
+            },
         }
     }
 </script>

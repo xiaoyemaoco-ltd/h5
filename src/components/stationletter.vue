@@ -6,7 +6,6 @@
             <van-list
                 v-model="loading"
                 :finished="finished"
-                finished-text="Больше не надо"
                 loading-text="Загрузка..."
                 @load="onLoad"
             >
@@ -22,7 +21,6 @@
                     </div>
                 </div>
             </van-list>
-
         </van-pull-refresh>
     </div>
 </template>

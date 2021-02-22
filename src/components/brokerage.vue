@@ -2,75 +2,83 @@
     <div>
         <Header :title="title"></Header>
         <div class="content">
-            <div>
-                <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
-                <van-dropdown-menu class="sel">
-                    <van-dropdown-item v-model="value1" :options="option1" @change="onchange1"/>
-                    <van-dropdown-item v-model="value2" :options="option2" @change="onchange" />
-                </van-dropdown-menu>
+            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                <div>
+                    <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
+                    <van-dropdown-menu class="sel">
+                        <van-dropdown-item v-model="value1" :options="option1" @change="onchange1"/>
+                        <van-dropdown-item v-model="value2" :options="option2" @change="onchange" />
+                    </van-dropdown-menu>
 
-                <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
-                    <van-datetime-picker v-model="currentDate" type="year-month" title="Выберите год и месяц" confirm-button-text="подтвердить"
-                                         cancel-button-text="отменить" :min-date="minDate" :max-date="maxDate" @confirm="confirmdate" @cancel="cancel"/>
-                </van-popup>
-            </div>
+                    <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
+                        <van-datetime-picker v-model="currentDate" type="year-month" title="Выберите год и месяц" confirm-button-text="подтвердить"
+                                             cancel-button-text="отменить" :min-date="minDate" :max-date="maxDate" @confirm="confirmdate" @cancel="cancel"/>
+                    </van-popup>
+                </div>
 
-            <div class="count">
-                <div class="all">
-                    <span>Всего:</span>
-                    <span class="money">{{split_total}}тг.</span>
-                    <span>{{split_total_count}}шт.</span>
-                </div>
-                <div class="all">
-                    <span>Мои подписчики:</span>
-                    <span class="money">{{split_mobile}}тг.</span>
-                    <span>{{split_mobile_count}} шт.</span>
-                </div>
-                <div class="all">
-                    <span>Поделись:</span>
-                    <span class="money">{{split_h5}}тг.</span>
-                    <span>{{split_h5_count}} шт.</span>
-                </div>
-                <div class="all">
-                    <span>Мой заказ:</span>
-                    <span class="money">{{split_self}}тг.</span>
-                    <span>{{split_self_count}} шт.</span>
-                </div>
-            </div>
-
-            <van-list
-                v-model="loading"
-                :finished="finished"
-                finished-text="Больше не надо"
-                loading-text="Загрузка..."
-                @load="onLoad"
-            >
-                <div class="list" v-for="(v, k) in list" :key="k">
-                    <div class="top">
-                        <h3>{{v.split_money}}</h3>
-                        <span class="unit">тг.</span>
-                        <span class="status">{{v.status_code}}</span>
+                <div class="count">
+                    <div class="all">
+                        <span>Всего:</span>
+                        <span class="money">{{split_total}}тг.</span>
+                        <span>{{split_total_count}}шт.</span>
                     </div>
-                    <div class="second">
-                        <span class="proname text">сумма заказа:</span>
-                        <span class="prome">{{v.pay_money}}</span>
-                        <span class="text">тг.</span>
-                        <div class="right">
-                            <img src="../assets/image/fenxiang@2x.png" />
-                            <span class="text">{{v.xd_user_name}}</span>
+                    <div class="all">
+                        <span>Мои подписчики:</span>
+                        <span class="money">{{split_mobile}}тг.</span>
+                        <span>{{split_mobile_count}} шт.</span>
+                    </div>
+                    <div class="all">
+                        <span>Поделись:</span>
+                        <span class="money">{{split_h5}}тг.</span>
+                        <span>{{split_h5_count}} шт.</span>
+                    </div>
+                    <div class="all">
+                        <span>Мой заказ:</span>
+                        <span class="money">{{split_self}}тг.</span>
+                        <span>{{split_self_count}} шт.</span>
+                    </div>
+                </div>
+
+                <van-list
+                    v-model="loading"
+                    :finished="finished"
+                    finished-text="Больше не надо"
+                    loading-text="Загрузка..."
+                    @load="onLoad"
+                >
+                    <div class="list" v-for="(v, k) in list" :key="k">
+                        <div class="top">
+                            <h3>{{v.split_money}}</h3>
+                            <span class="unit">тг.</span>
+                            <span class="status">{{v.status_code}}</span>
+                        </div>
+                        <div class="second">
+                            <span class="proname text">сумма заказа:</span>
+                            <span class="prome">{{v.pay_money}}</span>
+                            <span class="text">тг.</span>
+                            <div class="right">
+                                <img src="../assets/image/fenxiang@2x.png" />
+                                <span class="text">{{v.xd_user_name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="second">
+                            <span class="text date">{{v.creat_time}}</span>
+                        </div>
+
+                        <div class="second bottom">
+                            <img src="../assets/image/icon-ok.png">
+                            <p class="text date">{{v.invalid_res}}</p>
                         </div>
                     </div>
+                </van-list>
 
-                    <div class="second">
-                        <span class="text date">{{v.creat_time}}</span>
-                    </div>
-
-                    <div class="second bottom">
-                        <img src="../assets/image/icon-ok.png">
-                        <p class="text date">{{v.invalid_res}}</p>
-                    </div>
+                <div style="height: 100%; margin-top: 10px" v-if="list.length == 0">
+                    <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                    <P style="font-weight: bold; font-size: 16px; text-align: center">Не удалось найти никакой информации</P>
                 </div>
-            </van-list>
+
+            </van-pull-refresh>
 
         </div>
 
@@ -123,6 +131,7 @@
                 split_mobile_count: 0,
                 split_h5: 0,
                 split_h5_count: 0,
+                isLoading: false,
             }
         },
         mounted() {
@@ -199,7 +208,17 @@
             //时间取消
             cancel () {
                 this.show = false
-            }
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.updata.pageNumber = 0
+                    this.updata.pageSize = 20
+                    this.list = []
+                    this.getlist();
+                    this.isLoading = false;
+                }, 1000);
+            },
         }
     }
 </script>

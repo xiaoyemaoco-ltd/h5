@@ -2,51 +2,53 @@
     <div>
         <Header :title="title"></Header>
         <div class="content">
-            <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" search="search"/>
-            <div class="option">
-                <span :class="date.indexOf('-') >= 0 ? 'active' : ''" class="img" @click="selectdate">
-                    <img src="../assets/image/month.png" >
-                </span>
-                <span :class="date == 'month' ? 'active' : ''" @click="month">эа месяц</span>
-                <span :class="date == 'week' ? 'active' : ''" @click="week">эа неделя</span>
-                <span :class="date == 'day' ? 'active' : ''" @click="day">эа день</span>
-                <span :class="date == 'all' ? 'active' : ''" @click="all">Все</span>
+            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" search="search"/>
+                <div class="option">
+                    <span :class="date.indexOf('-') >= 0 ? 'active' : ''" class="img" @click="selectdate">
+                        <img src="../assets/image/month.png" >
+                    </span>
+                    <span :class="date == 'month' ? 'active' : ''" @click="month">эа месяц</span>
+                    <span :class="date == 'week' ? 'active' : ''" @click="week">эа неделя</span>
+                    <span :class="date == 'day' ? 'active' : ''" @click="day">эа день</span>
+                    <span :class="date == 'all' ? 'active' : ''" @click="all">Все</span>
 
-                <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
-                    <van-datetime-picker v-model="currentDate" type="year-month" title="Выберите год и месяц" confirm-button-text="подтвердить"
-                                         cancel-button-text="отменить" :min-date="minDate" :max-date="maxDate" @confirm="confirmdate" @cancel="cancel"/>
-                </van-popup>
-            </div>
-            <div class="desc">
-                <span>Всего: {{count}}</span>
-                <span class="text">сумма заказа:</span>
-                <span class="money">{{allperformance}}</span>
-                <span>тг.</span>
-            </div>
-
-            <div class="list" v-for="(v, k) in list" :key="k">
-                <div class="images">
-                    <img id="img" v-if="v.headimg" :src="v.headimg">
-                    <img id="img" v-else src="../assets/image/default_head_img.png">
-                    <p>{{v.user_name}}</p>
+                    <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
+                        <van-datetime-picker v-model="currentDate" type="year-month" title="Выберите год и месяц" confirm-button-text="подтвердить"
+                                             cancel-button-text="отменить" :min-date="minDate" :max-date="maxDate" @confirm="confirmdate" @cancel="cancel"/>
+                    </van-popup>
                 </div>
-                <div class="other">
-                    <div class="top">
-                        <span class="text1">сумма заказа:</span>
-                        <span class="money">{{v.performance}}</span>
-                        <span>тг.</span>
-                    </div>
-                    <div class="middle">
-                        <span>+7 {{v.mobile_phone}}</span>
-                    </div>
-                    <div class="bottom ing" v-if="v.status == 1">в Процесс проверки</div>
-                    <div class="bottom" v-else @click="applyvip(v.user_id)">настроить как VIP</div>
+                <div class="desc">
+                    <span>Всего: {{count}}</span>
+                    <span class="text">сумма заказа:</span>
+                    <span class="money">{{allperformance}}</span>
+                    <span>тг.</span>
                 </div>
-            </div>
 
-            <div style="margin-top: 10px" v-if="list.length == 0">
-                <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-            </div>
+                <div class="list" v-for="(v, k) in list" :key="k">
+                    <div class="images">
+                        <img id="img" v-if="v.headimg" :src="v.headimg">
+                        <img id="img" v-else src="../assets/image/default_head_img.png">
+                        <p>{{v.user_name}}</p>
+                    </div>
+                    <div class="other">
+                        <div class="top">
+                            <span class="text1">сумма заказа:</span>
+                            <span class="money">{{v.performance}}</span>
+                            <span>тг.</span>
+                        </div>
+                        <div class="middle">
+                            <span>+7 {{v.mobile_phone}}</span>
+                        </div>
+                        <div class="bottom ing" v-if="v.status == 1">в Процесс проверки</div>
+                        <div class="bottom" v-else @click="applyvip(v.user_id)">настроить как VIP</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px" v-if="list.length == 0">
+                    <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
+                </div>
+            </van-pull-refresh>
         </div>
     </div>
 </template>
@@ -68,7 +70,8 @@
                 list: [],
                 date: 'month',
                 allperformance: 0,
-                count: 0
+                count: 0,
+                isLoading: false,
             }
         },
         inject: ['reload'],
@@ -182,7 +185,15 @@
                         }
                     })
                 })
-            }
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.list = []
+                    this.getlist();
+                    this.isLoading = false;
+                }, 1000);
+            },
         }
     }
 </script>

@@ -27,6 +27,7 @@ import Stationletter from './components/stationletter'
 import Stationmsgdetail from './components/stationmsgdetail'
 import Paysuccess from './components/paysuccess'
 import Withdraw from './components/withdraw'
+import Comment from './components/comment'
 import Test from './components/category1'
 
 Vue.use(Router)
@@ -60,6 +61,7 @@ const routes = [
     {path: '/stationmsgdetail', component: Stationmsgdetail},
     {path: '/paysuccess', component: Paysuccess},
     {path: '/withdraw', component: Withdraw},
+    {path: '/comment', component: Comment},
     {path: '/test', component: Test},
 ]
 

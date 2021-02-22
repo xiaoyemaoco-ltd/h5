@@ -6,27 +6,27 @@
                 <van-dropdown-item @change="change2" v-model="value2" :options="option2" />
             </van-dropdown-menu>
         </div>
-        <!--<div id="header">
-            <van-nav-bar title="列表" left-text="返回" left-arrow @click-left="onClickLeft"/>
-        </div>-->
+
         <div id="content">
-            <van-list id="list" v-model="loading" offset="1"
-                      :finished="finished"
-                      finished-text=""
-                      loading-text="Загрузка..."
-                      @load="onLoad">
-                <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.goods_id)">
-                    <img v-lazy="item.goods_thumb">
-                    <p v-if="item.sales > 0" id="sales">Продажи：{{item.sales}}</p>
-                    <p v-else id="sales"></p>
-                    <P class="text">{{item.goods_name}}</P>
-                    <label id="attr">
-                        <span id="price">{{item.price}}</span>
-                        <span id="dw">тг.</span>
-                        <span :id="item.cang == 'CN' ? 'cang' : 'hskst'">{{item.cang}}</span>
-                    </label>
-                </div>
-            </van-list>
+            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                <van-list id="list" v-model="loading" offset="1"
+                          :finished="finished"
+                          finished-text=""
+                          loading-text="Загрузка..."
+                          @load="onLoad">
+                    <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.goods_id)">
+                        <img v-lazy="item.goods_thumb">
+                        <p v-if="item.sales > 0" id="sales">Продажи：{{item.sales}}</p>
+                        <p v-else id="sales"></p>
+                        <P class="text">{{item.goods_name}}</P>
+                        <label id="attr">
+                            <span id="price">{{item.price}}</span>
+                            <span id="dw">тг.</span>
+                            <span :id="item.cang == 'CN' ? 'cang' : 'hskst'">{{item.cang}}</span>
+                        </label>
+                    </div>
+                </van-list>
+            </van-pull-refresh>
         </div>
     </div>
 </template>
@@ -58,6 +58,7 @@
                     pageNumber: 0,  //页码
                     pageSize:20     //每页条数
                 },
+                isLoading: false,
                 loading: false,
                 finished: false,
             };
@@ -121,7 +122,17 @@
                         this.list = res.data.data
                     }
                 })
-            }
+            },
+            //下拉刷新
+            onRefresh() {
+                setTimeout(() => {
+                    this.updata.pageNumber = 0
+                    this.updata.pageSize = 20
+                    this.list = []
+                    this.getGoodsList();
+                    this.isLoading = false;
+                }, 1000);
+            },
         },
     }
 </script>
