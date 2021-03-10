@@ -2,10 +2,10 @@
     <div>
         <Header :title="title"></Header>
         <div class="Allorder" id="middle">
-            <van-tabs :active="active" @change="changstatus" swipeable>
+            <van-tabs :active="active" @change="changstatus" swipeable class="vantab">
                 <van-search v-model="value" placeholder="введите ключевое слово для поиска" search="search"/>
                 <van-tab title="Bce" name="-1">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
                                 v-model="loading" offset="10"
                                 :finished="finished"
@@ -49,13 +49,13 @@
                         </van-list>
                     </van-pull-refresh>
 
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                    <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Bожиданий" name="100">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
@@ -98,13 +98,13 @@
                     </div>
                     </van-list>
                     </van-pull-refresh>
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                    <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Aктивные" name="101">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
@@ -145,13 +145,13 @@
                     </div>
                     </van-list>
                     </van-pull-refresh>
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                    <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Завершенные" name="105">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
                         v-model="loading" offset="10"
                         :finished="finished"
@@ -194,13 +194,13 @@
                     </van-list>
                     </van-pull-refresh>
 
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                    <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Отмененные" name="102">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
                         v-model="loading"
                         :finished="finished" offset="10"
@@ -242,7 +242,7 @@
                     </van-list>
                     </van-pull-refresh>
 
-                    <div style="height: 100%; margin-top: 10px" v-if="orderlist.length == 0">
+                    <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
@@ -332,6 +332,7 @@
                         }
                         this.updata.pageNumber = e.data.skip;
                         this.orderlist = this.orderlist.concat(list); // 将新数据与老数据进行合并
+                        console.log(this.orderlist)
                     } else {
                         this.finished = true;
                     }
@@ -416,7 +417,7 @@
         background-color: #eee;
     }
     .van-tab__pane {
-        height: calc( 100vh - 300px);
+        height: calc( 100vh - 250px);
         overflow-y:auto;
     }
     #content {
@@ -436,7 +437,10 @@
     }
     #middle {
       height: calc( 100vh - 100px);
-      overflow-y:auto;
+      overflow:hidden;
+    }
+    #middle >>> .vantab {
+        /*height: calc( 100vh - 50px);*/
     }
     .AllCode .paid {
         float: right;

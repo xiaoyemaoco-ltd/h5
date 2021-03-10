@@ -1,5 +1,5 @@
 <template>
-    <van-tabbar v-model="tabbarValue" active-color="#ff362c" inactive-color="#000" @change="onChange">
+    <van-tabbar v-model="tabbarValue" active-color="#ff362c" inactive-color="#000" @change="onChange" id="tabbar">
         <van-tabbar-item name="home">
           <span id="text">Первая</span>
           <template #icon="props">
@@ -49,13 +49,32 @@
                 } else {
                   this.$router.push('./' + index)
                 }
-
             }
         }
     }
 </script>
 
 <style scoped>
+  /*iphoneX、iphoneXs*/
+  @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+      #tabbar {
+         padding-bottom: 34px !important
+      }
+  }
+
+  /*iphone Xs Max*/
+  @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+      #tabbar {
+         padding-bottom: 34px !important
+      }
+  }
+
+  /*iphone XR*/
+  @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+      #tabbar {
+         padding-bottom: 34px !important
+      }
+  }
  .van-tabbar-item__icon img {
    height: 48px;
  }

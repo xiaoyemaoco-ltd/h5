@@ -2,7 +2,7 @@
     <div>
         <Header :title="title"></Header>
         <div class="content">
-            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+            <van-pull-refresh class="refresh" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                 <div>
                     <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
                     <van-dropdown-menu class="sel">
@@ -227,7 +227,7 @@
     .van-list >>> .van-list__finished-text {
         display: none;
     }
-    .content {
+    .refresh {
         background-color: #eee;
         height: calc( 100vh - 100px );
         overflow-y:auto;

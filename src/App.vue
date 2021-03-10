@@ -49,4 +49,7 @@ export default {
 #nav {
   background-color: unset;
 }
+::-webkit-scrollbar {
+  width: 0 !important;
+}
 </style>

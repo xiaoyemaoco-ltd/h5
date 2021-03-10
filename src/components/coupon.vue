@@ -4,7 +4,7 @@
         <div class="Allorder">
             <van-tabs :active="active" @change="changstatus" swipeable>
                 <van-tab title="доверенное" name="1">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="couponlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." error-text="Больше не надо"
                             @load="onLoad" v-if="couponlist.length > 0"
                     >
@@ -54,13 +54,13 @@
                         </div>
                     </van-list>
                     </van-pull-refresh>
-                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                    <div class="refresh" style="margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="использованный" name="2">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="couponlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list v-model="loading" :finished="finished" loading-text="Загрузка..." offset="10"
                             @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
@@ -110,13 +110,13 @@
                     </van-list>
                     </van-pull-refresh>
 
-                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                    <div class="refresh" style="margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="истекший" name="3">
-                    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+                    <van-pull-refresh class="refresh" v-if="couponlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list v-model="loading" offset="10" :finished="finished" loading-text="Загрузка..." @load="onLoad" v-if="couponlist.length > 0">
                         <div id="content" v-for="(v, k) in couponlist" :key="k">
                             <div class="Allshop">
@@ -142,13 +142,13 @@
                             <div class="lookdetail" v-if="currentActive2 == k">
                                 <div class="desc border">
                                     <h4>Ограничения на использовать</h4>
-                                    <p class="border">При покупке превышать <span>{{v.limitamount}} тг.</span> Можно использовать купоны</p >
+                                    <p class="border special">При покупке превышать <span>{{v.limitamount}} тг.</span> Можно использовать купоны</p >
                                 </div>
                                 <div class="desc">
                                     <h4>правило использовать</h4>
                                     <p class="border" v-html="v.memo"></p >
                                 </div>
-                                <div class="desc" v-if="v.forgoodslist">
+                                <div class="desc btn" v-if="v.forgoodslist">
                                     <h4>ограниченного использования товар</h4>
                                     <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
                                         <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
@@ -164,7 +164,7 @@
                         </div>
                     </van-list>
                     </van-pull-refresh>
-                    <div style="height: 100%; margin-top: 10px" v-if="couponlist.length == 0">
+                    <div class="refresh" style="margin-top: 10px" v-if="couponlist.length == 0">
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
                         <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
@@ -310,7 +310,7 @@
 </script>
 
 <style scoped>
-    .van-tab__pane {
+    .refresh {
         height: calc( 100vh - 180px);
         overflow-y:auto;
     }
@@ -452,21 +452,29 @@
     #content .lookdetail .border {
         border-top: unset;
     }
+    #content .lookdetail .border >>> p{
+        margin: unset;
+    }
     .lookdetail .desc {
-        padding-bottom: 20px;
         margin: 0 15px;
         padding-top: 15px;
         border-top: 1px #ccc solid;
+    }
+    .lookdetail .desc .special {
+        padding-left: 15px;
     }
     .border p p {
         margin: 10px 0;
     }
     .forgood li{
         padding-bottom: 10px;
-        font-size: 9px;
+        font-size: 20px;
         line-height: 40px;
         list-style: disc;
         margin-left:45px;
+    }
+    .btn {
+        padding-bottom: 10px;
     }
     .button {
         display: block;
@@ -477,6 +485,7 @@
         height: 50px;
         border-radius: 25px;
         padding: 0 25px;
+        margin-bottom: 15px;
     }
     .order {
         padding-top: 20px;

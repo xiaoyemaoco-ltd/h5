@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="background-color: #eee;">
         <van-nav-bar id="nav" :right-text="islogin ?'выход' : ''" @click-right="signout"/>
         <div id="content">
             <div id="header">
@@ -159,9 +159,8 @@
                     </van-tabbar>
                 </div>
             </div>
-            <tabbar :active="active"></tabbar>
         </div>
-
+        <tabbar :active="active"></tabbar>
     </div>
 </template>
 
@@ -271,11 +270,34 @@
 </script>
 
 <style scoped>
+    /*iphoneX、iphoneXs*/
+    @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+        #content {
+            height: calc( 100vh - 220px) !important
+        }
+    }
+
+    /*iphone Xs Max*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+        #content {
+            height: calc( 100vh - 220px) !important
+        }
+    }
+
+    /*iphone XR*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+        #content {
+            height: calc( 100vh - 220px) !important
+        }
+    }
     #content {
         background-color: #eee;
         text-align: left;
         height: calc( 100vh - 180px);
         overflow-y:auto;
+    }
+    #content::-webkit-scrollbar {
+        width: 0 !important;
     }
     #nav {
         background-color: #ff655d;
@@ -311,7 +333,7 @@
         width: 55%;
     }
     #middle {
-        margin-top: 28px;
+        margin-top: 20px;
     }
     #header #login {
         width: 15%;
@@ -419,7 +441,7 @@
         width: 100%;
         margin: 0 auto;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
     #select {
       height: 100%;

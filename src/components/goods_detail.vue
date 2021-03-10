@@ -52,24 +52,21 @@
                     </div>
                     <div id="attrlist">
                         <label id="tz">регион доставки：</label>
-                        <p id="desc" v-if="cityname == ''" @click="selctarea">Выбрать</p>
-                        <p id="desc" v-else @click="selctarea">{{provice}} {{cityname}}</p>
+                        <p id="desc" v-if="areavalue == ''" @click="selctarea">Выбрать</p>
+                        <p id="desc" v-else @click="selctarea">{{areavalue}}</p>
                     </div>
 
                     <!--省市選取-->
                     <div>
-                        <van-popup round  v-model="show2" closeable position="bottom">
-                            <div id="coupon1">
-                                <van-tree-select height="55vw" :items="items" :active-id.sync="items.region_id"
-                                                 :main-active-index.sync="activeIndex" @click-nav="getprovice">
-                                    <template slot="content" >
-                                        <ul class="right-content">
-                                             <li v-for="(item, index) in city" :key="index" :class="selected == item.region_id ? 'selected' : ''"
-                                                 @click="onItemClick(item.region_id, item.region_name)"> {{item.region_name}} </li>
-                                        </ul>
-                                    </template>
-                                </van-tree-select>
-                            </div>
+                        <van-popup class="provice" v-model="show2" round position="bottom">
+                            <van-cascader
+                                    v-model="cascaderValue"
+                                    title="Ваш район"
+                                    :options="options"
+                                    @close="show2 = false"
+                                    @finish="onFinish"
+                                    placeholder = "Выбрать"
+                            />
                         </van-popup>
                     </div>
 
@@ -214,7 +211,10 @@
                 productstock: 0,
                 product_id: '',
                 attr_id: '',
-                user_id: 0
+                user_id: 0,
+                cascaderValue: '',
+                options: [],
+                areavalue: ''
             };
         },
         inject: ['reload'],
@@ -228,6 +228,7 @@
             this.getCity(3)
         },
         methods: {
+            //选择属性
             selectattr(id, index) {
                 this.attrselected[index] = id
                 // let attr = JSON.parse(JSON.stringify(this.attrselected))
@@ -246,28 +247,6 @@
                 this.productstock = resdata.product_number
                 this.product_id = resdata.product_id
             },
-            onChange(index) {
-                this.showList = false;
-                this.chosenCoupon = index;
-            },
-            getprovice(index) {
-                let provice = this.items[index].region_id
-                this.provice = this.items[index].text
-                this.getCity(provice)
-            },
-            onItemClick(id, name){
-                this.selected = id
-                this.cityname = name
-                this.$axios.post('api/goods/calShipping', {
-                    city_id: id,
-                    cang_id: this.detail.cang_id
-                }).then((res) => {
-                    if (res.data.statuscode == 200) {
-                        this.aging = res.data.aging
-                    }
-                })
-                this.show2 = false
-            },
             selectsku() {
                 this.show = true
             },
@@ -280,6 +259,7 @@
             showPopup() {
                 this.show1 = true
             },
+            //商品详情
             getGoodsDetail() {
                 this.$axios.post('api/goods/getGoodsDetail', {
                     goods_id: this.$route.query.goods_id,
@@ -291,12 +271,13 @@
                         this.coupondata = res.data.data.coupons
                         let provice = res.data.data.provice
                         provice.map((item) => {
-                            this.items.push({
-                                region_id: item.region_id,
-                                text: item.region_name
+                            this.options.push({
+                                value: item.region_id,
+                                text: item.region_name,
+                                children: item.children
                             })
                         })
-                        this.provice = this.items[0].text
+                        this.provice = this.options[0].text
                         //判断商品是否有属性
                         if (Object.keys(res.data.data.properties).length > 0) {
                             this.properties = res.data.data.properties
@@ -349,6 +330,7 @@
                         this.$toast({
                             message: 'Этот товар распродан',
                             position: 'top',
+                            type: 'fail'
                         });
                         return;
                     }
@@ -357,6 +339,7 @@
                         this.$toast({
                             message: 'Этот товар распродан',
                             position: 'top',
+                            type: 'fail'
                         });
                         return;
                     }
@@ -398,15 +381,24 @@
             },
             //立即购买
             buynow () {
+                console.log(this.productstock, this.value)
                 //判断库存
                 if (this.detail.goods_type != 0) {
                     if (this.productstock < this.value) {
-                        this.$toast.fail('Этот товар распродан')
+                        this.$toast({
+                            message: 'Этот товар распродан',
+                            position: 'top',
+                            type: 'fail'
+                        });
                         return;
                     }
                 } else {
                     if (this.detail.goods_number < this.value) {
-                        this.$toast.fail('Этот товар распродан')
+                        this.$toast({
+                            message: 'Этот товар распродан',
+                            position: 'top',
+                            type: 'fail'
+                        });
                         return;
                     }
                 }
@@ -490,6 +482,19 @@
                         this.city = []
                         this.city = res.data.data
                         this.selected = this.city[0].region_id
+                    }
+                })
+            },
+            //城市选择完成时
+            onFinish (value) {
+                this.show2 = false
+                this.areavalue = value.selectedOptions.map((option) => option.text).join(' ');
+                this.$axios.post('api/goods/calShipping', {
+                    city_id: value.value,
+                    cang_id: this.detail.cang_id
+                }).then((res) => {
+                    if (res.data.statuscode == 200) {
+                        this.aging = res.data.aging
                     }
                 })
             }
@@ -630,7 +635,7 @@
         display:flex;
         text-align:left;
         align-items:center;
-        justify-content:center;
+        /*justify-content:center;*/
     }
 
     #attrlist #desc {

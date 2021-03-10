@@ -32,7 +32,7 @@
         </div>
 
         <!--购物车为空-->
-        <div id="kong" v-else>
+        <div id="kong" v-if="list.length == 0">
             <div id="cartimg">
                 <img src="../assets/image/shop/gouwuchekong@2x.png">
             </div>
@@ -76,6 +76,7 @@
         components: {
             Tabbar
         },
+        inject: ['reload'],
         mounted() {
             let userinfo = localStorage.getItem('userinfo')
             // if (!userinfo) {
@@ -137,6 +138,7 @@
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.getCartList()
+                        // this.reload()
                     }
                 })
             },
@@ -213,13 +215,13 @@
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
+                        this.checked2 = []
                         this.list.map((v) => {
                             if (v.can_handsel == 1) {
                                 this.checked2.push(v.rec_id)
                                 this.price += parseInt(v.goods_price) * 100
                             }
                         })
-
                         if (this.checked2.length ==  Object.keys(this.list).length) {
                             this.checkedAll = true
                         }
@@ -350,6 +352,26 @@
         font-size: 26px;
         height: 100%;
         line-height: 100px;
+    }
+    /*iphoneX、iphoneXs*/
+    @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+        .van-submit-bar {
+            bottom: 125px !important
+        }
+    }
+
+    /*iphone Xs Max*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+        .van-submit-bar {
+            bottom: 125px !important
+        }
+    }
+
+    /*iphone XR*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+        .van-submit-bar {
+            bottom: 125px !important
+        }
     }
     .van-submit-bar {
         bottom: 90px;

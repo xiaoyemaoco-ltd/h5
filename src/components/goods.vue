@@ -8,7 +8,7 @@
         </div>
 
         <div id="content">
-            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+            <van-pull-refresh style="height: 100%" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                 <van-list id="list" v-model="loading" offset="1"
                           :finished="finished"
                           finished-text=""
@@ -138,10 +138,6 @@
 </script>
 
 <style scoped>
-    #header {
-        height: 100px;
-        background-color: rgb(238, 10, 36);
-    }
     #header .van-nav-bar{
         background-color: unset;
         height: 100px;

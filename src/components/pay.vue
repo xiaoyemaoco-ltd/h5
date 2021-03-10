@@ -33,7 +33,7 @@
                             <div id="title" class="van-sku-row van-hairline--bottom">
                                 <div class="van-sku-row__title">Способ доставки</div>
                                 <div  class="van-sku-row__item" v-for="(item, index) in shipping_list" :key="index">
-                                    <div :id="shipping_id == item.shipping_id ? 'active' : ''" class="van-sku-row__item-name"
+                                    <div :id="shipping_id == item.shipping_id ? 'active' : ''" class="van-sku-row__item-name shipping_name"
                                          @click="selectpickupway(item.shipping_id, item.support_pickup, item.shipping_name, item.first_fee)">{{item.shipping_name}}</div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                 <i class="van-icon van-icon-arrow van-cell__right-icon"><!----></i>
             </div>
             <div>
-                <van-popup v-model="show1" closeable round position="bottom" style="z-index: 2113;" >
+                <van-popup v-model="show1" closeable round position="bottom" style="z-index: 9999; bottom: 49px" >
                     <div class="van-sku-body">
                         <div class="van-sku-group-container">
                             <div id="title" class="van-sku-row van-hairline--bottom">
@@ -468,10 +468,11 @@
     .van-sku-row__item {
         background-color: #cccccc;
         border-radius: 30px;
-        border: 2px #ccc solid;
+        border: 1px #ccc solid;
     }
     #title >>> .van-sku-row__item-name {
         width: 400px;
+        text-align: center;
     }
     #active {
         background-color: #ff362c;

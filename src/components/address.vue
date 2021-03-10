@@ -2,7 +2,7 @@
     <div id="content">
         <Header :title="title"></Header>
         <div class="box">
-            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+            <van-pull-refresh style="height: 100%" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                 <div id="content" v-for="(item, index) in list" :key="index">
                   <div class="addBox">
                     <div class="addradio">

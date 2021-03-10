@@ -70,27 +70,6 @@
                         this.initScroll()
                     }
                 })
-                /*var that = this;
-                $clg.showLoading()
-                $api.get($api.URL + '/catelog.php', function(ret) {
-                    $clg.hideLoading()
-                    if (ret) {
-                        if (ret.error === "0") {
-                            // console.log(JSON.stringify(ret.content.categories));
-                            that.categories = ret.content.categories
-                            $api.byId('scrollDetail').style.opacity = 1;
-                            var now_index = "";
-                            that.categories.forEach(function(item, index) {
-                                if (item.id == api.pageParam.cat_index) {
-                                    now_index = index;
-                                }
-                            })
-                            that.initScroll(now_index)
-                        }
-                    } else {
-                        alert(JSON.stringify(err));
-                    }
-                })*/
             },
             initScroll: function(now_index) {
                 var that = this;

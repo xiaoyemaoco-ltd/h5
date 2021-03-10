@@ -6,26 +6,19 @@
         <div id="content">
             <div id="left" ref="left">
                 <van-sidebar v-model="activeKey"  ref="menuList">
-                    <van-sidebar-item @click="onChange" ref="l_item" v-for="(item, index) in category" :key="index" :title="item.cat_name"
-                    />
+                    <van-sidebar-item @click="onChange" ref="l_item" v-for="(item, index) in category" :key="index" :title="item.cat_name"/>
                 </van-sidebar>
             </div>
-            <div  id="right" ref="right">
+            <div id="right" ref="right">
                 <h3>{{catename}}</h3>
-                <div id="list" class="list right-item-hook">
-                    <van-list v-model="loading" offset="10"
-                              :finished="finished"
-                              finished-text="Больше не надо"
-                              @load="load">
-
-                    <div class="right" ref="good" style="width: 100%;display: flex;flex-wrap: wrap;">
+                <div id="list" class="list right-item-hook" ref="box">
+                    <div class="right" ref="cate">
                         <div id="goods" v-for="(v, k) in list" :key="k" @click="getGoodsList(v.cat_id)">
                             <img id="images" v-lazy="v.cat_img" >
                             <P class="text">{{v.cat_name}}</P>
                         </div>
+                        <p class="tip" v-show="show">Потяните вверх, чтобы продолжить просмотр {{loadtext}}</p>
                     </div>
-                    </van-list>
-
                 </div>
             </div>
         </div>
@@ -36,12 +29,11 @@
 <script>
     import Tabbar from "./tabbar";
     import BScroll from "better-scroll"
-
     export default {
         name: "goods",
         data() {
             return {
-                active: 'category1',
+                active: 'category',
                 // active: Number(window.localStorage.getItem("activeIndex")||0),
                 list: [],
                 loading: true,
@@ -50,60 +42,107 @@
                 pageNo: 0, //当前页码
                 category: [],
                 catename: '',
+                loadtext: '',
+                loadtext1: '',
                 activeKey: 0,
-                loadtext: 'продолжить просмотр ',
-
-                updata:{
-                    pageNumber: 0,  //页码
-                    pageSize:20     //每页条数
-                },
+                show: false,
+                scrollY:0,
+                scroller: '',
             };
         },
         components: {
             Tabbar
         },
-        mounted() {
+        created() {
             this.getCategory()
         },
         computed: {
             //动态绑定class类名
         },
         inject: ['reload'],
+        watch: {
+            scrollY: function (e) {
+                if (e < 0) {
+                    this.scrollY(0)
+                }
+            }
+        },
         methods: {
-            load() {
-                this.$axios.post('api/v1/Getclassdata', {
-                    parent_id: this.category[this.activeKey].cat_id
-                }).then((res) => {
-                    if (res.data.statuscode == 200) {
-                        console.log(res)
-                        let list = res.data.list
-                        this.catename = this.category[this.activeKey + 1].cat_name
-
-                        this.loading = false;
-                        //是否处于加载状态，加载过程中不触发load事件
-                        if (list == null || list.length === 0) {
-                            this.finished = true;           // 加载结束
-                            return;
+            initScroller() {
+                //初始化betterScroll
+                let self = this
+                setTimeout(function () {
+                    self.scroller = new BScroll(self.$refs.box, {
+                        probeType: 1,
+                        click: true,
+                        mouseWheel: true,//开启鼠标滚轮
+                        disableMouse: false,//启用鼠标拖动
+                        disableTouch: false,//启用手指触摸
+                        pullUpLoad: {
+                            threshold: -40
+                        },
+                        scrollY: true
+                    })
+                    //给右侧绑定的BScroll绑定监听事件,但是你会发现并没有调用
+                    self.scroller.on('scroll',({x,y})=>{
+                        console.log(x, y)
+                        self.scrollY = Math.abs(y);
+                    })
+                    self.scroller.on('pullingUp', (e) => {
+                        console.log(e)
+                        if (self.activeKey == self.category.length - 2) self.show = false
+                        if (self.activeKey + 1 < self.category.length) {
+                            self.activeKey += 1
+                            self.catename = self.category[self.activeKey].cat_name
+                            self.loadtext = self.category[self.activeKey].cat_name
+                            self.loadtext1 = self.category[self.activeKey - 1].cat_name
+                            self.getCateList()
                         }
-                        // this.list = this.list.concat(list);
-                        this.list = list;
-                    } else {
-                        this.finished = true;
-                    }
-                })
-                this.activeKey += 1
+                        self.scroller.finishPullUp();
+                    })
+                    self.scroller.on('touchEnd', function (position) {
+                        position.y = 0
+                        if (position.y > 30) { // 下拉刷新
+                            if (self.activeKey > 0) {
+                                self.activeKey -= 1
+                                self.catename = self.category[self.activeKey].cat_name
+                            }
+                            self.getCateList()
+                        }
+                    })
+                }, 2000)
+
             },
-            //点击左侧
+                //点击左侧
             onChange(index) {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+                this.activeKey = index
+                if (this.activeKey != this.category.length - 1) {
+                    this.show = true
+                } else {
+                    this.show = false
+                }
                 this.$axios.post('api/v1/Getclassdata', {
                     parent_id: this.category[index].cat_id
                 }).then((res) => {
                     if (res.data.statuscode == 200) {
-                        console.log(res)
                         this.list = []
                         this.list = res.data.list
                         this.catename = this.category[index].cat_name
+                        if (index < this.category.length - 1) {
+                            this.loadtext = this.category[index + 1].cat_name
+                        }
+                        if (index > 0) {
+                            this.loadtext1 = this.category[index - 1].cat_name
+                        }
+                        this.$refs.box.scrollTop = 0
                     }
+                    this.$toast.clear();
                 })
             },
             //商品列表
@@ -117,69 +156,36 @@
             },
             getCategory() {
                 this.$axios.post('api/v1/getallclassdata').then((e) => {
-                    console.log(e)
                     if (e.data.statuscode == 200) {
                         this.category = e.data.list
                         this.catename = e.data.list[0].cat_name
-                        this.loadtext += e.data.list[1].cat_name
-                        // this.list = e.data.list[0].sub_cat_id
-                        this.loading = false
-
-                        /*this.$nextTick(() => {
-                            this._initBScroll()
-                            // 获取某个分类下商品列表离顶部距离
-                            this._initRightHeight();
-                        })*/
-
-                        /*this.$axios.post('api/v1/Getclassdata', {
-                            parent_id: e.data.list[0].cat_id
-                        }).then((res) => {
-                            if (res.data.statuscode == 200) {
-                                this.list = res.data.list
-                            }
-                        })*/
+                        this.loadtext = e.data.list[1].cat_name
+                        this.getCateList()
+                        this.$nextTick(() => {
+                            this.initScroller()
+                        })
                     }
                 })
             },
-            _initBScroll() {
-                if (!this.rights) {
-                    this.rights = new BScroll(this.$refs.right, {
-                        startY: true,
-                        click: true, // 配置允许点击事件
-                        scrollY: true, // 可以开启纵向滚动
-                        probeType: 3, // 开启滚动监听
-                        bounce: false // 关闭弹性效果
-                    })
-                    //rights这个对象监听事件，实时获取位置pos.y
-                    this.rights.on('scroll', (pos) => {
-                        this.scrollY = Math.abs(Math.round(pos.y))
-                        console.log(this.scrollY)
-                    })
-                } else {
-                    this.rights.refresh()
-                }
-                this.lefts = new BScroll(this.$refs.left, {
-                    click: true,
+            getCateList () {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
+                let _this = this
+                _this.$axios.post('api/v1/Getclassdata', {
+                    parent_id: _this.category[_this.activeKey].cat_id
+                }).then((res) => {
+                    this.$toast.clear();
+                    if (res.data.statuscode == 200) {
+                        let list = res.data.list
+                        _this.list = list;
+                        _this.show = true
+                        // _this.$refs.cate.scrollTo(0, 0, 1)
+                    }
                 })
-                console.log(this.lefts)
-            },
-            //求出右边列表的高度
-            _initRightHeight(){
-                let rightItems = this.$refs.good
-                let height = 0
-                this.listHeight.push(height)
-                for(let i = 0; i < rightItems.length; i++){
-                    let item = rightItems[i]
-                    height += item.clientHeight
-                    this.listHeight.push(height)
-                }
-                console.log(this.listHeight)
-            },
-            //左右联调
-            _initLeftScroll(index){
-                let menu = this.$refs.menuList;
-                let el = menu[index];
-                this.leftBscroll.scrollToElement(el,300,0,-300)
             }
         }
     }
@@ -205,15 +211,15 @@
         font-weight: bold;
     }
     .van-sidebar .van-sidebar-item {
-        padding: 30px 2px;
+        padding: 20px 2px;
     }
 
     .van-sidebar-item >>> .van-sidebar-item__text {
-        font-size: 12px;
+        font-size: 20px;
     }
     #content {
         display: flex;
-        height: calc( 100vh - 100px );
+        height: calc( 100vh - 200px );
         width: 750px;
         /*overflow:hidden;*/
     }
@@ -222,20 +228,33 @@
         height: calc(100vh - 200px);
     }
     #left >>> .van-sidebar {
-        width: 250px;
+        width: 270px;
     }
     #content #right {
-        width: 500px;
-        height: calc(100vh - 250px);
+        width: 480px;
+        height: calc(100vh - 200px);
         overflow: hidden;
     }
     #right #list {
+        /*display: flex;*/
+        /*flex-wrap: wrap;*/
+        /*height: calc(100vh - 260px);*/
+        height: 1100px;
+        padding-left: 15px;
+        overflow: hidden;
+    }
+    #list .right {
+        align-content: flex-start;
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
-        margin-bottom: 100px;
-        height: calc(100vh - 250px);
-        overflow-y:auto;
     }
+
+    /*#list::-webkit-scrollbar {*/
+    /*    display: none;*/
+    /*    width: 0;*/
+    /*}*/
+
     #right #goods {
         width: 49%;
     }
@@ -252,11 +271,20 @@
         text-align: left;
         padding: 15px;
         width: 100%;
+        margin: unset;
     }
     #list >>> .van-list__finished-text {
         width: 100%;
     }
     #list >>> .van-list__loading {
         width: 100%;
+    }
+    #list .tip {
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        padding: 20px 0;
+        margin: unset;
     }
 </style>
