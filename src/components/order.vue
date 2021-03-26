@@ -1,9 +1,9 @@
 <template>
     <div>
-        <Header :title="title"></Header>
+        <Header :title="title" :before_url="beforeUrl"></Header>
         <div class="Allorder" id="middle">
             <van-tabs :active="active" @change="changstatus" swipeable class="vantab">
-                <van-search v-model="value" placeholder="введите ключевое слово для поиска" search="search"/>
+                <van-search v-model="value" placeholder="введите ключевое слово для поиска" @search="search"/>
                 <van-tab title="Bce" name="-1">
                     <van-pull-refresh class="refresh" v-if="orderlist.length > 0" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                         <van-list
@@ -270,10 +270,16 @@
                     pageSize:20     //每页条数
                 },
                 isLoading: false,
+                beforeUrl: ''
             }
         },
         components: {
             Header
+        },
+        beforeRouteEnter (to, from, next) {
+            next(vm => {
+                vm.beforeUrl = from.path
+            })
         },
         mounted() {
             setTimeout(() => {
@@ -291,6 +297,11 @@
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
                 this.active = localStorage.getItem('order_active')
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getuserorder();
             }, 0)
         },
@@ -307,14 +318,6 @@
                 })
             },
             getuserorder () {
-
-                /*this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });*/
-
                 this.$axios.post('api/order/Getuserorder', {
                     user_id: this.user_id,
                     skip: this.updata.pageNumber,
@@ -322,7 +325,7 @@
                     composite_status: this.active,
                     keyword: this.value
                 }).then((e) => {
-                    // this.$toast.clear()
+                    this.$toast.clear();
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
@@ -332,13 +335,20 @@
                         }
                         this.updata.pageNumber = e.data.skip;
                         this.orderlist = this.orderlist.concat(list); // 将新数据与老数据进行合并
-                        console.log(this.orderlist)
                     } else {
                         this.finished = true;
                     }
                 })
             },
             search () {
+                this.updata.pageNumber = 0
+                this.orderlist = []
+                this.finished = false;
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getuserorder()
             },
             changstatus (e) {
@@ -347,13 +357,16 @@
                 this.updata.pageNumber = 0
                 this.orderlist = []
                 this.finished = false;
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getuserorder()
             },
             onLoad() {
                 // this.updata.pageNumber++;
-
                 this.getuserorder();
-
             },
             //跳详情
             getOrderDetail(order_id) {
@@ -417,7 +430,7 @@
         background-color: #eee;
     }
     .van-tab__pane {
-        height: calc( 100vh - 250px);
+        height: calc( 100vh - 270px);
         overflow-y:auto;
     }
     #content {

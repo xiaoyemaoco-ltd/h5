@@ -145,6 +145,10 @@ export default {
     bounce: true;
   }
 
+  #content::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
   .my-swipe {
     background-color: #ffffff;
   }

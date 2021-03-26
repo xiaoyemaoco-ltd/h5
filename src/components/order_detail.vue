@@ -47,7 +47,7 @@
                 </div>
                 <div id="text">
                     <label class="bh">купон:</label>
-                    <label class="number">0</label>
+                    <label class="number">{{coupon}}</label>
                 </div>
                 <div id="text">
                     <label class="bh">Cумма заказа:</label>
@@ -66,6 +66,7 @@
             return {
                 title: 'спецификация заказа',
                 user_id: 0,
+                coupon: 0,
                 detail: []
             }
         },
@@ -96,6 +97,7 @@
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.detail = e.data.data
+                        this.coupon = e.data.coupon
                     } else {
                         this.$toast.fail(e.data.message)
                     }

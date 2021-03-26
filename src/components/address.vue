@@ -2,7 +2,7 @@
     <div id="content">
         <Header :title="title"></Header>
         <div class="box">
-            <van-pull-refresh style="height: 100%" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
+            <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                 <div id="content" v-for="(item, index) in list" :key="index">
                   <div class="addBox">
                     <div class="addradio">
@@ -16,7 +16,7 @@
                     </div>
                   </div>
                   <div id="edit">
-                    <van-radio-group v-model="radio">
+                    <van-radio-group v-model="radio" id="radio">
                       <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
                     </van-radio-group>
                     <div id="ed" @click="adressupdate(item.address_id)">
@@ -238,6 +238,10 @@
     #edit #ed, #edit #del {
         margin-left: 50px;
         display: flex;
+        width: 30%;
+    }
+    #edit #radio {
+        width: 40%;
     }
     #edit #ed span, #edit #del span {
       margin-left: 10px;

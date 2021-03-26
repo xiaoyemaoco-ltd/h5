@@ -6,11 +6,11 @@ if (process.env.NODE_ENV === 'production') {
     /*第二层if，根据.env文件中的VUE_APP_FLAG判断是生产环境还是测试环境*/
     if (process.env.VUE_APP_FLAG === 'pro') {
         //production 生产环境
-        host = 'http://api.xinggeyun.com';
+        host = 'http://test.liuqiang13qqcom.yxnat.softdev.top';
 
     } else {
         //test 测试环境
-        host = 'http://192.168.0.152:8102';
+        host = 'http://test.liuqiang13qqcom.yxnat.softdev.top';
 
     }
 } else {

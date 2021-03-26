@@ -68,7 +68,8 @@ export default {
             address: '',
             userid: 0,
             options: [],
-            cascaderValue: ''
+            cascaderValue: '',
+            address_id: 0
         }
     },
     components: {
@@ -77,6 +78,7 @@ export default {
     mounted() {
         this.getaddess()
         this.getCity(3)
+        this.address_id = this.$route.query.address_id
         /*this.getdistrict(36)*/
     },
     methods: {
@@ -93,7 +95,10 @@ export default {
                     this.lastname = res.last_name
                     this.mobile = res.mobile
                     this.address = res.address
+                    this.provice_id = res.province
+                    this.city_id = res.city
                     if (res.district_name) {
+                        this.disctrict_id = res.district
                         this.areavalue = res.province_name + ' ' + res.city_name + ' ' + res.district_name + ' ' + res.address
                         this.cascaderValue = res.district
                     } else {
@@ -141,7 +146,8 @@ export default {
                 city: this.city_id,
                 district: this.disctrict_id,
                 address: this.address,
-                mobile: this.mobile
+                mobile: this.mobile,
+                address_id: this.address_id
             }).then((e) => {
                 this.$toast.clear(); // 关闭加载
                 if (e.data.statuscode == 200) {
@@ -296,7 +302,7 @@ export default {
         border: unset;
         width: 608px;
         height: 80px;
-        line-height: 80px;
+        line-height: 40px;
         text-align: center;
         background: #ef423a;
         border-radius: 40px;
@@ -341,7 +347,7 @@ export default {
 
     }
     .provice >>> .van-tab__text {
-        font-size: 12px;
+        font-size: 24px;
     }
     .selectedaddress {
         width: 80%;

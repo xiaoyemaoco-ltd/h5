@@ -322,7 +322,7 @@
         color: #ff362c;
     }
     .provice >>> .van-tab__text {
-        font-size: 12px;
+        font-size: 24px;
     }
     .selectedaddress {
         width: 80%;

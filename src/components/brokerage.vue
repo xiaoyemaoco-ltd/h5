@@ -4,7 +4,7 @@
         <div class="content">
             <van-pull-refresh class="refresh" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
                 <div>
-                    <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" />
+                    <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" @search="search"/>
                     <van-dropdown-menu class="sel">
                         <van-dropdown-item v-model="value1" :options="option1" @change="onchange1"/>
                         <van-dropdown-item v-model="value2" :options="option2" @change="onchange" />
@@ -40,11 +40,11 @@
                 </div>
 
                 <van-list
-                    v-model="loading"
+                    v-model="loading" offset="10"
                     :finished="finished"
                     finished-text="Больше не надо"
                     loading-text="Загрузка..."
-                    @load="onLoad"
+                    @load="onLoad" v-if="list.length > 0"
                 >
                     <div class="list" v-for="(v, k) in list" :key="k">
                         <div class="top">
@@ -95,7 +95,7 @@
                 show: false,
                 title: 'Мои комиссия',
                 value: '',
-                value1: 1,
+                value1: 0,
                 value2: '3',
                 option1: [
                     { text: 'Все', value: -1 },
@@ -143,6 +143,7 @@
             this.user_id = userinfo.user_id
             this.updata.pageNumber = 0
             this.updata.pageSize = 20
+            this.getlist();
         },
         methods: {
             getlist () {
@@ -155,9 +156,10 @@
                     datetype: this.value2,
                     monthkey: this.date
                 }).then((e) => {
+                    this.$toast.clear();
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
-                        this.loading = false;              //是否处于加载状态，加载过程中不触发load事件
+                        this.loading = false;             //是否处于加载状态，加载过程中不触发load事件
                         if (list == null || list.length === 0) {
                             this.finished = true;           // 加载结束
                             return;
@@ -172,10 +174,22 @@
                         this.split_mobile_count = e.data.split_mobile_count
                         this.split_h5 = e.data.split_h5
                         this.split_h5_count = e.data.split_h5_count
+                        console.log(this.split_total)
                     } else {
                         this.finished = true;
                     }
                 })
+            },
+            search () {
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
+                this.list = []
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
+                this.getlist()
             },
             onLoad() {
                 this.getlist();
@@ -187,6 +201,11 @@
                 this.list = []
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getlist()
             },
             onchange1 (e) {
@@ -194,6 +213,11 @@
                 this.list = []
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getlist()
             },
             //确认时间
@@ -311,6 +335,7 @@
         margin-right: 15px;
     }
     .right img {
+        height: 30px;
         width: 30px;
         padding: 10px 0;
         margin-right: 12px;

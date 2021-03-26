@@ -503,6 +503,26 @@
 </script>
 
 <style scoped>
+    /*iphoneX、iphoneXs*/
+    @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+        .bottom >>> .van-goods-action, .van-popup  {
+            padding-bottom: 34px !important
+        }
+    }
+
+    /*iphone Xs Max*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+        .bottom >>> .van-goods-action, .van-popup  {
+            padding-bottom: 34px !important
+        }
+    }
+
+    /*iphone XR*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+        .bottom >>> .van-goods-action, .van-popup  {
+            padding-bottom: 34px !important
+        }
+    }
     #content {
         width: 750px;
         height: calc( 100vh - 100px);

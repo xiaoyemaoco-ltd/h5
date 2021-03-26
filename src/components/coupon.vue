@@ -215,10 +215,16 @@
                     })
                     return
                 }
+                this.couponlist = []
                 this.user_id = userinfo.user_id
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
                 this.active = localStorage.getItem('coupon_active')
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getusercouponlist();
             }, 0)
         },
@@ -228,6 +234,11 @@
                 localStorage.setItem('coupon_active', this.active)
                 this.updata.pageNumber = 0
                 this.couponlist = []
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 this.getusercouponlist()
             },
             getusercouponlist () {
@@ -237,6 +248,7 @@
                     maxperpage: this.updata.pageSize,
                     showtype: this.active
                 }).then((e) => {
+                    this.$toast.clear();
                     if (e.data.statuscode == 200) {
                         let list = e.data.list
                         this.loading = false;              //是否处于加载状态，加载过程中不触发load事件

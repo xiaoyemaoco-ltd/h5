@@ -86,7 +86,7 @@
                 <van-field v-model="postscript" label="комментарий:" label-width="100" placeholder="" />
             </van-cell-group>
             <div id="coupon">
-                <van-cell is-link @click="showPopup">купон
+                <van-cell is-link @click="showPopup">купоны
                     <span v-show="couponnum != 0 && showCoupprice == false" class="couponnum">купон {{couponnum}} шт.</span>
                     <span v-show="couponnum == 0" class="couponnum">Нет в наличии</span>
                     <span v-show="showCoupprice" class="couponnum showCoupprice">- {{couponprice}} тг.</span>
@@ -124,11 +124,31 @@
                     </div>
                 </van-popup>
             </div>
+            <div id="usermoney" v-show="is_balance_pay">
+                <van-checkbox-group v-model="result">
+                    <van-cell-group>
+                        <van-cell title="Использовать остаток баланс">
+                            <template #right-icon>
+                                <van-checkbox name="user_money" ref="checkboxes" @click="toggle()"/>
+                            </template>
+                        </van-cell>
+                    </van-cell-group>
+                </van-checkbox-group>
+                <div v-show="balance_div">
+                    <div id="normal" v-if="balance_enough">
+                        <p>Использовать баланс: <span>{{real_money}}</span> тг.</p>
+                        <p>Баланс составляет: {{user_money}} тг.</p>
+                    </div>
+                    <div id="red-text" v-else>
+                        <p>Баланс составляет: {{user_money}} тг.，Недостаточно средств для Оплатить текущий заказ</p>
+                    </div>
+                </div>
+            </div>
             <div id="paytype">
                 <p>Способ оплаты</p>
                 <div style="display: flex">
                     <div v-for="(v, k) in payment" :key="k">
-                        <div class="image" :id="payid == v.pay_id ? 'active1' : ''" @click="selectpay(v.pay_id, v.pay_desc)">
+                        <div v-if="v.pay_code != 'balance'" class="image" :id="payid == v.pay_id ? 'active1' : ''" @click="selectpay(v.pay_id, v.pay_code)">
                             <img :src="getImgUrl(v.pay_code)" style="width: 70px; height: 30px">
                             <span :class="payid == v.pay_id ? 'trag' : ''"></span>
                         </div>
@@ -146,7 +166,7 @@
                     <span id="cang">+0 тг.</span>
                 </label>
                 <label id="addr">
-                  <span id="text">купон</span>
+                  <span id="text">купоны</span>
                   <span id="cang">- {{couponprice}} тг.</span>
                 </label>
             </div>
@@ -195,6 +215,7 @@
                 payment: [],
                 paydesc: '',
                 payid: 0,
+                pay_code: '',
                 coupondata: [],
                 postscript: '',
                 goods_id: 0,
@@ -206,11 +227,18 @@
                 couponId: 0,
                 couponprice: 0,
                 showCoupprice: false,
+                result: [],
+                user_money: 0,
+                balance_div: false,
+                balance_enough: false,
+                real_money: 0,
+                is_balance_pay: false
             }
         },
         mounted() {
             let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             this.userinfo = userinfo
+            this.user_money = parseInt(userinfo.user_money)
             this.totalprice = this.$route.query.price / 100
             this.amount = this.$route.query.price / 100
             this.rec_ids = this.$route.query.rec_ids
@@ -235,6 +263,7 @@
                 this.buy_num = this.$route.query.goods_number
                 this.goods_attr_id = this.$route.query.goods_attr_id
             }
+            this.real_money = this.amount
         },
         methods: {
             //创建订单
@@ -250,7 +279,11 @@
                     return
                 }
 
-                if (!this.payid) {
+                if (this.balance_enough && this.is_balance_pay) {
+                    this.pay_code = 'balance'
+                }
+
+                if (!this.pay_code) {
                     this.$toast.fail('Выберите метод оплаты')
                     return
                 }
@@ -264,6 +297,7 @@
                     address: this.address,
                     postscript: this.postscript,
                     pay_id: this.payid,
+                    pay_code: this.pay_code,
                     shipping_id: this.shipping_id,
                     pickup_point_id: this.shippickup,
                     user_id: this.userinfo.user_id,
@@ -276,21 +310,20 @@
                 }).then((e) => {
                     this.$toast.clear()
                     if (e.data.statuscode == 200) {
-                        this.$router.push({
-                            path: './confirmorder',
-                            query: {
-                                pay_id: this.payid,
-                                amount: this.amount,
-                                ordersn: e.data.order_sn
-                            }
-                        })
-                        /*this.$toast({
-                            type: 'success',
-                            message: e.data.message,
-                            onClose: () => {
-
-                            }
-                        })*/
+                        if (e.data.pay_code == 'balance') {
+                            this.$router.push({
+                                path: './order',
+                            })
+                        } else {
+                            this.$router.push({
+                                path: './confirmorder',
+                                query: {
+                                    pay_id: this.payid,
+                                    amount: this.amount,
+                                    ordersn: e.data.order_sn
+                                }
+                            })
+                        }
                     } else {
                         this.$toast.fail(e.data.message)
                     }
@@ -299,6 +332,20 @@
             //读取优惠券
             showPopup() {
                 this.show2 = true
+            },
+            toggle() {
+                let checked = this.$refs.checkboxes.checked
+                if (checked) {
+                    this.balance_div = true
+                    if (this.user_money >= this.amount) {
+                        this.balance_enough = true
+                        this.amount = 0
+                    } else {
+                        this.balance_enough = false
+                    }
+                } else {
+                    this.balance_div = false
+                }
             },
             //去详情
             todetail (id) {
@@ -314,9 +361,9 @@
                 return require("@/assets/image/pay/payment_"+icon+".jpg");
             },
             //选择付款方式
-            selectpay (id, desc) {
+            selectpay (id, code) {
                 this.payid = id
-                this.paydesc = desc
+                this.pay_code = code
             },
             //选择收货点
             change ($e) {
@@ -364,6 +411,7 @@
                         this.shipping_name = e.data.shipping_name
                         this.shipping_desc = e.data.shipping_desc
                         this.support_pickup = e.data.support_pickup
+                        this.is_balance_pay = e.data.balancePay
                         this.shipping_list = e.data.shipping_list
                         this.payment = e.data.payment
                         this.payid = this.payment[0].pay_id
@@ -392,7 +440,6 @@
                 }).then((e) => {
                     if (e.data.statuscode == 200) {
                         let res = e.data.data
-                        console.log(res)
                         this.username = res.consignee
                         this.mobile = res.mobile
                         this.province_id = res.province
@@ -456,6 +503,9 @@
     #text2 {
         color: #a0a0a0;
         margin: unset;
+    }
+    [class*=van-hairline]::after {
+        border: unset;
     }
 
     #title {
@@ -539,7 +589,7 @@
     #beizhu {
         margin: 10px 0;
     }
-    #coupon {
+    #coupon, #usermoney{
         text-align: left;
         margin-bottom: 10px;
     }
@@ -685,6 +735,27 @@
         font-size: 26px;
     }
     #coupon .showCoupprice {
+        color: #ff362c;
+    }
+    #red-text, #normal {
+        border-top: 1px solid #eeeeee;
+    }
+    #red-text p {
+        color: #ff362c;
+        padding: 10px 15px;
+        margin: unset;
+        font-size: 20px;
+        line-height: 30px;
+        background-color: #fff;
+    }
+    #normal p {
+        padding: 10px 15px;
+        margin: unset;
+        font-size: 20px;
+        line-height: 30px;
+        background-color: #fff;
+    }
+    #normal p span {
         color: #ff362c;
     }
 </style>

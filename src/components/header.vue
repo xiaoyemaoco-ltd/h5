@@ -12,7 +12,8 @@
     export default {
         name: "headerBar",
         props: {
-            title: String
+            title: String,
+            before_url: String
         },
         data() {
             return {
@@ -25,13 +26,19 @@
         },
         methods: {
             clickLeft () {
-                if (this.title == 'Оплата онлайн') {
+                console.log(this.before_url)
+                if (this.before_url == '/pay') {
                     this.$router.go(-2)
                 } else {
                     if (this.$route.query.path) {
                         this.$router.push(this.$route.query.path)
                     } else {
-                        this.$router.back()
+                        if (window.history.length <= 1) {
+                            this.$router.push({path:'/'})
+                            return false
+                        } else {
+                            this.$router.go(-1)
+                        }
                     }
                 }
             },

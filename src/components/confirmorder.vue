@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Header :title="title"></Header>
+        <Header :title="title" :before_url="beforeUrl"></Header>
         <div class="content">
             <div class="desc">
                 <div class="icon"><img src="../assets/image/msg-pending.svg"></div>
@@ -39,11 +39,17 @@
               ordersn: '',
               desc: '',
               pay_code: '',
-              imgs: ''
+              imgs: '',
+              beforeUrl: ''
           }
         },
         components: {
             Header
+        },
+        beforeRouteEnter (to, from, next) {
+            next(vm => {
+                vm.beforeUrl = from.path
+            })
         },
         mounted() {
             if (!this.$route.query.amount || !this.$route.query.ordersn) {

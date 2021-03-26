@@ -40,18 +40,18 @@
                     </div>
                 </div>-->
                 <div class="other1 other" v-if="rank != 0">
-                    <div id="left">
-                        <p id="money">0</p>
+                    <div id="left" @click="brokerage">
+                        <p id="money">{{fan}}</p>
                         <p id="text">Моя прибыль</p>
                     </div>
                     <div id="middle">
                         <img src="../assets/image/uc/a-l-img.png">
-                        <span>14 день</span>
+                        <span>14 дней</span>
                         <img src="../assets/image/uc/a-r-img.png">
                     </div>
                     <div id="right">
-                        <p id="money">2729</p>
-                        <p id="text">активный</p>
+                        <p id="money">{{user_money}}</p>
+                        <p id="text">Активные</p>
                     </div>
                 </div>
                 <div class="other">
@@ -85,7 +85,7 @@
                 <div class="other" v-if="rank != 0">
                     <van-tabbar id="select">
                         <van-tabbar-item @click="brokerage">
-                            <span>Мой бонус</span>
+                            <span>Мой Бонусы</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_teamorder.png" />
                             </template>
@@ -178,7 +178,9 @@
                 invitecode: '',
                 rank: 0,
                 user_id: 0,
-                text: ''
+                text: '',
+                user_money: 0,
+                fan: 0
             }
         },
         components: {
@@ -241,6 +243,14 @@
                     this.rank = userinfo.user_rank
                     this.user_id = userinfo.user_id
                 }
+                this.$axios.post('api/user/getUserInfo', {
+                    user_id: this.user_id
+                }).then((e) => {
+                    if (e.data.statuscode == 200) {
+                        this.fan = e.data.fan
+                        this.user_money = parseInt(e.data.user.user_money)
+                    }
+                })
             },
             signout () {
                 this.$toast.loading({
@@ -295,6 +305,9 @@
         text-align: left;
         height: calc( 100vh - 180px);
         overflow-y:auto;
+    }
+    #content::-webkit-scrollbar {
+        width: 0 !important;
     }
     #content::-webkit-scrollbar {
         width: 0 !important;

@@ -3,7 +3,7 @@
         <Header :title="title"></Header>
         <div class="content">
             <van-pull-refresh class="content" v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
-                <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" search="search"/>
+                <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" @search="search"/>
                 <div class="option">
                     <span :class="date.indexOf('-') >= 0 ? 'active' : ''" class="img" @click="selectdate">
                         <img src="../assets/image/month.png" >

@@ -124,21 +124,12 @@
             },
             //改变数量
             changenum($event, item) {
-                this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });
-
                 this.$axios.post('api/goods/changeCartGoodsNumber', {
                     rec_id: item.rec_id,
                     goods_number: $event
                 }).then((e) => {
-                    this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.getCartList()
-                        // this.reload()
                     }
                 })
             },
@@ -174,6 +165,13 @@
             },
             //全部删除
             delcart() {
+                if (this.checked2.length == 0) {
+                    this.$toast({
+                        type: 'fail',
+                        message: 'Пожалуйста, выберите продукт',
+                    })
+                    return
+                }
 
                 this.$toast.loading({
                     duration: 0,
@@ -283,12 +281,12 @@
             },
             //选中
             selected ($ids) {
-                this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });
+                // this.$toast.loading({
+                //     duration: 0,
+                //     forbidClick: true,
+                //     mask: true,
+                //     message: "Загрузка..."
+                // });
                 this.$axios.post('api/goods/cartSelected', {
                     cart_ids: $ids,
                     user_id: this.user_id
@@ -355,21 +353,21 @@
     }
     /*iphoneX、iphoneXs*/
     @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-        .van-submit-bar {
+        .van-submit-bar, #delete {
             bottom: 125px !important
         }
     }
 
     /*iphone Xs Max*/
     @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
-        .van-submit-bar {
+        .van-submit-bar, #delete {
             bottom: 125px !important
         }
     }
 
     /*iphone XR*/
     @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
-        .van-submit-bar {
+        .van-submit-bar, #delete {
             bottom: 125px !important
         }
     }
@@ -381,17 +379,19 @@
     }
     #delete #sel {
         flex: 1;
+        margin-left: 20px;
     }
     #delete #delshop {
-
+        margin-right: 20px;
     }
     #delete {
         display: flex;
-        width: 650px;
+        width: 100%;
         position: fixed;
         bottom: 100px;
-        padding: 0 35px;
+        padding: 10px 0;
         z-index: 999;
+        background-color: #fff;
     }
     #kong {
       text-align: center;
@@ -402,6 +402,9 @@
         padding-bottom: 200px;
         height: calc( 100vh - 300px);
         overflow-y:auto;
+    }
+    #content::-webkit-scrollbar {
+        width: 0 !important;
     }
     #cartimg {
       width: 80%;
