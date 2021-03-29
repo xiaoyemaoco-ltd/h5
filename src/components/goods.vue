@@ -7,9 +7,9 @@
             </van-dropdown-menu>
         </div>
 
-        <div id="content">
+        <div id="content" v-if="list.length > 0">
             <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
-                <van-list id="list" v-model="loading" offset="1"
+                <van-list id="list" v-model="loading" offset="10"
                           :finished="finished"
                           finished-text=""
                           loading-text="Загрузка..."
@@ -27,6 +27,9 @@
                     </div>
                 </van-list>
             </van-pull-refresh>
+        </div>
+        <div style="height: 100%; margin-top: 10px" v-else>
+            <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
         </div>
     </div>
 </template>
@@ -63,12 +66,16 @@
                 finished: false,
             };
         },
+        beforeRouteLeave(to, from, next) {
+            to.meta.keepAlive = true
+            next()
+        },
         mounted() {
             this.keyword = this.$route.query.keyword
             this.cate_id = this.$route.query.cate_id
             this.updata.pageNumber = 0
             this.updata.pageSize = 20
-            // this.getGoodsList()
+            this.getGoodsList()
         },
         methods: {
             onLoad() {

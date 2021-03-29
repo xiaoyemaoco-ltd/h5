@@ -42,12 +42,13 @@
                 tabbarValue: this.active
             }
         },
-        methods: {
+
+      methods: {
             onChange(index) {
                 if (index == 'home') {
-                  this.$router.push('./')
+                  this.$router.push('/')
                 } else {
-                  this.$router.push('./' + index)
+                  this.$router.push('/' + index)
                 }
             }
         }

@@ -32,14 +32,40 @@
                </ul>
            </div>
        </div>
-       <tabbar :active="active"></tabbar>
+       <!--<tabbar :active="active"></tabbar>-->
+
+       <van-tabbar active-color="#ff362c" inactive-color="#000" @change="onChange" id="tabbar">
+           <van-tabbar-item name="home">
+               <span id="text">Первая</span>
+               <template #icon="props">
+                   <img src="../assets/image/foot/shouye1@2x.png" />
+               </template>
+           </van-tabbar-item>
+           <van-tabbar-item name="category">
+               <span id="text" style="color:#ff362c" >классификация</span>
+               <template #icon="props">
+                   <img src="../assets/image/foot/fenlei2@2x.png" />
+               </template>
+           </van-tabbar-item>
+           <van-tabbar-item name="cart">
+               <span id="text">корзина</span>
+               <template #icon="props">
+                   <img src="../assets/image/foot/gouwuche1@2x.png" />
+               </template>
+           </van-tabbar-item>
+           <van-tabbar-item name="personal">
+               <span id="text">шахта</span>
+               <template #icon="props">
+                   <img src="../assets/image/foot/gerenzhongxin1@2x.png" />
+               </template>
+           </van-tabbar-item>
+       </van-tabbar>
    </div>
 </template>
 
 
 <script>
     import BScroll from "better-scroll";
-    import Tabbar from "./tabbar";
     export default {
         data() {
             return {
@@ -53,16 +79,31 @@
                 touch: {},
                 fixedLoading: false,
                 titleHeight: 0,
-                fixedImgHeight: 0,
+                fixedImgHeight: 0
             }
         },
-        components: {
-            Tabbar
+        /*beforeRouteLeave(to, from, next) {
+            if (to.path === '/goods'){
+                from.meta.keepAlive = true;
+            }else{
+                from.meta.keepAlive = false;
+            }
+            next();
+        },*/
+        activated() {
+
         },
         mounted() {
             this.getClassifyData()
         },
         methods: {
+            onChange(index) {
+                if (index == 'home') {
+                    this.$router.push('/')
+                } else {
+                    this.$router.push('/' + index)
+                }
+            },
             getClassifyData: function() {
                 this.$axios.post('api/v1/getallclassdata').then((e) =>{
                     if (e.data.statuscode == 200) {
@@ -165,24 +206,51 @@
                 }
                 this.currentIndex = listHeight.length - 2
             },
-            currentIndex: function() {
-                // newIndex < 0 ? newIndex = 0 : ""
-                /*var theTitle = this.$refs.titleText[newIndex].offsetTop
+            /*currentIndex: function() {
+                newIndex < 0 ? newIndex = 0 : ""
+                var theTitle = this.$refs.titleText[newIndex].offsetTop
                 var theTitleHeight = this.$refs.titleText[newIndex].clientHeight
-                var detailHeight = this.$refs.titleDetail.clientHeight*/
-                /*if (this.titleHeight - theTitleHeight < theTitle) {
+                var detailHeight = this.$refs.titleDetail.clientHeight
+                if (this.titleHeight - theTitleHeight < theTitle) {
                     this.scrollTitle.scrollTo(0, this.titleHeight - theTitle - theTitleHeight)
                 } else {
                     this.scrollTitle.scrollTo(0, 0)
 
-                }*/
-            }
+                }
+            }*/
         }
     }
 </script>
 
 
 <style lang="scss" scoped>
+    /*iphoneX、iphoneXs*/
+    @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+        #tabbar {
+            padding-bottom: 34px !important
+        }
+    }
+
+    /*iphone Xs Max*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+        #tabbar {
+            padding-bottom: 34px !important
+        }
+    }
+
+    /*iphone XR*/
+    @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+        #tabbar {
+            padding-bottom: 34px !important
+        }
+    }
+    .van-tabbar-item__icon img {
+        height: 48px;
+    }
+    #text {
+        font-size: 15px;
+        display: inline-block;
+    }
     #cate {
         height: calc( 100vh - 100px );
         /*padding-bottom: 50px;*/

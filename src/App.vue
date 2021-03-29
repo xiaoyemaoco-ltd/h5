@@ -2,7 +2,10 @@
   <div id="app">
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <router-view v-if="isRouterAlive"></router-view>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive && isRouterAlive"/>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive && isRouterAlive"/>
   </div>
 </template>
 

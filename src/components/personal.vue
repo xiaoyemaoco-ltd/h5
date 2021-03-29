@@ -103,7 +103,7 @@
                             </template>
                         </van-tabbar-item>
 
-                        <van-tabbar-item @click="coupon"></van-tabbar-item>
+                        <van-tabbar-item></van-tabbar-item>
                     </van-tabbar>
                 </div>
                 <div class="other" v-if="rank == 3">
@@ -115,19 +115,19 @@
                             </template>
                         </van-tabbar-item>
                         <van-tabbar-item>
-                            <span>Успех моей команды</span>
+                            <!--<span>Успех моей команды</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_plussta.png" />
-                            </template>
+                            </template>-->
                         </van-tabbar-item>
                         <van-tabbar-item>
-                            <span>лидер</span>
+                            <!--<span>лидер</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_pluslistrank.png" />
-                            </template>
+                            </template>-->
                         </van-tabbar-item>
 
-                        <van-tabbar-item @click="coupon"></van-tabbar-item>
+                        <van-tabbar-item></van-tabbar-item>
                     </van-tabbar>
                 </div>
                 <div class="other">
@@ -139,22 +139,22 @@
                             </template>
                         </van-tabbar-item>
                         <van-tabbar-item>
-                            <span>Окно </span>
+                           <!-- <span>Окно </span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_leaveword.png" />
-                            </template>
+                            </template>-->
                         </van-tabbar-item>
                         <van-tabbar-item>
-                            <span>Pуководство VIP</span>
+                            <!--<span>Pуководство VIP</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/m_viphelp.png" />
-                            </template>
+                            </template>-->
                         </van-tabbar-item>
                         <van-tabbar-item>
-                            <span>Центр помощи</span>
+                            <!--<span>Центр помощи</span>
                             <template #icon="props">
                                 <img src="../assets/image/uc/icon-help.png" />
-                            </template>
+                            </template>-->
                         </van-tabbar-item>
                     </van-tabbar>
                 </div>

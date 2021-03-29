@@ -219,7 +219,6 @@
                 this.user_id = userinfo.user_id
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
-                this.active = localStorage.getItem('coupon_active')
                 this.$toast.loading({
                     duration: 0,
                     forbidClick: true,
@@ -231,7 +230,6 @@
         methods: {
             changstatus (e) {
                 this.active = e
-                localStorage.setItem('coupon_active', this.active)
                 this.updata.pageNumber = 0
                 this.couponlist = []
                 this.$toast.loading({

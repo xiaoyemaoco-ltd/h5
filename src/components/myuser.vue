@@ -177,7 +177,7 @@
                                 type: 'success',
                                 message: e.data.message,
                                 onClose: () => {
-                                    this.reload()
+                                    this.getlist()
                                 }
                             })
                         } else {

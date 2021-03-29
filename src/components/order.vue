@@ -186,7 +186,7 @@
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button class="paid_btn comment_btn" @click="comment">Написать отзыв</button>
+                            <!--<button class="paid_btn comment_btn" @click="comment">Написать отзыв</button>-->
                             <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
@@ -296,7 +296,6 @@
                 this.user_id = userinfo.user_id
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
-                this.active = localStorage.getItem('order_active')
                 this.$toast.loading({
                     duration: 0,
                     forbidClick: true,
@@ -353,7 +352,6 @@
             },
             changstatus (e) {
                 this.active = e
-                localStorage.setItem('order_active', this.active)
                 this.updata.pageNumber = 0
                 this.orderlist = []
                 this.finished = false;

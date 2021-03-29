@@ -7,7 +7,7 @@
                     <van-search v-model="value" placeholder="Пожалуйста, введите ключевые слова" @search="search"/>
                     <van-dropdown-menu class="sel">
                         <van-dropdown-item v-model="value1" :options="option1" @change="onchange1"/>
-                        <van-dropdown-item v-model="value2" :options="option2" @change="onchange" />
+                        <van-dropdown-item v-model="value2" :options="option2" @change="onchange" @closed="openmonth"/>
                     </van-dropdown-menu>
 
                     <van-popup v-model="show" round position="bottom" style="z-index: 2113;" >
@@ -40,7 +40,7 @@
                 </div>
 
                 <van-list
-                    v-model="loading" offset="10"
+                    v-model="loading"
                     :finished="finished"
                     finished-text="Больше не надо"
                     loading-text="Загрузка..."
@@ -147,6 +147,7 @@
         },
         methods: {
             getlist () {
+                console.log(this.date)
                 this.$axios.post('api/v1/Getincomelist', {
                     user_id: this.user_id,
                     skip: this.updata.pageNumber,
@@ -165,19 +166,18 @@
                             return;
                         }
                         this.updata.pageNumber = e.data.skip;
-                        this.list = this.list.concat(list); // 将新数据与老数据进行合并
-                        this.split_total = e.data.split_total
-                        this.split_total_count = e.data.split_total_count
-                        this.split_self = e.data.split_self
-                        this.split_self_count = e.data.split_self_count
-                        this.split_mobile = e.data.split_mobile
-                        this.split_mobile_count = e.data.split_mobile_count
-                        this.split_h5 = e.data.split_h5
-                        this.split_h5_count = e.data.split_h5_count
-                        console.log(this.split_total)
+                        this.list = this.list.concat(list);
                     } else {
                         this.finished = true;
                     }
+                    this.split_total = e.data.split_total
+                    this.split_total_count = e.data.split_total_count
+                    this.split_self = e.data.split_self
+                    this.split_self_count = e.data.split_self_count
+                    this.split_mobile = e.data.split_mobile
+                    this.split_mobile_count = e.data.split_mobile_count
+                    this.split_h5 = e.data.split_h5
+                    this.split_h5_count = e.data.split_h5_count
                 })
             },
             search () {
@@ -192,12 +192,14 @@
                 this.getlist()
             },
             onLoad() {
-                this.getlist();
+               this.getlist();
             },
             onchange (e) {
                 if (e == '-1') {
                     this.show = true
+                    return
                 }
+                this.date = ''
                 this.list = []
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
@@ -227,6 +229,8 @@
                 let month = Number(value.getMonth()) + 1
                 this.date = year + '-' + month
                 this.list = []
+                this.updata.pageNumber = 0
+                this.updata.pageSize = 20
                 this.getlist()
             },
             //时间取消
@@ -243,6 +247,11 @@
                     this.isLoading = false;
                 }, 1000);
             },
+            openmonth () {
+                if (this.value2 == -1) {
+                    this.show = true
+                }
+            }
         }
     }
 </script>

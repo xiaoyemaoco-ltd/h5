@@ -26,7 +26,6 @@
         },
         methods: {
             clickLeft () {
-                console.log(this.before_url)
                 if (this.before_url == '/pay') {
                     this.$router.go(-2)
                 } else {
