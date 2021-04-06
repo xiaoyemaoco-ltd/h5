@@ -376,7 +376,8 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         font-size: 26px;
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         text-align: left;
         line-height: 36px;
     }

@@ -118,7 +118,7 @@ export default {
                 this.$toast.fail('введите Фамилия');
                 return
             }
-            if (this.mobile == '' || !(/^\d{1}\d{9}$/.test(this.mobile))) {
+            if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
                 this.$toast.fail('Ошибка номера телефона');
                 return
             }

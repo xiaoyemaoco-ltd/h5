@@ -57,5 +57,7 @@ export default {
     .text {
         text-align: left;
         font-size: 30px;
+        word-wrap: normal;
+        word-break: normal;
     }
 </style>

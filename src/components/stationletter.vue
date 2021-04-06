@@ -139,7 +139,8 @@ export default {
     .content {
         margin-top: unset;
         color: #686868;
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         margin-right: 15px;
     }
     .time {

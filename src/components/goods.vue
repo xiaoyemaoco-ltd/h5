@@ -7,22 +7,22 @@
             </van-dropdown-menu>
         </div>
 
-        <div id="content" v-if="list.length > 0">
+        <div id="content" v-if="list.length" ref="listBox">
             <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
-                <van-list id="list" v-model="loading" offset="10"
-                          :finished="finished"
+                <van-list id="list" v-model="loading"
+                          :finished="finished" offset="20"
                           finished-text=""
                           loading-text="Загрузка..."
                           @load="onLoad">
                     <div id="goods" v-for="(item, index) in list" :key="index" @click="getGoodsDetail(item.goods_id)">
                         <img v-lazy="item.goods_thumb">
-                        <p v-if="item.sales > 0" id="sales">Продажи：{{item.sales}}</p>
+                        <p v-if="item.sales > 0" id="sales">Продано：{{item.sales}}</p>
                         <p v-else id="sales"></p>
                         <P class="text">{{item.goods_name}}</P>
                         <label id="attr">
                             <span id="price">{{item.price}}</span>
                             <span id="dw">тг.</span>
-                            <span :id="item.cang == 'CN' ? 'cang' : 'hskst'">{{item.cang}}</span>
+                            <span v-if="item.cang" :id="item.cang == 'CN' ? 'cang' : 'hskst'">{{item.cang}}</span>
                         </label>
                     </div>
                 </van-list>
@@ -41,7 +41,7 @@
         components: {Header},
         data() {
             return {
-                title: 'электрический чайник',
+                title: '',
                 value: 0,
                 value2: 'default',
                 switch1: false,
@@ -64,25 +64,31 @@
                 isLoading: false,
                 loading: false,
                 finished: false,
+                from: ''
             };
         },
-        beforeRouteLeave(to, from, next) {
-            to.meta.keepAlive = true
-            next()
+        created() {
+            this.title = this.$route.query.cate_name
         },
         mounted() {
             this.keyword = this.$route.query.keyword
             this.cate_id = this.$route.query.cate_id
+            this.from = this.$route.query.from
             this.updata.pageNumber = 0
             this.updata.pageSize = 20
+            this.$toast.loading({
+                duration: 0,
+                forbidClick: true,
+                message: "Загрузка..."
+            });
+            if (localStorage.getItem('goods_order')) {
+                this.value2 = localStorage.getItem('goods_order')
+            }
             this.getGoodsList()
         },
         methods: {
             onLoad() {
                 this.getGoodsList();
-            },
-            onClickLeft () {
-                this.$router.back()
             },
             getGoodsDetail (goods_id) {
                 this.$router.push({
@@ -96,9 +102,12 @@
                 this.$axios.post('api/goods/getGoodsListByCate', {
                     cate_id: this.$route.query.cate_id,
                     keyword: this.keyword,
+                    from: this.from,
+                    order: this.value2,
                     skip: this.updata.pageNumber,
                     maxperpage: this.updata.pageSize
                 }).then((res) => {
+                    this.$toast.clear();
                     if (res.data.statuscode == 200) {
                         let e = Object.values(res.data.data)
                         this.loading = false;
@@ -115,20 +124,18 @@
                 })
             },
             change2() {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
-                this.updata.list = []
-                this.$axios.post('api/goods/getGoodsListByCate', {
-                    cate_id: this.$route.query.cate_id,
-                    keyword: this.keyword,
-                    skip: this.updata.pageNumber,
-                    maxperpage: this.updata.pageSize,
-                    order: this.value2
-                }).then((res) => {
-                    if (res.data.statuscode == 200) {
-                        this.list = res.data.data
-                    }
-                })
+                this.finished = false;
+                this.list = []
+                localStorage.setItem('goods_order', this.value2)
+                this.getGoodsList()
             },
             //下拉刷新
             onRefresh() {
@@ -163,6 +170,9 @@
     #content #list {
         display: flex;
         flex-wrap: wrap;
+    }
+    #list >>> .van-list__loading {
+        width: 100%;
     }
     #content #goods {
         width: 47.5%;

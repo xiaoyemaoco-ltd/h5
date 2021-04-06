@@ -35,7 +35,9 @@ Vue.use(Router)
 const routes = [
     {
         path: '/',
-        component: Home
+        component: Home,
+        name: 'home',
+        meta: {keepAlive: true}
     },
     {path: '/category', component: Category, meta: {keepAlive: true}},
     {path: '/cart', component: Cart},
@@ -43,7 +45,7 @@ const routes = [
     {path: '/goods', component: Goods},
     {path: '/goodsdetail', component: GoodsDetail},
     {path: '/pay', component: Pay},
-    {path: '/order', component: Order, meta: {keepAlive: true}},
+    {path: '/order', component: Order},
     {path: '/orderdetail', component: OrderDetail},
     {path: '/address', component: Address},
     {path: '/addaddress', component: AddAddress},
@@ -69,7 +71,7 @@ const routes = [
 const router = new Router({
     mode: 'hash',
     // base: 'D-Square',
-    routes
+    routes,
 });
 
 

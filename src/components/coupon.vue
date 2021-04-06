@@ -12,7 +12,7 @@
                             <div class="Allshop">
                                 <div class="shop_price">
                                     <div class="titleTop">
-                                        <h3>{{v.name}}</h3>
+                                        <p class="title">{{v.name}}</p>
                                         <div id="date">
                                             <label>Срок действия ваучера：</label>
                                             <span class="priceShop">{{v.stoptime_show}}</span>
@@ -43,7 +43,7 @@
                                     <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
                                         <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
                                     </ul>
-                                    <button class="button">Посмотреть больше продуктов</button>
+                                    <!--<button class="button">Посмотреть больше продуктов</button>-->
                                 </div>
                                 <div class="order" v-if="v.order_sn != ''">
                                     <h4>Заказы с купонами</h4>
@@ -67,7 +67,7 @@
                             <div class="Allshop">
                                 <div class="shop_price">
                                     <div class="titleTop">
-                                        <h3>{{v.name}}</h3>
+                                        <p class="title">{{v.name}}</p>
                                         <div id="date">
                                             <label>Срок действия ваучера：</label>
                                             <span class="priceShop">{{v.stoptime_show}}</span>
@@ -98,7 +98,7 @@
                                     <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
                                         <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
                                     </ul>
-                                    <button class="button">Посмотреть больше продуктов</button>
+                                   <!-- <button class="button">Посмотреть больше продуктов</button>-->
                                 </div>
                                 <div class="order" v-if="v.order_sn != ''">
                                     <h4>Заказы с купонами</h4>
@@ -122,7 +122,7 @@
                             <div class="Allshop">
                                 <div class="shop_price">
                                     <div class="titleTop">
-                                        <h3>{{v.name}}</h3>
+                                        <p class="title">{{v.name}}</p>
                                         <div id="date">
                                             <label id="shix">Срок действия ваучера：</label>
                                             <span id="shix" class="priceShop">{{v.stoptime_show}}</span>
@@ -153,7 +153,7 @@
                                     <ul class="forgood" v-for="(item, index) in v.forgoodslist" :key="index">
                                         <li @click="goodsdetail(item.goods_id)">{{item.goods_name}}</li>
                                     </ul>
-                                    <button class="button">Посмотреть больше продуктов</button>
+                                    <!--<button class="button">Посмотреть больше продуктов</button>-->
                                 </div>
                                 <div class="order" v-if="v.order_sn != ''">
                                     <h4>Заказы с купонами</h4>
@@ -406,8 +406,10 @@
         /*border-bottom-left-radius: 15px;
         border-top-left-radius: 15px;*/
     }
-    .titleTop h3 {
-        word-break: break-all;
+    .titleTop .title {
+        font-weight: bold;
+        word-wrap: normal;
+        word-break: normal;
         height: 60px;
         margin: 15px 15px;
         font-size: 18px;

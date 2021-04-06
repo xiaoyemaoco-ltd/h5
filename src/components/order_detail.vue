@@ -104,7 +104,7 @@
                 })
             },
             onCopy(){
-                this.$toast.success('Копировать успешно')
+                this.$toast('Скопировано')
             },
             onError () {
 
@@ -153,11 +153,13 @@
         text-align: left;
     }
     .titleTop h3 {
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         margin: unset;
     }
     .titleTop .priceShop {
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         margin: 10px 0;
         height: 90px;
     }

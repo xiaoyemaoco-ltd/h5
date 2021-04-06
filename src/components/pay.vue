@@ -238,11 +238,11 @@
         mounted() {
             let userinfo = JSON.parse(localStorage.getItem('userinfo'))
             this.userinfo = userinfo
-            this.user_money = parseInt(userinfo.user_money)
             this.totalprice = this.$route.query.price / 100
             this.amount = this.$route.query.price / 100
             this.rec_ids = this.$route.query.rec_ids
             this.getuserdefaultaddress()
+            this.getuserinfo()
             //立即购买数组
             if (this.$route.query.goods_id) {
                 let good = []
@@ -278,8 +278,7 @@
                     this.$toast.fail('Выберите адрес доставки')
                     return
                 }
-
-                if (this.balance_enough && this.is_balance_pay) {
+                if (this.balance_enough && this.balance_div) {
                     this.pay_code = 'balance'
                 }
 
@@ -326,6 +325,15 @@
                         }
                     } else {
                         this.$toast.fail(e.data.message)
+                    }
+                })
+            },
+            getuserinfo () {
+                this.$axios.post('api/user/getUserInfo', {
+                    user_id: this.userinfo.user_id
+                }).then((e) => {
+                    if (e.data.statuscode == 200) {
+                        this.user_money = parseInt(e.data.user.user_money)
                     }
                 })
             },
@@ -718,7 +726,8 @@
         border-top-left-radius: 15px;*/
     }
     .titleTop h3 {
-        word-break: break-all;
+        word-break: normal;
+        word-wrap: normal;
         margin: unset;
         margin: 15px 15px;
         height: 60px;

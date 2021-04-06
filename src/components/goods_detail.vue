@@ -29,7 +29,7 @@
                                 <div id="money">
                                     <h2>{{item.amount}}</h2>
                                     <!--<label>满20000可用</label>-->
-                                    <van-button id="use" @click="usecoupon(item.couponid)" round type="info">применять</van-button>
+                                    <van-button id="use" round type="info">применять</van-button>
                                 </div>
                             </div>
                         </div>
@@ -233,6 +233,7 @@
                 this.attrselected[index] = id
                 // let attr = JSON.parse(JSON.stringify(this.attrselected))
                 let key = ''
+                let resdata = []
                 if (Object.keys(this.attrselected).length > 1) {
                     key = Object.values(this.attrselected).join('|')
                     let reg=new RegExp(/\|/,'g')//g代表全部
@@ -241,11 +242,18 @@
                     key = this.attrselected[0]
                     this.attr_id = key
                 }
-                let resdata = this.products[key];
-                this.productprice = resdata.price
-                this.productsn = resdata.product_sn
-                this.productstock = resdata.product_number
-                this.product_id = resdata.product_id
+                resdata = this.products[key]
+                if (!resdata) {
+                    key = key.split('|')
+                    key = key[1] + '|' + key[0]
+                    resdata = this.products[key]
+                }
+                if (resdata) {
+                    this.productprice = resdata.price
+                    this.productsn = resdata.product_sn
+                    this.productstock = resdata.product_number
+                    this.product_id = resdata.product_id
+                }
             },
             selectsku() {
                 this.show = true
@@ -261,10 +269,17 @@
             },
             //商品详情
             getGoodsDetail() {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    mask: true,
+                    message: "Загрузка..."
+                });
                 this.$axios.post('api/goods/getGoodsDetail', {
                     goods_id: this.$route.query.goods_id,
                     user_id: this.user_id
                 }).then((res) => {
+                    this.$toast.clear()
                     if (res.data.statuscode == 200) {
                         this.detail = res.data.data
                         this.swiper = res.data.data.swiper_img
@@ -287,7 +302,6 @@
                             if (this.properties.spe.length > 1) {
                                 pro.map((v) => {
                                     if (v.product_number > 0) {
-                                        selected = v.goods_attr.split('|')
                                         this.attr_id = v.goods_attr
                                         this.productprice = v.price
                                         this.productsn = v.product_sn
@@ -295,11 +309,12 @@
                                         this.product_id = v.product_id
                                     }
                                 })
-                                /*let i = 0
+
+                                let i = 0
                                 this.properties.spe.map((item) => {
                                     selected[i] = item.values[0].id
                                     i++
-                                })*/
+                                })
                                 this.attr_id = Object.values(selected).join(',')
                             } else {
                                 pro.map((v) => {
@@ -432,18 +447,10 @@
                     return
                 }
 
-                this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });
-
                 this.$axios.post('api/user/collectGoods', {
                     user_id: this.user_id,
                     goods_id: this.detail.goods_id
                 }).then((e) => {
-                    this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.reload()
                     }
@@ -456,18 +463,10 @@
                     return
                 }
 
-                this.$toast.loading({
-                    duration: 0,
-                    forbidClick: true,
-                    mask: true,
-                    message: "Загрузка..."
-                });
-
                 this.$axios.post('api/user/deleteCollectGoods', {
                     user_id: this.user_id,
                     goods_id: this.detail.goods_id
                 }).then((e) => {
-                    this.$toast.clear()
                     if (e.data.statuscode == 200) {
                         this.reload()
                     }
@@ -659,7 +658,8 @@
     }
 
     #attrlist #desc {
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         width: 70%;
         margin: unset;
         color: #ff362c;
@@ -721,7 +721,7 @@
         margin: 0 10px;
         font-size: 16px;
         padding: 0 20px;
-        margin-top: 30px;
+        margin: 15px 0;
         background-color: #fff;
         border: 1px solid #fff;
         color: #23b7ac;
@@ -739,7 +739,8 @@
         border-top-left-radius: 15px;*/
     }
     .titleTop h3 {
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         margin: unset;
         margin: 15px 15px;
     }

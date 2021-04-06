@@ -15,8 +15,15 @@
                         >
                             <div id="content" v-for="(v, k) in orderlist" :key="k">
                                 <div class="AllCode">
-                                    <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                                    <div class="paid">время：{{v.add_time}}</div>
+                                    <div class="codeOrder" v-clipboard:copy="v.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">
+                                        <img class="imgicon" src="../assets/image/ordersn@2x.png">
+                                        <span> {{v.order_sn}} </span>
+                                        <img class="imgicon copyimg" src="../assets/image/copy@2x.png">
+                                    </div>
+                                    <div class="paid">
+                                        <img class="imgicon" src="../assets/image/orderdt@2x.png">
+                                        <span> {{v.add_time}}</span>
+                                    </div>
                                 </div>
                                 <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                                     <div class="shop_img">
@@ -24,7 +31,7 @@
                                     </div>
                                     <div class="shop_price">
                                         <div class="titleTop">
-                                            <h3>{{item.goods_name}}</h3>
+                                            <p class="title">{{item.goods_name}}</p>
                                             <p class="priceShop">{{item .goods_attr}}</p>
                                         </div>
                                         <div class="titleBottom">
@@ -33,15 +40,25 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="priceNum">
+                                <div class="consignee consnum">
+                                    <div class="conmsg name">
+                                        <img class="imgicon" src="../assets/image/icon-user@2x.png">
+                                        <span>{{v.consignee}}</span>
+                                    </div>
+                                    <div class="conmsg mobile">
+                                        <img class="imgicon" src="../assets/image/icon-tele@2x.png">
+                                        <span>{{v.mobile}}</span>
+                                    </div>
+                                </div>
+                                <div class="priceNum consnum">
                                     <label id="total">Bcero：</label>
                                     <label id="num">{{v.order_total_count}}</label>
                                     <label id="total">Toвap：</label>
                                     <label id="num">{{v.order_total_amount}}</label>
                                 </div>
                                 <div id="status">
-                                    <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
-                                    <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
+                                    <button v-if="v.order_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
+                                    <button v-if="v.order_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
                                     <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                                     <div style="clear: both;"></div>
                                 </div>
@@ -51,7 +68,6 @@
 
                     <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Bожиданий" name="100">
@@ -65,8 +81,15 @@
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                            <div class="paid">время：{{v.add_time}}</div>
+                            <div class="codeOrder" v-clipboard:copy="v.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">
+                                <img class="imgicon" src="../assets/image/ordersn@2x.png">
+                                <span> {{v.order_sn}} </span>
+                                <img class="imgicon copyimg" src="../assets/image/copy@2x.png">
+                            </div>
+                            <div class="paid">
+                                <img class="imgicon" src="../assets/image/orderdt@2x.png">
+                                <span> {{v.add_time}}</span>
+                            </div>
                         </div>
                         <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
@@ -74,7 +97,7 @@
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="title">{{item.goods_name}}</p>
                                     <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
@@ -83,15 +106,25 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="priceNum">
+                        <div class="consignee consnum">
+                            <div class="conmsg name">
+                                <img class="imgicon" src="../assets/image/icon-user@2x.png">
+                                <span>{{v.consignee}}</span>
+                            </div>
+                            <div class="conmsg mobile">
+                                <img class="imgicon" src="../assets/image/icon-tele@2x.png">
+                                <span>{{v.mobile}}</span>
+                            </div>
+                        </div>
+                        <div class="priceNum consnum">
                             <label id="total">Bcero：</label>
                             <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
                             <label id="num">{{v.order_total_amount}}</label>
                         </div>
                         <div id="status">
-                            <button v-if="v.pay_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
-                            <button v-if="v.pay_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
+                            <button v-if="v.order_status == 0" class="paid_btn paid_detail" @click="pay(v.pay_id, v.order_sn, v.order_total_amount)">Платить</button>
+                            <button v-if="v.order_status == 0" class="paid_btn" @click="cancel(v.order_id)">Отменить</button>
                             <button class="paid_btn" @click="getOrderDetail(v.order_id)">Проверить заказ</button>
                             <div style="clear: both;"></div>
                         </div>
@@ -100,7 +133,6 @@
                     </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Aктивные" name="101">
@@ -114,8 +146,15 @@
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                            <div class="paid">время：{{v.add_time}}</div>
+                            <div class="codeOrder" v-clipboard:copy="v.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">
+                                <img class="imgicon" src="../assets/image/ordersn@2x.png">
+                                <span> {{v.order_sn}} </span>
+                                <img class="imgicon copyimg" src="../assets/image/copy@2x.png">
+                            </div>
+                            <div class="paid">
+                                <img class="imgicon" src="../assets/image/orderdt@2x.png">
+                                <span> {{v.add_time}}</span>
+                            </div>
                         </div>
                         <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
@@ -123,7 +162,7 @@
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="title">{{item.goods_name}}</p>
                                     <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
@@ -132,7 +171,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="priceNum">
+                        <div class="consignee consnum">
+                            <div class="conmsg name">
+                                <img class="imgicon" src="../assets/image/icon-user@2x.png">
+                                <span>{{v.consignee}}</span>
+                            </div>
+                            <div class="conmsg mobile">
+                                <img class="imgicon" src="../assets/image/icon-tele@2x.png">
+                                <span>{{v.mobile}}</span>
+                            </div>
+                        </div>
+                        <div class="priceNum consnum">
                             <label id="total">Bcero：</label>
                             <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
@@ -147,7 +196,6 @@
                     </van-pull-refresh>
                     <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Завершенные" name="105">
@@ -161,8 +209,15 @@
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                            <div class="paid">время：{{v.add_time}}</div>
+                            <div class="codeOrder" v-clipboard:copy="v.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">
+                                <img class="imgicon" src="../assets/image/ordersn@2x.png">
+                                <span> {{v.order_sn}} </span>
+                                <img class="imgicon copyimg" src="../assets/image/copy@2x.png">
+                            </div>
+                            <div class="paid">
+                                <img class="imgicon" src="../assets/image/orderdt@2x.png">
+                                <span> {{v.add_time}}</span>
+                            </div>
                         </div>
                         <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
@@ -170,7 +225,7 @@
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="title">{{item.goods_name}}</p>
                                     <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
@@ -179,7 +234,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="priceNum">
+                        <div class="consignee consnum">
+                            <div class="conmsg name">
+                                <img class="imgicon" src="../assets/image/icon-user@2x.png">
+                                <span>{{v.consignee}}</span>
+                            </div>
+                            <div class="conmsg mobile">
+                                <img class="imgicon" src="../assets/image/icon-tele@2x.png">
+                                <span>{{v.mobile}}</span>
+                            </div>
+                        </div>
+                        <div class="priceNum consnum">
                             <label id="total">Bcero：</label>
                             <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
@@ -196,7 +261,6 @@
 
                     <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
                 <van-tab title="Отмененные" name="102">
@@ -210,8 +274,15 @@
                     >
                     <div id="content" v-for="(v, k) in orderlist" :key="k">
                         <div class="AllCode">
-                            <div class="codeOrder">номер заказа:{{v.order_sn}}</div>
-                            <div class="paid">время：{{v.add_time}}</div>
+                            <div class="codeOrder" v-clipboard:copy="v.order_sn" v-clipboard:success="onCopy" v-clipboard:error="onError">
+                                <img class="imgicon" src="../assets/image/ordersn@2x.png">
+                                <span> {{v.order_sn}} </span>
+                                <img class="imgicon copyimg" src="../assets/image/copy@2x.png">
+                            </div>
+                            <div class="paid">
+                                <img class="imgicon" src="../assets/image/orderdt@2x.png">
+                                <span> {{v.add_time}}</span>
+                            </div>
                         </div>
                         <div class="Allshop" v-for="(item, index) in v.goodslist" :key="index" @click="getOrderDetail(v.order_id)">
                             <div class="shop_img">
@@ -219,7 +290,7 @@
                             </div>
                             <div class="shop_price">
                                 <div class="titleTop">
-                                    <h3>{{item.goods_name}}</h3>
+                                    <p class="title">{{item.goods_name}}</p>
                                     <p class="priceShop">{{item .goods_attr}}</p>
                                 </div>
                                 <div class="titleBottom">
@@ -228,7 +299,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="priceNum">
+                        <div class="consignee consnum">
+                            <div class="conmsg name">
+                                <img class="imgicon" src="../assets/image/icon-user@2x.png">
+                                <span>{{v.consignee}}</span>
+                            </div>
+                            <div class="conmsg mobile">
+                                <img class="imgicon" src="../assets/image/icon-tele@2x.png">
+                                <span>{{v.mobile}}</span>
+                            </div>
+                        </div>
+                        <div class="priceNum consnum">
                             <label id="total">Bcero：</label>
                             <label id="num">{{v.order_total_count}}</label>
                             <label id="total">Toвap：</label>
@@ -244,7 +325,6 @@
 
                     <div style="height: 100%; margin-top: 10px" v-else>
                         <img style="width: 100%" src="../assets/image/shop/dingdankong@2x.png">
-                        <P style="font-weight: bold; font-size: 28px; text-align: center">купонов Нет</P>
                     </div>
                 </van-tab>
             </van-tabs>
@@ -293,6 +373,7 @@
                     })
                     return
                 }
+                this.active = localStorage.getItem('order_active')
                 this.user_id = userinfo.user_id
                 this.updata.pageNumber = 0
                 this.updata.pageSize = 20
@@ -352,6 +433,7 @@
             },
             changstatus (e) {
                 this.active = e
+                localStorage.setItem('order_active', this.active)
                 this.updata.pageNumber = 0
                 this.orderlist = []
                 this.finished = false;
@@ -418,7 +500,15 @@
             },
             comment () {
                 this.$router.push('/comment')
-            }
+            },
+            onCopy(){
+                this.$toast(
+                    {
+                        message: 'Скопировано',
+                        position: 'top'
+                    })
+            },
+            onError () {},
         }
     }
 </script>
@@ -444,7 +534,9 @@
     }
     .AllCode .codeOrder{
         display: inline-block;
-
+    }
+    .codeOrder *, .paid *, .conmsg * {
+        vertical-align:middle;
     }
     #middle {
       height: calc( 100vh - 100px);
@@ -455,6 +547,7 @@
     }
     .AllCode .paid {
         float: right;
+        text-align: right;
     }
     #content .Allshop {
         display: flex;
@@ -476,12 +569,15 @@
         margin-left: 20px;
         text-align: left;
     }
-    .titleTop h3 {
-        word-break: break-all;
+    .titleTop .title {
+        font-weight: bold;
+        word-wrap: normal;
+        word-break: normal;
         margin: unset;
     }
     .titleTop .priceShop {
-        word-break: break-all;
+        word-wrap: normal;
+        word-break: normal;
         margin: 10px 0;
         height: 90px;
     }
@@ -498,9 +594,29 @@
     }
     .priceNum  {
         text-align: right;
+    }
+    .consnum {
         border-bottom: 1px #eee solid;
         height: 50px;
         padding: 10px 15px 0 0;
+    }
+    .consignee {
+        padding: 5px 30px;
+        text-align: left;
+    }
+    .consignee .conmsg {
+        height: 100%;
+        display: inline-block;
+    }
+    .consignee .mobile {
+        margin-left: 50px;
+    }
+    .conmsg span {
+        display: inline-block;
+        margin-left: 15px;
+        line-height: 50px;
+        font-weight: 500;
+        font-size: 24px;
     }
     .priceNum #num {
         color: #EE0B0B;
@@ -525,5 +641,12 @@
     }
     .paid_detail {
         color: #EE0B0B;
+    }
+    .imgicon {
+        width: 30px;
+        height: 30px;
+    }
+    .copyimg {
+        margin-left: 10px;
     }
 </style>

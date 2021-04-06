@@ -7,7 +7,7 @@
         <van-row type="flex" justify="center" class="line">
             <van-col span="18">
                 <van-cell-group class="username">
-                    <van-field label="+7" class="border" v-model="mobile" placeholder="введите номер телефона" type="text" left-icon="manager"/>
+                    <van-field label="+7" class="border" v-model="mobile" placeholder="введите номер телефона" type="number" left-icon="manager"/>
                 </van-cell-group>
 
                 <van-cell-group class="username" v-show="show">

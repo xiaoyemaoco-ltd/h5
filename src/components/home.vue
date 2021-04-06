@@ -4,15 +4,25 @@
       <van-search v-model="value" @click="search" placeholder="поиска товар" />
     </div>
 
-    <div id="content">
+    <div id="content" ref="listBox">
 <!--        下拉刷新-->
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh" loading-text="Загрузка..." loosing-text="Отпустите, чтобы обновить..." pulling-text="Отпустите, чтобы обновить...">
           <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-            <van-swipe-item><img id="swiperimages" src="../assets/image/index1.png"></van-swipe-item>
-            <van-swipe-item><img id="swiperimages" src="../assets/image/index2.png"></van-swipe-item>
-            <van-swipe-item><img id="swiperimages" src="../assets/image/index3.png"></van-swipe-item>
-            <van-swipe-item><img id="swiperimages" src="../assets/image/index4.png"></van-swipe-item>
+            <van-swipe-item v-for="(item, index) in banner" :key="index">
+              <img id="swiperimages" v-lazy="item.img">
+            </van-swipe-item>
           </van-swipe>
+
+          <div class="icondiv">
+            <van-row type="flex" justify="space-between">
+              <van-col span="6" v-for="(item, index) in categorys" :key="index" @click="goodsList(item.cate_id)">
+                <img v-lazy="item.img">
+                <p>{{item.text}}</p>
+              </van-col>
+            </van-row>
+          </div>
+
+
           <van-list id="list" v-model="loading" offset="1"
                     :finished="finished"
                     finished-text="Больше не надо"
@@ -33,12 +43,36 @@
         </van-pull-refresh>
     </div>
 
-    <tabbar :active="active"></tabbar>
+    <van-tabbar active-color="#ff362c" inactive-color="#000" @change="onChange" id="tabbar">
+      <van-tabbar-item name="home">
+        <span id="text" style="color:#ff362c">Первая</span>
+        <template #icon="props">
+          <img src="../assets/image/foot/shouye2@2x.png" />
+        </template>
+      </van-tabbar-item>
+      <van-tabbar-item name="category">
+        <span id="text" >классификация</span>
+        <template #icon="props">
+          <img src="../assets/image/foot/fenlei1@2x.png" />
+        </template>
+      </van-tabbar-item>
+      <van-tabbar-item name="cart">
+        <span id="text">корзина</span>
+        <template #icon="props">
+          <img src="../assets/image/foot/gouwuche1@2x.png" />
+        </template>
+      </van-tabbar-item>
+      <van-tabbar-item name="personal">
+        <span id="text">шахта</span>
+        <template #icon="props">
+          <img src="../assets/image/foot/gerenzhongxin1@2x.png" />
+        </template>
+      </van-tabbar-item>
+    </van-tabbar>
   </div>
 </template>
 
 <script>
-  import Tabbar from "./tabbar";
 export default {
   name: 'Home',
   data() {
@@ -51,19 +85,100 @@ export default {
         pageNumber: 0,  //页码
         pageSize:20     //每页条数
       },
+      banner: [
+        {
+          'img': require('@/assets/image/index1.png'),
+        },
+        {
+          'img': require('@/assets/image/index2.png'),
+        },
+        {
+          'img': require('@/assets/image/index3.png'),
+        },
+        {
+          'img': require('@/assets/image/index4.png'),
+        },
+      ],
+      categorys: [
+        {
+          'img': require('@/assets/image/cate/jiad.png'),
+          'text': 'Бытовая техника',
+          'cate_id': 1633
+        },
+        {
+          'img': require('@/assets/image/cate/muy.png'),
+          'text': 'Мама и ребенок',
+          'cate_id': 501
+        },
+        {
+          'img': require('@/assets/image/cate/jiaju.png'),
+          'text': 'Бытовые товары',
+          'cate_id': 671
+        },
+        {
+          'img': require('@/assets/image/cate/car.png'),
+          'text': 'Все для автомобиля',
+          'cate_id': 925
+        },
+        {
+          'img': require('@/assets/image/cate/3C.png'),
+          'text': 'Электрический товар',
+          'cate_id': 1021
+        },
+        {
+          'img': require('@/assets/image/cate/book.png'),
+          'text': 'Канцелярские товары',
+          'cate_id': 1735
+        },
+        {
+          'img': require('@/assets/image/cate/gehu.png'),
+          'text': 'Красота и здоровье',
+          'cate_id': 1115
+        },
+        {
+          'img': require('@/assets/image/cate/fash.png'),
+          'text': 'Аксессуары и сумки',
+          'cate_id': 1677
+        },
+      ],
       isLoading: false,
       loading: false,
       finished: false,
     };
   },
-  components: {
-    Tabbar,
+  beforeRouteLeave(to, from, next) {
+    if (to.path == '/goodsdetail') {
+      from.meta.keepAlive = true
+      this.scroll = this.$refs.listBox.scrollTop;
+    }
+    if (to.path == '/goods') {
+      from.meta.keepAlive = false
+    }
+    next();
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.$refs.listBox.scrollTop = vm.scroll
+    })
   },
   mounted() {
     this.updata.pageNumber = 0
     this.updata.pageSize = 20
+    this.$toast.loading({
+      duration: 0,
+      forbidClick: true,
+      mask: true,
+      message: "Загрузка..."
+    });
   },
   methods: {
+    onChange(index) {
+      if (index == 'home') {
+        this.$router.push('/')
+      } else {
+        this.$router.push('/' + index)
+      }
+    },
     onLoad() {
       this.getgoodslist();
     },
@@ -100,6 +215,16 @@ export default {
         path: './search'
       })
     },
+    goodsList (cate_id) {
+      this.$router.push({
+        path: './goods',
+        query: {
+          cate_id: cate_id,
+          cate_name: 'Список продуктов',
+          from: 'home'
+        }
+      })
+    },
     //下拉刷新
     onRefresh() {
       setTimeout(() => {
@@ -119,14 +244,41 @@ export default {
   .hello {
     height: 1334px;
   }
+  /*iphoneX、iphoneXs*/
+  @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+    #tabbar {
+      padding-bottom: 34px !important
+    }
+  }
+
+  /*iphone Xs Max*/
+  @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+    #tabbar {
+      padding-bottom: 34px !important
+    }
+  }
+
+  /*iphone XR*/
+  @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+    #tabbar {
+      padding-bottom: 34px !important
+    }
+  }
   #header {
     height: 100px;
     background-color: #ef423a;
     margin: 0 auto;
     display: flex;
   }
+  .van-tabbar-item__icon img {
+    height: 48px;
+  }
   .van-search__content {
     border-radius: 30px;
+  }
+  #text {
+    font-size: 15px;
+    display: inline-block;
   }
   #list >>> .van-list__finished-text, #list >>>.van-list__loading {
     margin: 0 auto;
@@ -160,12 +312,13 @@ export default {
     background-color: #ff362c;
   }
 
-  .van-swipe-item {
-    height: 300px;
+  .my-swipe {
+    height: 350px;
   }
   #swiperimages {
     padding-top: 15px;
-    width: 96%;
+    width: 100%;
+    height: 100%;
   }
   .van-notice-bar {
     height: 45px;
@@ -200,6 +353,8 @@ export default {
     margin: 15px;
     height: 60px;
     line-height: 30px;
+    word-wrap: normal;
+    word-break: normal;
     /*兩行換行省略號*/
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -245,5 +400,17 @@ export default {
     color: #ffffff;
     line-height: 40px;
     border-radius: 5px;
+  }
+  .icondiv {
+    padding: 30px 15px 15px 15px;
+    background-color: #ffffff;
+  }
+  .icondiv p {
+    margin: 0 0 35px 0;
+    font-size: 20px;
+  }
+  .icondiv img {
+    width: 90px;
+    height: 90px;
   }
 </style>

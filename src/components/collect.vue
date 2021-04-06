@@ -33,7 +33,7 @@
                 </div>
                 <template #right>
                     <van-button square text="удалять" type="danger" class="delete-button" @click="delcollect(v.rec_id)"/>
-                    <van-button square text="Поделиться" color="#7232dd" class="delete-button" @click="share"/>
+                   <!-- <van-button square text="Поделиться" color="#7232dd" class="delete-button" @click="share"/>-->
                 </template>
             </van-swipe-cell>
         </div>

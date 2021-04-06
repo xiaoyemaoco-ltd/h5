@@ -188,7 +188,7 @@
         },
         inject: ['reload'],
         mounted() {
-            this.getuserifo()
+            this.getuserinfo()
         },
         methods: {
             //订单
@@ -232,7 +232,12 @@
                 this.$router.push('./withdraw')
             },
             //用户信息
-            getuserifo () {
+            getuserinfo () {
+                this.$toast.loading({
+                    duration: 0,
+                    forbidClick: true,
+                    message: "Загрузка..."
+                });
                 let userinfo = JSON.parse(localStorage.getItem('userinfo'))
                 if (userinfo) {
                     this.islogin = true
@@ -246,6 +251,7 @@
                 this.$axios.post('api/user/getUserInfo', {
                     user_id: this.user_id
                 }).then((e) => {
+                    this.$toast.clear();
                     if (e.data.statuscode == 200) {
                         this.fan = e.data.fan
                         this.user_money = parseInt(e.data.user.user_money)

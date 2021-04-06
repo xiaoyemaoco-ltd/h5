@@ -36,7 +36,7 @@
                             this.$router.push({path:'/'})
                             return false
                         } else {
-                            this.$router.go(-1)
+                            this.$router.back()
                         }
                     }
                 }
@@ -61,7 +61,7 @@
         color: #fff;
     }
     #head >>> .van-nav-bar__title {
-        font-size: 1.8em;
+        font-size: 1.4em;
         font-weight: 600;
     }
     #head >>> .van-nav-bar__arrow {

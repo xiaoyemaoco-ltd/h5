@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="history">
-                <p>Поиск найден</p>
+                <p>Поиск пользующийся спросом</p>
                 <div class="keywords">
                     <span v-for="(v, k) in keywords" :key="k" @click="goods(v)">{{v}}</span>
                 </div>
@@ -49,7 +49,8 @@
                 this.$router.push({
                     path: './goods',
                     query: {
-                        keyword: this.value
+                        keyword: this.value,
+                        cate_name: this.value
                     }
                 })
             },
@@ -57,7 +58,8 @@
                 this.$router.push({
                     path: './goods',
                     query: {
-                        keyword: val
+                        keyword: val,
+                        cate_name: val
                     }
                 })
             },
@@ -108,17 +110,18 @@
     }
     .history P {
         color: #a0a0a0;
-        font-size: 15px;
+        font-size: 20px;
     }
     .keywords {
         padding: 10px;
     }
     .keywords span {
         display: inline-block;
-        border: 1px #eee solid;
-        padding: 9px 15px;
+        border: 1px #ccc solid;
+        padding: 9px 20px;
         border-radius: 5px;
         margin: 0 15px 15px 0;
+        font-size: 28px;
     }
     .mine {
         margin-top: 30px;

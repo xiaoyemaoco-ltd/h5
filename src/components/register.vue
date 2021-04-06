@@ -23,7 +23,7 @@
                     <van-field class="border" v-model="password" placeholder="введите пароль"  type="password"  left-icon="lock"/>
                 </van-cell-group>
                 <van-cell-group class="username">
-                    <van-field class="border" v-model="invitecode" placeholder="код приглашения друзей"  type="password"  left-icon="friends"/>
+                    <van-field class="border" v-model="invitecode" placeholder="код приглашения друзей"  type="number"  left-icon="friends"/>
                 </van-cell-group>
             </van-col>
             <!--<van-col span="3">&nbsp</van-col>-->
@@ -62,10 +62,10 @@
         },
         methods: {
             register () {
-                /*if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
+                if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
                     this.$toast.fail('Ошибка номера телефона');
                     return
-                }*/
+                }
 
                 if (this.code == '') {
                     this.$toast.fail('код подтверждения должен быть заполнен');
@@ -114,10 +114,10 @@
             //获取验证码
             getcode () {
 
-                /*if (this.mobile == '' || !(/^\d{1}\d{9}$/.test(this.mobile))) {
+                if (this.mobile == '' || !(/^7\d{9}$/.test(this.mobile))) {
                     this.$toast.fail('Ошибка номера телефона');
                     return
-                }*/
+                }
 
                 this.$toast.loading({
                     duration: 0,

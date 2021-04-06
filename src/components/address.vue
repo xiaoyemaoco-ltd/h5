@@ -9,7 +9,7 @@
                       <div class="addsmallBox">
                         <div class="userphone">
                           <div class="user">{{item.consignee}}</div>
-                          <div class="phone">{{item.mobile}}</div>
+                          <div class="phone">+7 {{item.mobile}}</div>
                         </div>
                         <p class="address">{{item.province_name}} {{item.city_name}} {{item.district_name}} {{item.address}}</p>
                       </div>
@@ -17,7 +17,8 @@
                   </div>
                   <div id="edit">
                     <van-radio-group v-model="radio" id="radio">
-                      <van-radio position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
+                      <van-radio v-if="item.address_id == radio" position icon-size="20px" :name="item.address_id" @click="defalutaddress">по умолчанию</van-radio>
+                      <van-radio v-else position icon-size="20px" :name="item.address_id" @click="defalutaddress">Настроен по умолчанию</van-radio>
                     </van-radio-group>
                     <div id="ed" @click="adressupdate(item.address_id)">
                       <img src="../assets/image/bianji@2x.png">
@@ -131,6 +132,7 @@
                 this.$axios.post('api/user/getUserAddress', {
                   user_id: this.userid
                 }).then((e) => {
+                    console.log(e)
                     this.$toast.clear(); // 关闭加载
                     if (e.data.statuscode == 200) {
                         this.list = e.data.data
@@ -207,7 +209,8 @@
         color: #515151;
         padding-right: 20px;
         width: 100%;
-        word-wrap: break-word;
+        word-wrap: normal;
+        word-break: normal;
     }
     .addresadd, .address {
         margin: 10px 10px;
@@ -236,12 +239,17 @@
        vertical-align: middle;
     }
     #edit #ed, #edit #del {
-        margin-left: 50px;
+        /*margin-left: 15px;*/
         display: flex;
+    }
+    #edit #ed {
         width: 30%;
     }
+    #edit #del {
+        width: 20%;
+    }
     #edit #radio {
-        width: 40%;
+        width: 50%;
     }
     #edit #ed span, #edit #del span {
       margin-left: 10px;

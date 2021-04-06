@@ -21,7 +21,7 @@
                            <img v-lazy="item.cat_img"/>
                        </p>
                        <div class="sub2list fixed-flex fixed-flex-fs-s flex-wrap">
-                           <div class="sub2item fixed-flexv fixed-flex-fs-s" v-for="(v, k) in item.sub_cat_id" :key="k" @click="jumpMerchandise(v.cat_id)">
+                           <div class="sub2item fixed-flexv fixed-flex-fs-s" v-for="(v, k) in item.sub_cat_id" :key="k" @click="jumpMerchandise(v.cat_id, item.cat_name)">
                                <div class="img fixed-flex fixed-flex-c-c">
                                    <img v-lazy="v.cat_img"/>
                                </div>
@@ -171,11 +171,13 @@
                 }, 400)
 
             },
-            jumpMerchandise: function(catId) {
+            jumpMerchandise: function(catId, cate_name) {
                 this.$router.push({
                     path: './goods',
                     query: {
-                        cate_id: catId
+                        cate_id: catId,
+                        cate_name: cate_name,
+                        from: 'category'
                     }
                 })
             },
